@@ -23,7 +23,7 @@ public class Project extends BaseEntity {
     private Member creator;
     private Date startDate;
     private Date endDate;
-    private String explain;
+    private String introduce;
     private String openChattingLink;
     private String notionLink;
     private String githubLink;
