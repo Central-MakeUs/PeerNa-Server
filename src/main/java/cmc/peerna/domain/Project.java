@@ -24,6 +24,7 @@ public class Project extends BaseEntity {
     private Date startDate;
     private Date endDate;
     private String introduce;
+
     private String openChattingLink;
     private String notionLink;
     private String githubLink;
