@@ -21,6 +21,8 @@ public class Member extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private String name;
+
     private String image; // 변경 가능
 
     private String oneliner;
