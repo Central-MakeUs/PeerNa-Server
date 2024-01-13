@@ -39,10 +39,10 @@ public class SecurityConfig{
         httpSecurity.httpBasic(HttpBasicConfigurer::disable)
                 .cors(corsConfigurer -> corsConfigurer.configurationSource(corsConfigurationSource()))
                 .csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(authorize ->
-                        authorize
-                                .requestMatchers("/*").permitAll()
-                )
+//                .authorizeHttpRequests(authorize ->
+//                        authorize
+//                                .requestMatchers("/*").permitAll()
+//                )
         ;
 
         return httpSecurity.build();
