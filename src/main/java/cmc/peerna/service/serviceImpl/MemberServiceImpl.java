@@ -10,8 +10,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
-
 @Service
 @Slf4j
 @RequiredArgsConstructor
@@ -20,7 +18,7 @@ public class MemberServiceImpl implements MemberService {
     private final MemberRepository memberRepository;
     @Override
     public MemberResponseDto.MemberBaseDto findMember(Long memberId) {
-        Member member = memberRepository.findById(memberId).orElseThrow(() -> new MemberExceptionHandler(ResponseStatus._BAD_REQUEST));
+        Member member = memberRepository.findById(memberId).orElseThrow(() -> new MemberExceptionHandler(ResponseStatus.NOT_EXIST_MEMBER));
         return MemberResponseDto.MemberBaseDto.builder()
                 .id(member.getId())
                 .oneLiner(member.getOneliner())
