@@ -38,11 +38,11 @@ public class SecurityConfig{
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.httpBasic(HttpBasicConfigurer::disable)
                 .cors(corsConfigurer -> corsConfigurer.configurationSource(corsConfigurationSource()))
-//                .csrf(AbstractHttpConfigurer::disable)
-//                .authorizeHttpRequests(authorize ->
-//                        authorize
-//                                .requestMatchers("/*").permitAll()
-//                )
+                .csrf(AbstractHttpConfigurer::disable)
+                .authorizeHttpRequests(authorize ->
+                        authorize
+                                .requestMatchers("/*").permitAll()
+                )
         ;
 
         return httpSecurity.build();
