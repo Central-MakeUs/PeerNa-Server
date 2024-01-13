@@ -14,13 +14,21 @@ public enum ResponseStatus implements BaseCode {
 
     _INTERNAL_SERVER_ERROR(INTERNAL_SERVER_ERROR, 5000, "서버 에러, 관리자에게 문의 바랍니다."),
 
+    // 200번대 에러는 유저의 잘못된 요청 때문에 발생하는 에러 ex) 글자수 초과, db에 id:2인 member가 없는데 조회하는 경우
+
     // base 에러
-    _BAD_REQUEST(BAD_REQUEST,2100,"잘못된 요청입니다."),
-    WRONG_POST_TEST(BAD_REQUEST, 2101, "잘못된 POST 테스트 요청입니다."),
-    WRONG_GET_TEST(BAD_REQUEST, 2102, "잘못된 GET 테스트 요청입니다."),
+    _BAD_REQUEST(OK,2100,"잘못된 요청입니다."),
+    WRONG_GET_TEST(OK, 2102, "잘못된 GET 테스트 요청입니다."),
 
     // member 에러
-    NOT_EXIST_MEMBER(BAD_REQUEST, 2200, "존재하지 않는 유저입니다.");
+    NOT_EXIST_MEMBER(OK, 2200, "존재하지 않는 유저입니다."),
+
+
+
+    // 400번대 에러
+
+    WRONG_POST_TEST(BAD_REQUEST, 4101, "잘못된 POST 테스트 요청입니다.");
+
 
     private final HttpStatus httpStatus;
     private final Integer code;
