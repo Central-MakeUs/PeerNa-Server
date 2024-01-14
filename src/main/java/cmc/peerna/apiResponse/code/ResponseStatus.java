@@ -31,8 +31,12 @@ public enum ResponseStatus implements BaseCode {
     _FORBIDDEN(FORBIDDEN, 4003, "허용되지 않은 요청입니다."),
     INVALID_TOKEN_EXCEPTION(UNAUTHORIZED,4008,"토큰이 올바르지 않습니다." ),
 
+    FEIGN_CLIENT_ERROR_400(HttpStatus.BAD_REQUEST, 4009, "feign에서 400번대 에러가 발생했습니다."),
 
-    WRONG_POST_TEST(BAD_REQUEST, 4101, "잘못된 POST 테스트 요청입니다.");
+    WRONG_POST_TEST(BAD_REQUEST, 4101, "잘못된 POST 테스트 요청입니다."),
+
+    // 500번대 에러
+    FEIGN_CLIENT_ERROR_500(HttpStatus.INTERNAL_SERVER_ERROR, 5001, "Inter server Error in feign client");
 
 
     private final HttpStatus httpStatus;

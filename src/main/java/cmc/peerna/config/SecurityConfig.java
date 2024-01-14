@@ -1,7 +1,9 @@
 package cmc.peerna.config;
 
 import cmc.peerna.auth.OAuth2UserService;
+import cmc.peerna.jwt.JwtAuthenticationFilter;
 import cmc.peerna.jwt.JwtProvider;
+import cmc.peerna.jwt.JwtSecurityConfig;
 import cmc.peerna.jwt.handler.JwtAccessDeniedHandler;
 import cmc.peerna.jwt.handler.JwtAuthEntryPoint;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +18,7 @@ import org.springframework.security.config.annotation.web.configurers.HttpBasicC
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.ExceptionTranslationFilter;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -34,6 +37,7 @@ public class SecurityConfig{
     private final AuthenticationSuccessHandler oauthSuccessHandler;
     private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
     private final JwtAuthEntryPoint jwtAuthenticationEntryPoint;
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final JwtProvider jwtProvider;
 
 
@@ -81,14 +85,14 @@ public class SecurityConfig{
                 .exceptionHandling((exception) -> exception.authenticationEntryPoint(jwtAuthenticationEntryPoint)
                         .accessDeniedHandler(jwtAccessDeniedHandler));
 
-        http.authorizeHttpRequests(config -> config.anyRequest().permitAll());
-//        http.oauth2Login(oauth2Configurer -> oauth2Configurer
-//                .loginPage("/login")
-//                .successHandler(successHandler())
-//                .userInfoEndpoint(null)
-//                .userService(oAuth2UserService));
-
-
+        http.authorizeHttpRequests(config -> config.anyRequest().permitAll()).getOrBuild();
+//        http.apply(new JwtSecurityConfig(jwtProvider));
+        http.oauth2Login(oauth2Configurer -> oauth2Configurer
+                .loginPage("/login")
+                .successHandler(successHandler())
+                .userInfoEndpoint("")
+                .userService(oAuth2UserService));
+        http.addFilterAfter(jwtAuthenticationFilter, ExceptionTranslationFilter.class);
         return http.build();
 //        return http.getOrBuild();
     }
