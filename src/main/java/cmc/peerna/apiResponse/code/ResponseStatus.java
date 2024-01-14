@@ -27,6 +27,11 @@ public enum ResponseStatus implements BaseCode {
 
     // 400번대 에러
 
+    _UNAUTHORIZED(UNAUTHORIZED,4001,"로그인이 필요합니다."),
+    _FORBIDDEN(FORBIDDEN, 4003, "허용되지 않은 요청입니다."),
+    INVALID_TOKEN_EXCEPTION(UNAUTHORIZED,4008,"토큰이 올바르지 않습니다." ),
+
+
     WRONG_POST_TEST(BAD_REQUEST, 4101, "잘못된 POST 테스트 요청입니다.");
 
 
