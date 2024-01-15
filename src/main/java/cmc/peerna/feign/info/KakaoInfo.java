@@ -19,7 +19,7 @@ public class KakaoInfo {
     private String redirectUri;
     private String secretKey;
 
-    public String kakaoUrlInit(){
+    public String kakaoLoginUrlInit(){
         Map<String, Object> params = new HashMap<>();
         params.put("client_id", getClientId());
         params.put("redirect_uri", getRedirectUri());

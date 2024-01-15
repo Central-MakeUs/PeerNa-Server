@@ -1,14 +1,12 @@
 package cmc.peerna.web.controller;
 
-import cmc.peerna.apiResponse.code.BaseCode;
-import cmc.peerna.apiResponse.code.ResponseStatus;
 import cmc.peerna.apiResponse.response.ResponseDto;
+import cmc.peerna.feign.dto.KakaoTokenInfoResponseDto;
 import cmc.peerna.feign.service.AccountService;
-import cmc.peerna.jwt.SignResponseDto;
 import cmc.peerna.service.MemberService;
-import cmc.peerna.web.dto.requestDto.MemberRequestDto;
 import cmc.peerna.web.dto.responseDto.MemberResponseDto;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,11 +14,14 @@ import org.springframework.web.bind.annotation.*;
 
 
 @RestController
+@Slf4j
 @RequiredArgsConstructor
 public class MemberController {
 
     private final AccountService accountService;
     private final MemberService memberService;
+
+    // 서비스 단으로 넣어야 함.
 
     @GetMapping("/member/{memberId}")
     public ResponseDto<MemberResponseDto.MemberBaseDto> searchMember(@PathVariable(name = "memberId") Long memberId) {
@@ -28,19 +29,28 @@ public class MemberController {
         return ResponseDto.of(memberDto);
     }
 
-    @PostMapping("/member/oauth")
-    public ResponseDto<SignResponseDto> oauth(@RequestBody MemberRequestDto.OAuthDTO request) {
-        System.out.println("토큰 : " + request.getAccessToken());
-        SignResponseDto token = memberService.loginWithKakao(request);
-        return ResponseDto.of(token);
-    }
+//    // 이전 방식
+//    @PostMapping("/member/oauth")
+//    public ResponseDto<SignResponseDto> oauth(@RequestBody MemberRequestDto.OAuthDTO request) {
+//        System.out.println("토큰 : " + request.getAccessToken());
+//        SignResponseDto token = memberService.loginWithKakao(request);
+//        return ResponseDto.of(token);
+//    }
 
     @GetMapping("/login/kakao")
-    public ResponseEntity<Object> kakaoLogin()  {
-        HttpHeaders httpHeaders = accountService.kakaoLogin();
+    public ResponseEntity<Object> kakaoCode()  {
+        HttpHeaders httpHeaders = accountService.kakaoLoginRequestHeader();
         return httpHeaders != null ?
                 new ResponseEntity<>(httpHeaders, HttpStatus.SEE_OTHER):
                 ResponseEntity.badRequest().build();
+    }
+
+    //리다이렉트 주소
+    @GetMapping("/login/oauth2/kakao")
+    public ResponseEntity<Object> kakaoLogin(@RequestParam(value = "code") String code)  {
+        KakaoTokenInfoResponseDto kakaoUserInfo = accountService.getKakaoUserInfo(code);
+        log.info("유저 id" + kakaoUserInfo.getId());
+        return null;
     }
 }
 
