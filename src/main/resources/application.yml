@@ -41,7 +41,7 @@ spring:
       #      root: info
       org.hibernate.SQL: DEBUG
       org.hibernate.type: trace
-
+debug: true
 jwt:
   secret:
     key: testsecrettestsecrettestsecrettestsecrettestsecrettestsecrettestsecrettestsecrettestsecret
