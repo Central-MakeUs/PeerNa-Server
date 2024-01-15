@@ -20,6 +20,12 @@ spring:
 
   security:
     oauth2:
+      kakao:
+        infoUrl: https://kapi.kakao.com
+        baseUrl: https://kauth.kakao.com
+        clientId: ${kakao.client.id}
+        redirectUri: http://localhost:8080/login/oauth2/kakao
+        secretKey: ${kakao.client.secret}
       client:
         provider:
           kakao:
@@ -27,6 +33,7 @@ spring:
             token-uri: https://kauth.kakao.com/oauth/token
             user-info-uri: https://kapi.kakao.com/v2/user/me
             user-name-attribute: id
+
         registration:
           kakao:
             client-id: ${kakao.client.id}

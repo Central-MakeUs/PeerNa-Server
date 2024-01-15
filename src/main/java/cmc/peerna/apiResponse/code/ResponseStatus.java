@@ -20,6 +20,9 @@ public enum ResponseStatus implements BaseCode {
     _BAD_REQUEST(OK,2100,"잘못된 요청입니다."),
     WRONG_GET_TEST(OK, 2102, "잘못된 GET 테스트 요청입니다."),
 
+    // login 에러
+    KAKAO_LOGIN_ERROR(OK, 2150, "카카오 로그인 도중 에러 발생"),
+
     // member 에러
     NOT_EXIST_MEMBER(OK, 2200, "존재하지 않는 유저입니다."),
 
