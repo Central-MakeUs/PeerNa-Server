@@ -21,21 +21,13 @@ public class MemberController {
     private final AccountService accountService;
     private final MemberService memberService;
 
-    // 서비스 단으로 넣어야 함.
 
+    // TEST API
     @GetMapping("/member/{memberId}")
     public ResponseDto<MemberResponseDto.MemberBaseDto> searchMember(@PathVariable(name = "memberId") Long memberId) {
         MemberResponseDto.MemberBaseDto memberDto = memberService.findMember(memberId);
         return ResponseDto.of(memberDto);
     }
-
-//    // 이전 방식
-//    @PostMapping("/member/oauth")
-//    public ResponseDto<SignResponseDto> oauth(@RequestBody MemberRequestDto.OAuthDTO request) {
-//        System.out.println("토큰 : " + request.getAccessToken());
-//        SignResponseDto token = memberService.loginWithKakao(request);
-//        return ResponseDto.of(token);
-//    }
 
     @GetMapping("/login/kakao")
     public ResponseEntity<Object> kakaoCode()  {

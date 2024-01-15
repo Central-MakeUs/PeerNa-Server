@@ -27,32 +27,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class MemberServiceImpl implements MemberService {
 
-//    private final KakaoInfoFeignClient kakaoInfoFeignClient;
     private final MemberRepository memberRepository;
-
-
-//    @Override
-//    @Transactional
-//    public SignResponseDto loginWithKakao(MemberRequestDto.OAuthDTO request){
-//        String kakaoToken = "Bearer " + request.getAccessToken();
-//        log.info("토큰 : " + kakaoToken);
-//
-//        KakaoMemberInfo memberInfo = kakaoInfoFeignClient.getInfo1(kakaoToken);
-//        String kakaoId = memberInfo.getId().toString();
-//        Optional<Member> oauthMember = memberRepository.findBySocialTypeAndSocialId(SocialType.KAKAO, kakaoId);
-//        if (oauthMember.isPresent()) {
-//            String token = jwtProvider.createToken(oauthMember.get().getId(), List.of(new SimpleGrantedAuthority("USER")));
-//            return SignResponseDto.builder()
-//                    .token(token)
-//                    .build();
-//        } else{
-//            Member savedMember = memberRepository.save(MemberConverter.toMember(kakaoId, SocialType.KAKAO));
-//            String token = jwtProvider.createToken(savedMember.getId(), List.of(new SimpleGrantedAuthority("USER")));
-//            return SignResponseDto.builder()
-//                    .token(token)
-//                    .build();
-//        }
-//    }
 
 
     @Override
