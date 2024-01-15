@@ -20,6 +20,9 @@ public enum ResponseStatus implements BaseCode {
     _BAD_REQUEST(OK,2100,"잘못된 요청입니다."),
     WRONG_GET_TEST(OK, 2102, "잘못된 GET 테스트 요청입니다."),
 
+    // login 에러
+    KAKAO_LOGIN_ERROR(OK, 2150, "카카오 로그인 도중 에러 발생"),
+
     // member 에러
     NOT_EXIST_MEMBER(OK, 2200, "존재하지 않는 유저입니다."),
 
@@ -27,7 +30,16 @@ public enum ResponseStatus implements BaseCode {
 
     // 400번대 에러
 
-    WRONG_POST_TEST(BAD_REQUEST, 4101, "잘못된 POST 테스트 요청입니다.");
+    _UNAUTHORIZED(UNAUTHORIZED,4001,"로그인이 필요합니다."),
+    _FORBIDDEN(FORBIDDEN, 4003, "허용되지 않은 요청입니다."),
+    INVALID_TOKEN_EXCEPTION(UNAUTHORIZED,4008,"토큰이 올바르지 않습니다." ),
+
+    FEIGN_CLIENT_ERROR_400(HttpStatus.BAD_REQUEST, 4009, "feign에서 400번대 에러가 발생했습니다."),
+
+    WRONG_POST_TEST(BAD_REQUEST, 4101, "잘못된 POST 테스트 요청입니다."),
+
+    // 500번대 에러
+    FEIGN_CLIENT_ERROR_500(HttpStatus.INTERNAL_SERVER_ERROR, 5001, "Inter server Error in feign client");
 
 
     private final HttpStatus httpStatus;
