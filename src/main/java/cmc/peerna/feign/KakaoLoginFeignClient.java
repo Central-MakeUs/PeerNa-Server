@@ -16,5 +16,5 @@ public interface KakaoLoginFeignClient {
     void goToKakaoLoginPage(@RequestBody String kakaoLoginPageRequestDto);
 
     @PostMapping(value = "/oauth/token")
-    KakaoTokenResponseDto getToken(@RequestBody String code);
+    KakaoTokenResponseDto getToken(@RequestBody String kakaoTokenRequestDto);
 }

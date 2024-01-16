@@ -31,7 +31,6 @@ public class MemberController {
 
     @GetMapping("/login/kakao")
     public ResponseEntity<Object> kakaoCode()  {
-//        accountService.gotoKakaoLogin();
 
         HttpHeaders httpHeaders = accountService.kakaoLoginRequestHeader();
         return httpHeaders != null ?
@@ -42,6 +41,8 @@ public class MemberController {
     //리다이렉트 주소
     @GetMapping("/login/oauth2/kakao")
     public ResponseEntity<Object> kakaoLogin(@RequestParam(value = "code") String code)  {
+        log.info("리다이렉트 완료");
+        log.info("코드 : " + code);
         KakaoTokenInfoResponseDto kakaoUserInfo = accountService.getKakaoUserInfo(code);
         log.info("유저 id" + kakaoUserInfo.getId());
         return null;
