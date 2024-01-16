@@ -6,7 +6,7 @@ import cmc.peerna.converter.MemberConverter;
 import cmc.peerna.domain.Member;
 import cmc.peerna.domain.enums.SocialType;
 import cmc.peerna.jwt.JwtProvider;
-import cmc.peerna.jwt.SignResponseDto;
+import cmc.peerna.jwt.LoginResponseDto;
 import cmc.peerna.repository.MemberRepository;
 import cmc.peerna.service.MemberService;
 import cmc.peerna.web.dto.responseDto.MemberResponseDto;
@@ -41,21 +41,27 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     @Transactional
-    public SignResponseDto loginWithKakao(String kakaoId) {
+    public Member loginWithKakao(String kakaoId) {
         Optional<Member> oauthMember = memberRepository.findBySocialTypeAndSocialId(SocialType.KAKAO, kakaoId);
-        if (oauthMember.isPresent()) {
-            String token = jwtProvider.createToken(oauthMember.get().getId(), List.of(new SimpleGrantedAuthority("USER")));
-            return SignResponseDto.builder()
-                    .token(token)
-                    .build();
-        } else{
-            Member savedMember = memberRepository.save(MemberConverter.toMember(kakaoId, SocialType.KAKAO));
-            String token = jwtProvider.createToken(savedMember.getId(), List.of(new SimpleGrantedAuthority("USER")));
-            return SignResponseDto.builder()
-                    .token(token)
-                    .build();
 
-        }
+        if (!oauthMember.isPresent()) {
+            Member savedMember = memberRepository.save(MemberConverter.toMember(kakaoId, SocialType.KAKAO));
+            return savedMember;
+        } else return oauthMember.get();
+
+//        if (oauthMember.isPresent()) {
+//            String token = jwtProvider.createToken(oauthMember.get().getId(), List.of(new SimpleGrantedAuthority("USER")));
+//            return LoginResponseDto.builder()
+//                    .accessToken(token)
+//                    .build();
+//        } else{
+//            Member savedMember = memberRepository.save(MemberConverter.toMember(kakaoId, SocialType.KAKAO));
+//            String token = jwtProvider.createToken(savedMember.getId(), List.of(new SimpleGrantedAuthority("USER")));
+//            return LoginResponseDto.builder()
+//                    .accessToken(token)
+//                    .build();
+//
+//        }
     }
 
 

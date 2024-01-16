@@ -36,6 +36,8 @@ public class JwtProvider {
     // 만료시간 : 1Hour
     private final long exp = 1000L * 60 * 60;
 
+    private final long accessTokenValidityInMilliseconds = 1000L * 60 * 60;
+
 //    private final CustomUserDetailsService userDetailsService;
 
     @PostConstruct
@@ -51,6 +53,24 @@ public class JwtProvider {
                 .setIssuedAt(now)
                 .setExpiration(new Date(now.getTime() + exp))
                 .signWith(secretKey, SignatureAlgorithm.HS256)
+                .compact();
+    }
+
+    public String createAccessToken(
+            Long userId,
+            String socialType,
+            String socialId,
+            Collection<? extends GrantedAuthority> authorities) {
+        long now = (new Date()).getTime();
+        Date validity = new Date(now + this.accessTokenValidityInMilliseconds);
+
+        return Jwts.builder()
+                .setSubject(String.valueOf(userId))
+//                .claim("AUTHORITIES", authorities)
+                .claim("socialType", socialType)
+                .claim("socialID", socialId)
+                .signWith(secretKey, SignatureAlgorithm.HS512)
+                .setExpiration(validity)
                 .compact();
     }
 
