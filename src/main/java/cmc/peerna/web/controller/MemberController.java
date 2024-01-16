@@ -31,6 +31,8 @@ public class MemberController {
 
     @GetMapping("/login/kakao")
     public ResponseEntity<Object> kakaoCode()  {
+//        accountService.gotoKakaoLogin();
+
         HttpHeaders httpHeaders = accountService.kakaoLoginRequestHeader();
         return httpHeaders != null ?
                 new ResponseEntity<>(httpHeaders, HttpStatus.SEE_OTHER):

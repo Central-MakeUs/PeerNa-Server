@@ -4,6 +4,7 @@ import cmc.peerna.feign.config.KakaoFeignConfig;
 import cmc.peerna.feign.dto.KakaoTokenResponseDto;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -11,6 +12,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 @Component
 public interface KakaoLoginFeignClient {
 
+    @GetMapping(value = "/oauth/authorize")
+    void goToKakaoLoginPage(@RequestBody String kakaoLoginPageRequestDto);
 
     @PostMapping(value = "/oauth/token")
     KakaoTokenResponseDto getToken(@RequestBody String code);
