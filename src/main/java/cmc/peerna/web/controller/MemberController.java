@@ -3,6 +3,7 @@ package cmc.peerna.web.controller;
 import cmc.peerna.apiResponse.response.ResponseDto;
 import cmc.peerna.feign.dto.KakaoTokenInfoResponseDto;
 import cmc.peerna.feign.service.AccountService;
+import cmc.peerna.jwt.SignResponseDto;
 import cmc.peerna.service.MemberService;
 import cmc.peerna.web.dto.responseDto.MemberResponseDto;
 import lombok.RequiredArgsConstructor;
@@ -41,12 +42,12 @@ public class MemberController {
 
     //리다이렉트 주소
     @GetMapping("/login/oauth2/kakao")
-    public ResponseEntity<Object> kakaoLogin(@RequestParam(value = "code") String code)  {
+    public ResponseDto<SignResponseDto> kakaoLogin(@RequestParam(value = "code") String code)  {
         log.info("리다이렉트 완료");
         log.info("코드 : " + code);
         KakaoTokenInfoResponseDto kakaoUserInfo = accountService.getKakaoUserInfo(code);
         log.info("유저 id" + kakaoUserInfo.getId());
-        return null;
+        return ResponseDto.of(memberService.loginWithKakao(kakaoUserInfo.getId()));
     }
 }
 

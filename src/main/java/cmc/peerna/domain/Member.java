@@ -4,9 +4,11 @@ import cmc.peerna.domain.common.BaseEntity;
 import cmc.peerna.domain.enums.Job;
 import cmc.peerna.domain.enums.Part;
 import cmc.peerna.domain.enums.SocialType;
+import cmc.peerna.domain.enums.UserRole;
 import cmc.peerna.domain.mapping.ProjectMember;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 
 import java.util.List;
 
@@ -38,6 +40,10 @@ public class Member extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private SocialType socialType;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "user_role")
+    @ColumnDefault("'USER'")
+    private UserRole userRole;
     @OneToMany(mappedBy = "member")
     private List<ProjectMember> projectList;
 
