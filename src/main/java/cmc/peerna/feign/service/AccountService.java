@@ -2,6 +2,7 @@ package cmc.peerna.feign.service;
 
 import cmc.peerna.feign.KakaoInfoFeignClient;
 import cmc.peerna.feign.KakaoLoginFeignClient;
+import cmc.peerna.feign.dto.KakaoLoginPageRequestDto;
 import cmc.peerna.feign.dto.KakaoTokenInfoResponseDto;
 import cmc.peerna.feign.dto.KakaoTokenRequestDto;
 import cmc.peerna.feign.dto.KakaoTokenResponseDto;
@@ -35,6 +36,14 @@ public class AccountService {
         }
         return null;
     }
+
+    public void gotoKakaoLogin() {
+        String kakaoLoginPageRequestDto = KakaoLoginPageRequestDto.newInstance(kakaoInfo).toString();
+        System.out.println("테스트 : "  + kakaoLoginPageRequestDto);
+
+            kakaoLoginFeignClient.goToKakaoLoginPage(kakaoLoginPageRequestDto);
+    }
+
 
     // 인가 코드를 통해 카카오 유저 정보 알아내는 함수
     public KakaoTokenInfoResponseDto getKakaoUserInfo(String code) {

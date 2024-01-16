@@ -40,8 +40,8 @@ spring:
             client-id: ${kakao.client.id}
             client-secret: ${kakao.client.secret}
             client-authentication-method: client_secret_post
+            redirect-uri: https://dev.peerna.me/login/oauth2/kakao
 #            redirect-uri: http://localhost:8080/login/oauth2/kakao
-            redirectUri: https://dev.peerna.me/login/oauth2/kakao
             authorization-grant-type: authorization_code
             client-name: kakao
 
@@ -50,7 +50,7 @@ spring:
       #      root: info
       org.hibernate.SQL: DEBUG
       org.hibernate.type: trace
-#debug: true
+debug: true
 jwt:
   secret:
     key: testsecrettestsecrettestsecrettestsecrettestsecrettestsecrettestsecrettestsecrettestsecret
