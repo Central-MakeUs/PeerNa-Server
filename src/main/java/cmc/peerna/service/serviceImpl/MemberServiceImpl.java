@@ -1,7 +1,7 @@
 package cmc.peerna.service.serviceImpl;
 
 import cmc.peerna.apiResponse.code.ResponseStatus;
-import cmc.peerna.apiResponse.exception.handler.MemberExceptionHandler;
+import cmc.peerna.apiResponse.exception.handler.MemberException;
 import cmc.peerna.converter.MemberConverter;
 import cmc.peerna.domain.Member;
 import cmc.peerna.domain.enums.SocialType;
@@ -30,7 +30,7 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public MemberResponseDto.MemberBaseDto findMember(Long memberId) {
-        Member member = memberRepository.findById(memberId).orElseThrow(() -> new MemberExceptionHandler(ResponseStatus.NOT_EXIST_MEMBER));
+        Member member = memberRepository.findById(memberId).orElseThrow(() -> new MemberException(ResponseStatus.MEMBER_NOT_FOUND));
         return MemberResponseDto.MemberBaseDto.builder()
                 .id(member.getId())
                 .oneLiner(member.getOneliner())

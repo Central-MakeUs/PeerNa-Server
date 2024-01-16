@@ -1,7 +1,7 @@
 package cmc.peerna.web.controller;
 
 import cmc.peerna.apiResponse.code.ResponseStatus;
-import cmc.peerna.apiResponse.exception.handler.MemberExceptionHandler;
+import cmc.peerna.apiResponse.exception.handler.MemberException;
 import cmc.peerna.apiResponse.response.ResponseDto;
 import cmc.peerna.web.dto.requestDto.RootRequestDto;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,7 +20,7 @@ public class RootController {
     @PostMapping("/ping")
     public ResponseDto<String> postTest(@RequestBody RootRequestDto.PostTestDto body) {
         if (body.getBody().equals("peerna")) {
-            throw new MemberExceptionHandler(ResponseStatus.WRONG_POST_TEST);
+            throw new MemberException(ResponseStatus.WRONG_POST_TEST);
         }
         return ResponseDto.of(body.getBody());
     }
