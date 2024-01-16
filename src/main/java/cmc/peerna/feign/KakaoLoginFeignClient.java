@@ -11,10 +11,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 @FeignClient(name = "kakaoLoginFeignClient", url = "https://kauth.kakao.com", configuration = KakaoFeignConfig.class)
 @Component
 public interface KakaoLoginFeignClient {
-
-    @GetMapping(value = "/oauth/authorize")
-    void goToKakaoLoginPage(@RequestBody String kakaoLoginPageRequestDto);
-
     @PostMapping(value = "/oauth/token")
     KakaoTokenResponseDto getToken(@RequestBody String kakaoTokenRequestDto);
 }

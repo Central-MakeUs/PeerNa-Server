@@ -29,6 +29,7 @@ public class MemberController {
         return ResponseDto.of(memberDto);
     }
 
+    // 카카오 로그인 정보 입력 테스트용
     @GetMapping("/login/kakao")
     public ResponseEntity<Object> kakaoCode()  {
 
