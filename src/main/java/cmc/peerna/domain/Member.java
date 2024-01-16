@@ -1,10 +1,7 @@
 package cmc.peerna.domain;
 
 import cmc.peerna.domain.common.BaseEntity;
-import cmc.peerna.domain.enums.Job;
-import cmc.peerna.domain.enums.Part;
-import cmc.peerna.domain.enums.SocialType;
-import cmc.peerna.domain.enums.UserRole;
+import cmc.peerna.domain.enums.*;
 import cmc.peerna.domain.mapping.ProjectMember;
 import jakarta.persistence.*;
 import lombok.*;
@@ -25,7 +22,8 @@ public class Member extends BaseEntity {
 
     private String name;
 
-    private String image; // 변경 가능
+    @Enumerated(EnumType.STRING)
+    private TestType testType;
 
     private String oneliner;
 

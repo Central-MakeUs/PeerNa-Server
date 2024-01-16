@@ -1,5 +1,5 @@
 package cmc.peerna.domain.enums;
 
-public enum AnswerType {
+public enum TestType {
     D,I,S,C
 }
