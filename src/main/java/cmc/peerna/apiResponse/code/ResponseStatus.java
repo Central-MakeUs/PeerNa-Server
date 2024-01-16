@@ -24,7 +24,7 @@ public enum ResponseStatus implements BaseCode {
     KAKAO_LOGIN_ERROR(OK, 2150, "카카오 로그인 도중 에러 발생"),
 
     // member 에러
-    NOT_EXIST_MEMBER(OK, 2200, "존재하지 않는 유저입니다."),
+    MEMBER_NOT_FOUND(OK, 2200, "존재하지 않는 유저입니다."),
 
 
 
@@ -32,9 +32,12 @@ public enum ResponseStatus implements BaseCode {
 
     _UNAUTHORIZED(UNAUTHORIZED,4001,"로그인이 필요합니다."),
     _FORBIDDEN(FORBIDDEN, 4003, "허용되지 않은 요청입니다."),
+    FEIGN_CLIENT_ERROR_400(HttpStatus.BAD_REQUEST, 4007, "feign에서 400번대 에러가 발생했습니다."),
     INVALID_TOKEN_EXCEPTION(UNAUTHORIZED,4008,"토큰이 올바르지 않습니다." ),
+    INVALID_REFRESH_TOKEN(BAD_REQUEST, 4009, "리프레쉬 토큰이 유효하지 않습니다. 다시 로그인 해주세요"),
+    RE_LOGIN_EXCEPTION(UNAUTHORIZED, 4010, "모든 토큰이 만료되었습니다. 다시 로그인해주세요."),
 
-    FEIGN_CLIENT_ERROR_400(HttpStatus.BAD_REQUEST, 4009, "feign에서 400번대 에러가 발생했습니다."),
+
 
     WRONG_POST_TEST(BAD_REQUEST, 4101, "잘못된 POST 테스트 요청입니다."),
 

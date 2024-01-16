@@ -1,9 +1,13 @@
 package cmc.peerna.web.controller;
 
 import cmc.peerna.apiResponse.response.ResponseDto;
+import cmc.peerna.domain.Member;
+import cmc.peerna.domain.enums.UserRole;
 import cmc.peerna.feign.dto.KakaoTokenInfoResponseDto;
 import cmc.peerna.feign.service.AccountService;
-import cmc.peerna.jwt.SignResponseDto;
+import cmc.peerna.jwt.JwtProvider;
+import cmc.peerna.jwt.LoginResponseDto;
+import cmc.peerna.redis.service.RedisService;
 import cmc.peerna.service.MemberService;
 import cmc.peerna.web.dto.responseDto.MemberResponseDto;
 import lombok.RequiredArgsConstructor;
@@ -11,7 +15,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 
 @RestController
@@ -21,6 +28,8 @@ public class MemberController {
 
     private final AccountService accountService;
     private final MemberService memberService;
+    private final RedisService redisService;
+    private final JwtProvider jwtProvider;
 
 
     // TEST API
@@ -42,12 +51,28 @@ public class MemberController {
 
     //리다이렉트 주소
     @GetMapping("/login/oauth2/kakao")
-    public ResponseDto<SignResponseDto> kakaoLogin(@RequestParam(value = "code") String code)  {
-        log.info("리다이렉트 완료");
-        log.info("코드 : " + code);
+    public ResponseDto<LoginResponseDto> kakaoLogin(@RequestParam(value = "code") String code)  {
         KakaoTokenInfoResponseDto kakaoUserInfo = accountService.getKakaoUserInfo(code);
-        log.info("유저 id" + kakaoUserInfo.getId());
-        return ResponseDto.of(memberService.loginWithKakao(kakaoUserInfo.getId()));
+        Member member = memberService.loginWithKakao(kakaoUserInfo.getId());
+        String accessToken =
+                jwtProvider.createAccessToken(
+                        member.getId(),
+                        member.getSocialType().toString(),
+                        member.getSocialId(),
+                        List.of(new SimpleGrantedAuthority(UserRole.USER.name())));
+
+        String refreshToken =
+                redisService
+                        .generateRefreshToken(member.getSocialId(), member.getSocialType())
+                        .getToken();
+
+        return ResponseDto.of(LoginResponseDto.builder()
+                .memberId(member.getId())
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
+                .build());
+
     }
+
 }
 

@@ -8,4 +8,9 @@ public class MemberRequestDto {
     public static class OAuthDTO{
         private String accessToken;
     }
+
+    @Getter
+    public static class ReissueDTO {
+        private String refreshToken;
+    }
 }
