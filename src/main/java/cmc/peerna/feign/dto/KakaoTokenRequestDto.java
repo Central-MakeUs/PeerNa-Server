@@ -11,14 +11,14 @@ import lombok.*;
 public class KakaoTokenRequestDto {
     private String code;
     private String client_id;
-    private String client_secret;
+//    private String client_secret;
     private String redirect_uri;
     private final String grant_type = "authorization_code";
 
     public static KakaoTokenRequestDto newInstance(KakaoInfo kakaoInfo, String code) {
         return KakaoTokenRequestDto.builder()
                 .client_id(kakaoInfo.getClientId())
-                .client_secret(kakaoInfo.getSecretKey())
+//                .client_secret(kakaoInfo.getSecretKey())
                 .redirect_uri(kakaoInfo.getRedirectUri())
                 .code(code)
                 .build();
@@ -29,7 +29,7 @@ public class KakaoTokenRequestDto {
         return
                 "code=" + code + '&' +
                         "client_id=" + client_id + '&' +
-                        "client_secret=" + client_secret + '&' +
+//                        "client_secret=" + client_secret + '&' +
                         "redirect_uri=" + redirect_uri + '&' +
                         "grant_type=" + grant_type;
     }
