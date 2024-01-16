@@ -7,4 +7,6 @@ import cmc.peerna.web.dto.responseDto.MemberResponseDto;
 public interface MemberService {
 
     MemberResponseDto.MemberBaseDto findMember(Long memberId);
+
+    SignResponseDto loginWithKakao(String kakaoId);
 }
