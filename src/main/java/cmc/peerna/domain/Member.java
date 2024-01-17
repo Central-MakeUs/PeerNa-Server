@@ -25,6 +25,9 @@ public class Member extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private TestType testType;
 
+    @Enumerated(EnumType.STRING)
+    private PeerGrade selfPeerGrade;
+
     private String oneliner;
 
     @Enumerated(EnumType.STRING)

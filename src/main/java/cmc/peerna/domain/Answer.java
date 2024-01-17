@@ -2,6 +2,7 @@ package cmc.peerna.domain;
 
 import cmc.peerna.domain.common.BaseEntity;
 import cmc.peerna.domain.enums.AnswerChoice;
+import cmc.peerna.domain.enums.TestType;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -21,5 +22,7 @@ public class Answer extends BaseEntity {
     @JoinColumn(name = "question_id")
     private Question question;
 
+    @Enumerated(EnumType.STRING)
+    private TestType testType;
     private AnswerChoice answerChoice;
 }
