@@ -72,7 +72,7 @@ public class SecurityConfig{
         return (web) -> web.ignoring()
                 .requestMatchers(
                         "/favicon.ico",
-                        "/health", "/ping",
+                        "/health", "/test/**",
                         "/",
                         "/swagger-ui.html",
                         "/v3/api-docs",

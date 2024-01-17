@@ -32,7 +32,7 @@ public enum ResponseStatus implements BaseCode {
 
     _UNAUTHORIZED(UNAUTHORIZED,4001,"로그인이 필요합니다."),
     _FORBIDDEN(FORBIDDEN, 4003, "허용되지 않은 요청입니다."),
-    FEIGN_CLIENT_ERROR_400(HttpStatus.BAD_REQUEST, 4007, "feign에서 400번대 에러가 발생했습니다."),
+    FEIGN_CLIENT_ERROR_400(BAD_REQUEST, 4007, "feign에서 400번대 에러가 발생했습니다. 코드값이 잘못되었거나 이미 해당 코드를 통해 토큰 요청을 한 경우."),
     INVALID_TOKEN_EXCEPTION(UNAUTHORIZED,4008,"토큰이 올바르지 않습니다." ),
     INVALID_REFRESH_TOKEN(BAD_REQUEST, 4009, "리프레쉬 토큰이 유효하지 않습니다. 다시 로그인 해주세요"),
     RE_LOGIN_EXCEPTION(UNAUTHORIZED, 4010, "모든 토큰이 만료되었습니다. 다시 로그인해주세요."),
