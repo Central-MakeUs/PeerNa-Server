@@ -62,4 +62,3 @@ jwt:
 
 web:
   redirect-url: https://localhost:5173/login/kakao
-#  redirect-url: http://localhost:8080/health
