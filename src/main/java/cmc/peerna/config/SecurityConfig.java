@@ -72,7 +72,7 @@ public class SecurityConfig{
         return (web) -> web.ignoring()
                 .requestMatchers(
                         "/favicon.ico",
-                        "/health",
+                        "/health", "/ping",
                         "/",
                         "/swagger-ui.html",
                         "/v3/api-docs",
@@ -99,7 +99,17 @@ public class SecurityConfig{
                 .exceptionHandling((exception) -> exception.authenticationEntryPoint(jwtAuthenticationEntryPoint)
                         .accessDeniedHandler(jwtAccessDeniedHandler));
 
-        http.authorizeHttpRequests(config -> config.anyRequest().permitAll());
+
+        http.authorizeHttpRequests(
+                authorize ->
+                        authorize
+                                .requestMatchers("/swagger-ui/index.html")
+                                .authenticated()
+                                .anyRequest()
+                                .permitAll());
+//        http.authorizeHttpRequests(config -> config.anyRequest().permitAll());
+
+
         http.oauth2Login(oauth2Configurer -> oauth2Configurer
                 .loginPage("/login")
                 .successHandler(successHandler())
