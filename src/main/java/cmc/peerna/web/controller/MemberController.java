@@ -10,6 +10,7 @@ import cmc.peerna.jwt.LoginResponseDto;
 import cmc.peerna.redis.service.RedisService;
 import cmc.peerna.service.MemberService;
 import cmc.peerna.web.dto.responseDto.MemberResponseDto;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
@@ -32,14 +33,9 @@ public class MemberController {
     private final JwtProvider jwtProvider;
 
 
-    // TEST API
-    @GetMapping("/member/{memberId}")
-    public ResponseDto<MemberResponseDto.MemberBaseDto> searchMember(@PathVariable(name = "memberId") Long memberId) {
-        MemberResponseDto.MemberBaseDto memberDto = memberService.findMember(memberId);
-        return ResponseDto.of(memberDto);
-    }
 
     // 카카오 로그인 정보 입력 테스트용
+    @Operation(summary = "XX 백엔드 테스트용, 사용XX")
     @GetMapping("/login/kakao")
     public ResponseEntity<Object> kakaoCode()  {
 
@@ -50,6 +46,7 @@ public class MemberController {
     }
 
     //리다이렉트 주소
+    @Operation(summary = "XX 카카오 소셜 로그인 Redirect 주소, 사용XX")
     @GetMapping("/login/oauth2/kakao")
     public ResponseDto<LoginResponseDto> kakaoLogin(@RequestParam(value = "code") String code)  {
         KakaoTokenInfoResponseDto kakaoUserInfo = accountService.getKakaoUserInfo(code);
