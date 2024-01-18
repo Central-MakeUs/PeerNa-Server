@@ -59,3 +59,6 @@ debug: true
 jwt:
   secret:
     key: testsecrettestsecrettestsecrettestsecrettestsecrettestsecrettestsecrettestsecrettestsecret
+
+web:
+  redirect-url: https://localhost:5173/login/kakao
