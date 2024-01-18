@@ -12,7 +12,6 @@ public enum ResponseStatus implements BaseCode {
 
     _SUCCESS(OK, 2000, "성공!"),
 
-    _INTERNAL_SERVER_ERROR(INTERNAL_SERVER_ERROR, 5000, "서버 에러, 관리자에게 문의 바랍니다."),
 
     // 200번대 에러는 유저의 잘못된 요청 때문에 발생하는 에러 ex) 글자수 초과, db에 id:2인 member가 없는데 조회하는 경우
 
@@ -27,7 +26,6 @@ public enum ResponseStatus implements BaseCode {
     MEMBER_NOT_FOUND(OK, 2200, "존재하지 않는 유저입니다."),
 
 
-
     // 400번대 에러
 
     _UNAUTHORIZED(UNAUTHORIZED,4001,"로그인이 필요합니다."),
@@ -39,10 +37,14 @@ public enum ResponseStatus implements BaseCode {
     RE_LOGIN_EXCEPTION(UNAUTHORIZED, 4011, "모든 토큰이 만료되었습니다. 다시 로그인해주세요."),
 
 
-
     WRONG_POST_TEST(BAD_REQUEST, 4101, "잘못된 POST 테스트 요청입니다."),
 
+    // Test 관련 에러
+    ANSWER_NOT_FOUND(BAD_REQUEST, 4200, "잘못된 답변 ID 값을 전달했습니다."),
+    WRONG_ANSWER_COUNT(BAD_REQUEST, 4201, "답변 개수가 정확하게 18개가 아닙니다."),
+
     // 500번대 에러
+    _INTERNAL_SERVER_ERROR(INTERNAL_SERVER_ERROR, 5000, "서버 에러, 관리자에게 문의 바랍니다."),
     FEIGN_CLIENT_ERROR_500(HttpStatus.INTERNAL_SERVER_ERROR, 5001, "Inter server Error in feign client");
 
 

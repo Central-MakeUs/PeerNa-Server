@@ -1,5 +1,5 @@
 package cmc.peerna.domain.enums;
 
 public enum QuestionGroup {
-    T1,T2,T3,T4
+    G1,G2,G3,G4
 }
