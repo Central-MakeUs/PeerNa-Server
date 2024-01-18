@@ -24,7 +24,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.List;
 import java.util.Map;
 
@@ -77,20 +76,14 @@ public class MemberController {
                 "memberId=" + member.getId()
                 + "accessToken=" + accessToken
                 + "refreshToken=" + refreshToken;
-//        redirectAttributes.addAttribute("memberId", member.getId());
-//        redirectAttributes.addAttribute("accessToken", accessToken);
-//        redirectAttributes.addAttribute("refreshToken", refreshToken);
 
         response.sendRedirect(redirectUrl);
-
 
         return ResponseDto.of(LoginResponseDto.builder()
                 .memberId(member.getId())
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
                 .build());
-
     }
-
 }
 
