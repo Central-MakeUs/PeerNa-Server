@@ -10,16 +10,23 @@ import cmc.peerna.jwt.LoginResponseDto;
 import cmc.peerna.redis.service.RedisService;
 import cmc.peerna.service.MemberService;
 import cmc.peerna.web.dto.responseDto.MemberResponseDto;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.List;
+import java.util.Map;
 
 
 @RestController
@@ -32,6 +39,8 @@ public class MemberController {
     private final RedisService redisService;
     private final JwtProvider jwtProvider;
 
+    @Value("${web.redirect-url}")
+    String webRedirectUrl;
 
 
     // 카카오 로그인 정보 입력 테스트용
@@ -48,7 +57,7 @@ public class MemberController {
     //리다이렉트 주소
     @Operation(summary = "XX 카카오 소셜 로그인 Redirect 주소, 사용XX")
     @GetMapping("/login/oauth2/kakao")
-    public ResponseDto<LoginResponseDto> kakaoLogin(@RequestParam(value = "code") String code)  {
+    public ResponseDto<LoginResponseDto> kakaoLogin(@RequestParam(value = "code") String code, HttpServletResponse response) throws IOException {
         KakaoTokenInfoResponseDto kakaoUserInfo = accountService.getKakaoUserInfo(code);
         Member member = memberService.loginWithKakao(kakaoUserInfo.getId());
         String accessToken =
@@ -62,6 +71,18 @@ public class MemberController {
                 redisService
                         .generateRefreshToken(member.getSocialId(), member.getSocialType())
                         .getToken();
+
+        String redirectUrl = webRedirectUrl;
+        redirectUrl += "?"+
+                "memberId=" + member.getId()
+                + "accessToken=" + accessToken
+                + "refreshToken=" + refreshToken;
+//        redirectAttributes.addAttribute("memberId", member.getId());
+//        redirectAttributes.addAttribute("accessToken", accessToken);
+//        redirectAttributes.addAttribute("refreshToken", refreshToken);
+
+        response.sendRedirect(redirectUrl);
+
 
         return ResponseDto.of(LoginResponseDto.builder()
                 .memberId(member.getId())
