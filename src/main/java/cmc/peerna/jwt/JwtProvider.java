@@ -57,7 +57,7 @@ public class JwtProvider {
     }
 
     public String createAccessToken(
-            Long userId,
+            Long memberId,
             String socialType,
             String socialId,
             Collection<? extends GrantedAuthority> authorities) {
@@ -65,8 +65,8 @@ public class JwtProvider {
         Date validity = new Date(now + this.accessTokenValidityInMilliseconds);
 
         return Jwts.builder()
-                .setSubject(String.valueOf(userId))
-//                .claim("AUTHORITIES", authorities)
+                .setSubject(String.valueOf(memberId))
+                .claim("AUTHORITIES", authorities)
                 .claim("socialType", socialType)
                 .claim("socialID", socialId)
                 .signWith(secretKey, SignatureAlgorithm.HS512)
