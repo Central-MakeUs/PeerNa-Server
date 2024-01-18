@@ -3,6 +3,7 @@ package cmc.peerna.domain;
 import cmc.peerna.domain.common.BaseEntity;
 import cmc.peerna.domain.enums.*;
 import cmc.peerna.domain.mapping.ProjectMember;
+import cmc.peerna.web.dto.requestDto.MemberRequestDto;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
@@ -51,4 +52,11 @@ public class Member extends BaseEntity {
     @OneToMany(mappedBy = "creator")
     private List<Project> myProjectList;
 
+    public void setBasicInfo(MemberRequestDto.basicInfoDTO request) {
+        this.name = request.getName();
+        this.job = request.getJob();
+        this.part = request.getPart();
+        this.selfPeerGrade = request.getSelfPeerGrade();
+        this.oneliner = request.getOneLiner();
+    }
 }

@@ -1,17 +1,24 @@
 package cmc.peerna.web.controller;
 
 import cmc.peerna.apiResponse.response.ResponseDto;
+import cmc.peerna.converter.MemberConverter;
 import cmc.peerna.domain.Member;
 import cmc.peerna.domain.enums.UserRole;
 import cmc.peerna.feign.dto.KakaoTokenInfoResponseDto;
 import cmc.peerna.feign.service.AccountService;
 import cmc.peerna.jwt.JwtProvider;
 import cmc.peerna.jwt.LoginResponseDto;
+import cmc.peerna.jwt.handler.annotation.AuthMember;
 import cmc.peerna.redis.service.RedisService;
 import cmc.peerna.service.MemberService;
+import cmc.peerna.web.dto.requestDto.MemberRequestDto;
 import cmc.peerna.web.dto.responseDto.MemberResponseDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.Parameters;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -85,5 +92,22 @@ public class MemberController {
                 .refreshToken(refreshToken)
                 .build());
     }
+
+    @Operation(summary = "유저 기본 정보 저장 API ✔️", description = "유저의 기본 정보를 저장하는 API입니다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "2000",description = "OK 성공"),
+            @ApiResponse(responseCode = "2200",description = "BAD_REQUEST, 존재하지 않는 유저를 조회한 경우.")
+    })
+    @Parameters({
+            @Parameter(name = "member", hidden = true)
+    })
+    @PostMapping("member/basic-info")
+    public ResponseDto<MemberResponseDto.MemberStatusDto> saveMemberInfo(@AuthMember Member member, @RequestBody MemberRequestDto.basicInfoDTO request) {
+        memberService.saveMemberBasicInfo(member, request);
+        return ResponseDto.of(MemberConverter.toMemberStatusDto(member.getId(), "SaveMemberBasicInfo"));
+    }
+
+
+
 }
 
