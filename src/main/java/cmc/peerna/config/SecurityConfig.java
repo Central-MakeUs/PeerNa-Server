@@ -35,18 +35,14 @@ import java.util.Collections;
 @EnableMethodSecurity
 @Configuration
 //@EnableGlobalMethodSecurity(prePostEnabled = true)
-//@RequiredArgsConstructor
+@RequiredArgsConstructor
 public class SecurityConfig{
 
     private final OAuth2UserService oAuth2UserService;
-
-    public SecurityConfig(OAuth2UserService oAuth2UserService) {
-        this.oAuth2UserService = oAuth2UserService;
-    }
     private final JwtAccessDeniedHandler jwtAccessDeniedHandler = new JwtAccessDeniedHandler();
     private final JwtAuthEntryPoint jwtAuthenticationEntryPoint = new JwtAuthEntryPoint();
     private final JwtAuthExceptionHandler jwtAuthenticationExceptionHandler = new JwtAuthExceptionHandler();
-    private final JwtProvider jwtProvider = new JwtProvider();
+    private final JwtProvider jwtProvider;
 
 
     @Bean

@@ -25,11 +25,13 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         HttpServletRequest httpServletRequest = request;
         String jwt = jwtProvider.resolveToken(httpServletRequest);
+        log.info("resolve한 jwt 값 : " + jwt);
         if (StringUtils.hasText(jwt) && jwtProvider.validateToken(jwt)){
             Authentication authentication = jwtProvider.getAuthentication(jwt);
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }else{
-            throw new JwtAuthenticationException(ResponseStatus.INVALID_TOKEN_EXCEPTION);
+//            throw new JwtAuthenticationException(ResponseStatus.INVALID_TOKEN_EXCEPTION);
+            SecurityContextHolder.getContext().setAuthentication(null);
         }
         filterChain.doFilter(httpServletRequest, response);
     }

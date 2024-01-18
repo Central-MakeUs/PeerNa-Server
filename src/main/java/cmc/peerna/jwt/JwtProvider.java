@@ -24,12 +24,11 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.stream.Collectors;
 
-@RequiredArgsConstructor
 @Component
 public class JwtProvider {
 
-    @Value("${jwt.secret.key}")
-    private String secret;
+
+    private final String secret;
 
     private Key secretKey;
 
@@ -38,11 +37,17 @@ public class JwtProvider {
 
     private final long accessTokenValidityInMilliseconds = 1000L * 60 * 60;
 
+
 //    private final CustomUserDetailsService userDetailsService;
 
     @PostConstruct
     protected void init() {
-        secretKey = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
+        this.secretKey = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
+    }
+
+    public JwtProvider(
+            @Value("${jwt.secret.key}") String secret){
+        this.secret = secret;
     }
 
     public String createToken(Long memberId, Collection<? extends GrantedAuthority> authorities) {
