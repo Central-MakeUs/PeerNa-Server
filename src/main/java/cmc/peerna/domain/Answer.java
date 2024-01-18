@@ -24,5 +24,6 @@ public class Answer extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     private TestType testType;
+    @Enumerated(EnumType.STRING)
     private AnswerChoice answerChoice;
 }

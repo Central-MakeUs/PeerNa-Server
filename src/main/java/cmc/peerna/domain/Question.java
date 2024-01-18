@@ -19,6 +19,7 @@ public class Question extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String content;
+    @Enumerated(EnumType.STRING)
     private QuestionGroup questionGroup;
 
     @OneToMany(mappedBy = "question")

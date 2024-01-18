@@ -6,6 +6,8 @@ import cmc.peerna.domain.enums.PeerGrade;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 
+import java.util.List;
+
 public class MemberRequestDto {
 
     @Getter
@@ -25,5 +27,10 @@ public class MemberRequestDto {
         private Part part;
         private PeerGrade selfPeerGrade;
         private String oneLiner;
+    }
+
+    @Getter
+    public static class selfTestDto{
+        List<Long> answerIdList;
     }
 }

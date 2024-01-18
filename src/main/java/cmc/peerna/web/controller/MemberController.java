@@ -106,7 +106,7 @@ public class MemberController {
                 .build());
     }
 
-    @Operation(summary = "유저 기본 정보 저장 API ✔️", description = "유저의 기본 정보를 저장하는 API입니다.")
+    @Operation(summary = "유저 기본 정보 저장 API ✔️🔑", description = "유저의 기본 정보를 저장하는 API입니다.")
     @ApiResponses({
             @ApiResponse(responseCode = "2200",description = "BAD_REQUEST, 존재하지 않는 유저를 조회한 경우.")
     })
@@ -118,6 +118,7 @@ public class MemberController {
         memberService.saveMemberBasicInfo(member, request);
         return ResponseDto.of(MemberConverter.toMemberStatusDto(member.getId(), "SaveMemberBasicInfo"));
     }
+
 
 
 
