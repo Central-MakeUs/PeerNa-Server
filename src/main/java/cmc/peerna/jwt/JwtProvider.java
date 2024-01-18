@@ -1,9 +1,8 @@
 package cmc.peerna.jwt;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jws;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import cmc.peerna.apiResponse.code.ResponseStatus;
+import cmc.peerna.apiResponse.exception.handler.JwtAuthenticationException;
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
@@ -32,10 +31,8 @@ public class JwtProvider {
 
     private Key secretKey;
 
-    // 만료시간 : 1Hour
-    private final long exp = 1000L * 60 * 60;
-
-    private final long accessTokenValidityInMilliseconds = 1000L * 60 * 60;
+    // 만료시간 : 5Hour, 추후 수정
+    private final long accessTokenValidityInMilliseconds = 1000L * 60 * 60 * 5;
 
 
 //    private final CustomUserDetailsService userDetailsService;
@@ -56,7 +53,7 @@ public class JwtProvider {
                 .setSubject(String.valueOf(memberId))
                 .claim("AUTHORITIES",authorities)
                 .setIssuedAt(now)
-                .setExpiration(new Date(now.getTime() + exp))
+                .setExpiration(new Date(now.getTime() + accessTokenValidityInMilliseconds))
                 .signWith(secretKey, SignatureAlgorithm.HS256)
                 .compact();
     }
@@ -105,13 +102,19 @@ public class JwtProvider {
         return null;
     }
 
-    public boolean validateToken(String token) {
+    public boolean validateToken(String token) throws JwtAuthenticationException {
         try {
             Jws<Claims> claims = Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(token);
             // 만료되었을 시 false
             return !claims.getBody().getExpiration().before(new Date());
-        } catch (Exception e) {
-            return false;
+        } catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
+            throw new JwtAuthenticationException(ResponseStatus.INVALID_TOKEN_EXCEPTION);
+        } catch (ExpiredJwtException e) {
+                throw new JwtAuthenticationException(ResponseStatus.EXPIRED_JWT_EXCEPTION);
+        } catch (UnsupportedJwtException e) {
+            throw new JwtAuthenticationException(ResponseStatus.INVALID_TOKEN_EXCEPTION);
+        } catch (IllegalArgumentException e) {
+            throw new JwtAuthenticationException(ResponseStatus.INVALID_TOKEN_EXCEPTION);
         }
     }
 }
