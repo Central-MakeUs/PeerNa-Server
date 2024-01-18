@@ -74,8 +74,8 @@ public class MemberController {
         String redirectUrl = webRedirectUrl;
         redirectUrl += "?"+
                 "memberId=" + member.getId()
-                + "accessToken=" + accessToken
-                + "refreshToken=" + refreshToken;
+                + "&accessToken=" + accessToken
+                + "&refreshToken=" + refreshToken;
 
         response.sendRedirect(redirectUrl);
 
