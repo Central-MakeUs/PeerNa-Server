@@ -15,7 +15,11 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@Tag(name = "RootController API 목록", description = "테스트, 기타 API 목록입니다.")
+@ApiResponses({
+        @ApiResponse(responseCode = "2000",description = "OK 성공"),
+        @ApiResponse(responseCode = "5000",description = "서버 에러, 로빈에게 알려주세요."),
+})
+@Tag(name = "테스트, 기타 API", description = "테스트, 기타 API 목록입니다.")
 public class RootController {
 
     private final MemberService memberService;
@@ -27,7 +31,6 @@ public class RootController {
 
     @Operation(summary = "POST 요청 TEST API ✔️", description = "POST 요청 테스트용 API입니다. <br> body에 \"peerna\" 를 넣은 경우 4101 반환")
     @ApiResponses({
-            @ApiResponse(responseCode = "2000",description = "OK 성공"),
             @ApiResponse(responseCode = "4101",description = "BAD_REQUEST, body에 \"peerna\" 를 넣은 경우")
     })
     @PostMapping("/test/ping")
@@ -42,7 +45,6 @@ public class RootController {
     @GetMapping("/test/{memberId}")
     @Operation(summary = "GET 요청 TEST API ✔️", description = "GET 요청 테스트용 API입니다.")
     @ApiResponses({
-            @ApiResponse(responseCode = "2000",description = "OK 성공"),
             @ApiResponse(responseCode = "2200",description = "BAD_REQUEST, 존재하지 않는 유저를 조회한 경우.")
     })
     public ResponseDto<MemberResponseDto.MemberBaseDto> searchMember(@PathVariable(name = "memberId") Long memberId) {

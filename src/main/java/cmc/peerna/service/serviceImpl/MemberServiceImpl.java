@@ -9,6 +9,7 @@ import cmc.peerna.jwt.JwtProvider;
 import cmc.peerna.jwt.LoginResponseDto;
 import cmc.peerna.repository.MemberRepository;
 import cmc.peerna.service.MemberService;
+import cmc.peerna.web.dto.requestDto.MemberRequestDto;
 import cmc.peerna.web.dto.responseDto.MemberResponseDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -62,6 +63,19 @@ public class MemberServiceImpl implements MemberService {
 //                    .build();
 //
 //        }
+    }
+
+    @Transactional
+    @Override
+    public void saveMemberBasicInfo(Member member, MemberRequestDto.basicInfoDTO request) {
+        member.setBasicInfo(request);
+
+    }
+
+    @Override
+    public Member findById(Long memberId) {
+        return memberRepository.findById(memberId).orElseThrow(() -> new MemberException(ResponseStatus.MEMBER_NOT_FOUND));
+
     }
 
 

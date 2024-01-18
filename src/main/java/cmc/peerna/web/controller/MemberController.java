@@ -1,17 +1,25 @@
 package cmc.peerna.web.controller;
 
 import cmc.peerna.apiResponse.response.ResponseDto;
+import cmc.peerna.converter.MemberConverter;
 import cmc.peerna.domain.Member;
 import cmc.peerna.domain.enums.UserRole;
 import cmc.peerna.feign.dto.KakaoTokenInfoResponseDto;
 import cmc.peerna.feign.service.AccountService;
 import cmc.peerna.jwt.JwtProvider;
 import cmc.peerna.jwt.LoginResponseDto;
+import cmc.peerna.jwt.handler.annotation.AuthMember;
 import cmc.peerna.redis.service.RedisService;
 import cmc.peerna.service.MemberService;
+import cmc.peerna.web.dto.requestDto.MemberRequestDto;
 import cmc.peerna.web.dto.responseDto.MemberResponseDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.Parameters;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,6 +39,18 @@ import java.util.Map;
 @RestController
 @Slf4j
 @RequiredArgsConstructor
+@ApiResponses({
+        @ApiResponse(responseCode = "2000",description = "OK 성공"),
+        @ApiResponse(responseCode = "4007",description = "feign에서 400번대 에러가 발생했습니다. 코드값이 잘못되었거나 이미 해당 코드를 통해 토큰 요청을 한 경우.\""),
+        @ApiResponse(responseCode = "4008",description = "토큰이 올바르지 않습니다."),
+        @ApiResponse(responseCode = "4009",description = "리프레쉬 토큰이 유효하지 않습니다. 다시 로그인 해주세요"),
+        @ApiResponse(responseCode = "4010",description = "기존 토큰이 만료되었습니다. 토큰을 재발급해주세요."),
+        @ApiResponse(responseCode = "4011",description = "모든 토큰이 만료되었습니다. 다시 로그인해주세요."),
+        @ApiResponse(responseCode = "5000",description = "서버 에러, 로빈에게 알려주세요."),
+
+})
+@Tag(name = "Member 관련 API 목록", description = "Member 관련 API 목록입니다.")
+
 public class MemberController {
 
     private final AccountService accountService;
@@ -85,5 +105,21 @@ public class MemberController {
                 .refreshToken(refreshToken)
                 .build());
     }
+
+    @Operation(summary = "유저 기본 정보 저장 API ✔️", description = "유저의 기본 정보를 저장하는 API입니다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "2200",description = "BAD_REQUEST, 존재하지 않는 유저를 조회한 경우.")
+    })
+    @Parameters({
+            @Parameter(name = "member", hidden = true)
+    })
+    @PostMapping("member/basic-info")
+    public ResponseDto<MemberResponseDto.MemberStatusDto> saveMemberInfo(@AuthMember Member member, @RequestBody MemberRequestDto.basicInfoDTO request) {
+        memberService.saveMemberBasicInfo(member, request);
+        return ResponseDto.of(MemberConverter.toMemberStatusDto(member.getId(), "SaveMemberBasicInfo"));
+    }
+
+
+
 }
 
