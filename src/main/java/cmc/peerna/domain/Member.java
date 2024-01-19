@@ -59,4 +59,8 @@ public class Member extends BaseEntity {
         this.selfPeerGrade = request.getSelfPeerGrade();
         this.oneliner = request.getOneLiner();
     }
+
+    public void setTestType(TestType testType) {
+        this.testType=testType;
+    }
 }
