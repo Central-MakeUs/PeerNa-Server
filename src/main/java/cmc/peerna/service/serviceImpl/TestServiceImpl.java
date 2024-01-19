@@ -13,6 +13,7 @@ import cmc.peerna.web.dto.requestDto.MemberRequestDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -42,5 +43,12 @@ public class TestServiceImpl implements TestService {
                                             .build());
                         }
                 ).collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional
+    public void deleteSelfTest(Member member) {
+        selfTestRepository.deleteAllByWriter(member);
+
     }
 }

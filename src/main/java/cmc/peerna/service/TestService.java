@@ -5,4 +5,6 @@ import cmc.peerna.web.dto.requestDto.MemberRequestDto;
 
 public interface TestService {
     void saveSelfTest(Member member, MemberRequestDto.selfTestDto request);
+
+    void deleteSelfTest(Member member);
 }
