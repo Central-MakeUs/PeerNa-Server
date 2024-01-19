@@ -12,4 +12,6 @@ public interface TestService {
     TestResponseDto.selfTestResultResponseDto saveAndGetSelfTestResult(Member member);
 
     TestResponseDto.selfTestResultResponseDto getSelfTestResult(Member member);
+
+    void deleteSelfTestResult(Member member);
 }

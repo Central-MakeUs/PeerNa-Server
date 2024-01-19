@@ -11,4 +11,6 @@ public interface SelfTestRepository extends JpaRepository<SelfTest, Long> {
     void deleteAllByWriter(Member writer);
 
     List<SelfTest> findALlByWriter(Member writer);
+
+    boolean existsByWriter(Member writer);
 }
