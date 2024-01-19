@@ -10,4 +10,6 @@ public interface TestService {
     void deleteSelfTest(Member member);
 
     TestResponseDto.selfTestResultResponseDto saveAndGetSelfTestResult(Member member);
+
+    TestResponseDto.selfTestResultResponseDto getSelfTestResult(Member member);
 }

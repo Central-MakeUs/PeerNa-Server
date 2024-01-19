@@ -79,6 +79,12 @@ public class TestServiceImpl implements TestService {
         return TestConverter.toSelfTestResultDto(selfTestResult);
     }
 
+    @Override
+    public TestResponseDto.selfTestResultResponseDto getSelfTestResult(Member member) {
+        SelfTestResult selfTestResult = selfTestResultRepository.findByMember(member);
+        return TestConverter.toSelfTestResultDto(selfTestResult);
+    }
+
 }
 
 

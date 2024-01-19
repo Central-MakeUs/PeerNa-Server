@@ -46,9 +46,10 @@ public class TestController {
             @Parameter(name = "member", hidden = true)
     })
     @PostMapping("member/selfTest")
-    public ResponseDto<MemberResponseDto.MemberStatusDto> saveSelfTest(@AuthMember Member member, @RequestBody MemberRequestDto.selfTestDto request) {
+    public ResponseDto<TestResponseDto.selfTestResultResponseDto> saveSelfTest(@AuthMember Member member, @RequestBody MemberRequestDto.selfTestDto request) {
         testService.saveSelfTest(member, request);
-        return ResponseDto.of(MemberConverter.toMemberStatusDto(member.getId(), "SelfTest"));
+        TestResponseDto.selfTestResultResponseDto selfTestResult = testService.saveAndGetSelfTestResult(member);
+        return ResponseDto.of(selfTestResult);
     }
 
     @Operation(summary = "셀프 테스트 삭제 API ✔️🔑", description = "셀프 테스트 삭제 API입니다.")
@@ -74,7 +75,8 @@ public class TestController {
     })
     @GetMapping("member/selfTestResult")
     public ResponseDto<TestResponseDto.selfTestResultResponseDto> getSelfTestResult(@AuthMember Member member) {
-        TestResponseDto.selfTestResultResponseDto selfTestResult = testService.saveAndGetSelfTestResult(member);
+
+        TestResponseDto.selfTestResultResponseDto selfTestResult = testService.getSelfTestResult(member);
         return ResponseDto.of(selfTestResult);
     }
 }
