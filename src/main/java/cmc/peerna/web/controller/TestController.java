@@ -47,6 +47,8 @@ public class TestController {
     })
     @PostMapping("member/selfTest")
     public ResponseDto<TestResponseDto.selfTestResultResponseDto> saveSelfTest(@AuthMember Member member, @RequestBody MemberRequestDto.selfTestDto request) {
+
+        testService.deleteSelfTestResult(member);
         testService.saveSelfTest(member, request);
         TestResponseDto.selfTestResultResponseDto selfTestResult = testService.saveAndGetSelfTestResult(member);
         return ResponseDto.of(selfTestResult);

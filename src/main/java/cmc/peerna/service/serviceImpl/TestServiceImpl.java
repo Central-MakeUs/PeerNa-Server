@@ -34,6 +34,10 @@ public class TestServiceImpl implements TestService {
     @Transactional
     @Override
     public void saveSelfTest(Member member, MemberRequestDto.selfTestDto request) {
+        if (selfTestRepository.existsByWriter(member)) {
+            deleteSelfTest(member);
+        }
+
         List<Long> answerIdList = request.getAnswerIdList();
         if(answerIdList.size()!=answerCount)
             throw new TestException(ResponseStatus.WRONG_ANSWER_COUNT);
@@ -63,6 +67,10 @@ public class TestServiceImpl implements TestService {
     @Override
     @Transactional
     public TestResponseDto.selfTestResultResponseDto saveAndGetSelfTestResult(Member member) {
+        if(selfTestResultRepository.existsByMember(member)) {
+            deleteSelfTestResult(member);
+        }
+
         List<SelfTest> selfTestList = selfTestRepository.findALlByWriter(member);
         TestType peerType = selfTestResultCalculator.selfTestPeerType(selfTestList);
         List<PeerCard> peerCards = selfTestResultCalculator.selfTestPeerCard(selfTestList);
@@ -83,6 +91,11 @@ public class TestServiceImpl implements TestService {
     public TestResponseDto.selfTestResultResponseDto getSelfTestResult(Member member) {
         SelfTestResult selfTestResult = selfTestResultRepository.findByMember(member);
         return TestConverter.toSelfTestResultDto(selfTestResult);
+    }
+
+    @Override
+    public void deleteSelfTestResult(Member member) {
+        selfTestResultRepository.deleteByMember(member);
     }
 
 }

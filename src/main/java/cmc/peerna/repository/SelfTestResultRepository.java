@@ -7,4 +7,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface SelfTestResultRepository extends JpaRepository<SelfTestResult, Long> {
 
     SelfTestResult findByMember(Member member);
+
+    void deleteByMember(Member member);
+
+    boolean existsByMember(Member member);
 }
