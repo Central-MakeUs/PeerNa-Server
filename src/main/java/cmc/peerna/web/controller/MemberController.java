@@ -113,7 +113,7 @@ public class MemberController {
     @Parameters({
             @Parameter(name = "member", hidden = true)
     })
-    @PostMapping("member/basic-info")
+    @PostMapping("/member/basic-info")
     public ResponseDto<MemberResponseDto.MemberStatusDto> saveMemberInfo(@AuthMember Member member, @RequestBody MemberRequestDto.basicInfoDTO request) {
         memberService.saveMemberBasicInfo(member, request);
         return ResponseDto.of(MemberConverter.toMemberStatusDto(member.getId(), "SaveMemberBasicInfo"));

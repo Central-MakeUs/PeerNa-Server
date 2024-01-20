@@ -1,16 +1,17 @@
 package cmc.peerna.domain;
 
 import cmc.peerna.domain.common.BaseEntity;
-import cmc.peerna.domain.enums.NoticeType;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.UUID;
 
 @Entity
 @Getter
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class Feedback extends BaseEntity {
+public class PeerFeedback extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,4 +26,10 @@ public class Feedback extends BaseEntity {
     private Member target;
 
     private String contents;
+
+    private String nonMemberUuid;
+
+    public void updateWriter(Member member) {
+        this.writer = member;
+    }
 }

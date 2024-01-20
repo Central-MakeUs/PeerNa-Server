@@ -5,13 +5,13 @@ import cmc.peerna.apiResponse.exception.handler.TestException;
 import cmc.peerna.converter.TestConverter;
 import cmc.peerna.domain.*;
 import cmc.peerna.domain.enums.PeerCard;
+import cmc.peerna.domain.enums.PeerGrade;
 import cmc.peerna.domain.enums.TestType;
-import cmc.peerna.repository.AnswerRepository;
-import cmc.peerna.repository.SelfTestRepository;
-import cmc.peerna.repository.SelfTestResultRepository;
+import cmc.peerna.repository.*;
 import cmc.peerna.service.TestService;
 import cmc.peerna.utils.SelfTestResultCalculator;
 import cmc.peerna.web.dto.requestDto.MemberRequestDto;
+import cmc.peerna.web.dto.requestDto.TestRequestDto;
 import cmc.peerna.web.dto.responseDto.TestResponseDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,6 +19,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -29,6 +31,10 @@ public class TestServiceImpl implements TestService {
     private final AnswerRepository answerRepository;
     private final SelfTestRepository selfTestRepository;
     private final SelfTestResultRepository selfTestResultRepository;
+    private final PeerFeedbackRepository peerFeedbackRepository;
+    private final PeerGradeResultRepository peerGradeResultRepository;
+    private final PeerTestRepository peerTestRepository;
+
     private final SelfTestResultCalculator selfTestResultCalculator;
 
     @Transactional
@@ -94,8 +100,80 @@ public class TestServiceImpl implements TestService {
     }
 
     @Override
+    @Transactional
     public void deleteSelfTestResult(Member member) {
         selfTestResultRepository.deleteByMember(member);
+    }
+
+
+    @Override
+    @Transactional
+    public void savePeerTest(Member writer, Member target, TestRequestDto.peerTestRequestDto request) {
+
+        List<Long> answerIdList = request.getAnswerIdList();
+        if(answerIdList.size()!=answerCount)
+            throw new TestException(ResponseStatus.WRONG_ANSWER_COUNT);
+
+        answerIdList.stream()
+                .map(answerId ->
+                        {
+                            Answer answer = answerRepository.findById(answerId).orElseThrow(() -> new TestException(ResponseStatus.ANSWER_NOT_FOUND));
+                            Question question = answer.getQuestion();
+                            return peerTestRepository.save(
+                                    PeerTest.builder()
+                                            .writer(writer)
+                                            .target(target)
+                                            .question(question)
+                                            .answer(answer)
+                                            .nonMemberUuid(request.getUuid().toString())
+                                            .build());
+                        }
+                ).collect(Collectors.toList());
+
+        savePeerFeedBack(writer, target, request.getFeedback(), request.getUuid());
+        savePeerGradeResult(writer, target, request.getPeerGrade(), request.getUuid());
+
+    }
+
+    @Override
+    @Transactional
+    public void savePeerFeedBack(Member writer, Member target, String feedback, String uuid) {
+        peerFeedbackRepository.save(PeerFeedback.builder()
+                .writer(writer)
+                .target(target)
+                .contents(feedback)
+                .nonMemberUuid(uuid.toString())
+                .build()
+        );
+    }
+    @Override
+    @Transactional
+    public void savePeerGradeResult(Member writer, Member target, PeerGrade peerGrade, String uuid) {
+        peerGradeResultRepository.save(PeerGradeResult.builder()
+                .writer(writer)
+                .target(target)
+                .peerGrade(peerGrade)
+                .nonMemberUuid(uuid.toString())
+                .build()
+        );
+    }
+
+    @Override
+    @Transactional
+    public void updatePeerTestMemberId(Member member, String uuid) {
+
+        PeerFeedback peerFeedback = peerFeedbackRepository.findByNonMemberUuid(uuid);
+        peerFeedback.updateWriter(member);
+
+        PeerGradeResult peerGradeResult = peerGradeResultRepository.findByNonMemberUuid(uuid);
+        peerGradeResult.updateWriter(member);
+
+        List<PeerTest> peerTestList = peerTestRepository.findAllByNonMemberUuid(uuid);
+
+        for (PeerTest peerTest : peerTestList) {
+            peerTest.updateWriter(member);
+        }
+
     }
 
 }

@@ -1,6 +1,7 @@
 package cmc.peerna.domain;
 
 import cmc.peerna.domain.common.BaseEntity;
+import cmc.peerna.domain.enums.PeerGrade;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -11,25 +12,15 @@ import java.util.UUID;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class PeerTest extends BaseEntity {
-
+public class PeerGradeResult extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "writer_id")
+    @OneToOne
     private Member writer;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "target_id")
+    @OneToOne
     private Member target;
-
-    @OneToOne
-    private Question question;
-
-    @OneToOne
-    private Answer answer;
+    private PeerGrade peerGrade;
 
     private String nonMemberUuid;
     public void updateWriter(Member member) {
