@@ -4,8 +4,10 @@ import cmc.peerna.apiResponse.response.ResponseDto;
 import cmc.peerna.converter.MemberConverter;
 import cmc.peerna.domain.Member;
 import cmc.peerna.jwt.handler.annotation.AuthMember;
+import cmc.peerna.service.MemberService;
 import cmc.peerna.service.TestService;
 import cmc.peerna.web.dto.requestDto.MemberRequestDto;
+import cmc.peerna.web.dto.requestDto.TestRequestDto;
 import cmc.peerna.web.dto.responseDto.MemberResponseDto;
 import cmc.peerna.web.dto.responseDto.TestResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
@@ -34,6 +36,7 @@ import org.springframework.web.bind.annotation.*;
 
 public class TestController {
 
+    private final MemberService memberService;
     private final TestService testService;
 
     @Operation(summary = "셀프 테스트 API ✔️🔑", description = "셀프 테스트 API입니다.")
@@ -81,4 +84,20 @@ public class TestController {
         TestResponseDto.selfTestResultResponseDto selfTestResult = testService.getSelfTestResult(member);
         return ResponseDto.of(selfTestResult);
     }
+
+    @Operation(summary = "비회원 피어 테스트 작성 API ✔️🔑", description = "비회원 피어 테스트 작성 API입니다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "2200", description = "BAD_REQUEST, 존재하지 않는 유저입니다."),
+            @ApiResponse(responseCode = "4200", description = "BAD_REQUEST, 잘못된 답변 ID 값을 전달했습니다."),
+            @ApiResponse(responseCode = "4201", description = "BAD_REQUEST, 답변 개수가 정확하게 18개가 아닙니다.")
+    })
+    @PostMapping("test/peerTest/{targetId}") // /UUID 붙여서 target 식별 로직  추가하기 , 임시로 requestParam으로.
+    public ResponseDto<TestResponseDto.peerTestIdResponseDto> savePeerTest(@RequestParam(name = "targetId")Long targetId,  @RequestBody TestRequestDto.peerTestRequestDto requestDto) {
+        Member writer = Member.builder()
+                .id(0L).build();
+        testService.savePeerTest(writer, memberService.findById(targetId), requestDto);
+        return ResponseDto.of(TestResponseDto.peerTestIdResponseDto.builder()
+                .peerTestId(targetId).build());
+    }
+
 }

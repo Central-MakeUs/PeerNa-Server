@@ -23,4 +23,12 @@ public class TestResponseDto {
         private PeerCard group4;
 
     }
+
+    @Builder
+    @Getter
+    @AllArgsConstructor(access = AccessLevel.PROTECTED)
+    @NoArgsConstructor(access = AccessLevel.PROTECTED)
+    public static class peerTestIdResponseDto{
+        private Long peerTestId;
+    }
 }
