@@ -5,6 +5,8 @@ import cmc.peerna.domain.enums.PeerGrade;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.UUID;
+
 @Entity
 @Getter
 @Builder
@@ -19,4 +21,9 @@ public class PeerGradeResult extends BaseEntity {
     @OneToOne
     private Member target;
     private PeerGrade peerGrade;
+
+    private String nonMemberUuid;
+    public void updateWriter(Member member) {
+        this.writer = member;
+    }
 }

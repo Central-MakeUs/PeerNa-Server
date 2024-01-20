@@ -6,6 +6,8 @@ import cmc.peerna.web.dto.requestDto.MemberRequestDto;
 import cmc.peerna.web.dto.requestDto.TestRequestDto;
 import cmc.peerna.web.dto.responseDto.TestResponseDto;
 
+import java.util.UUID;
+
 public interface TestService {
     void saveSelfTest(Member member, MemberRequestDto.selfTestDto request);
 
@@ -18,6 +20,7 @@ public interface TestService {
     void deleteSelfTestResult(Member member);
 
     void savePeerTest(Member writer, Member target, TestRequestDto.peerTestRequestDto request);
-    void savePeerFeedBack(Member writer, Member target, String feedback);
-    void savePeerGradeResult(Member writer, Member target, PeerGrade peerGrade);
+    void savePeerFeedBack(Member writer, Member target, String feedback, String uuid);
+    void savePeerGradeResult(Member writer, Member target, PeerGrade peerGrade, String uuid);
+    void updatePeerTestMemberId(Member member, String uuid);
 }

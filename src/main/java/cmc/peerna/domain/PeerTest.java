@@ -4,6 +4,8 @@ import cmc.peerna.domain.common.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.UUID;
+
 @Entity
 @Getter
 @Builder
@@ -28,4 +30,9 @@ public class PeerTest extends BaseEntity {
 
     @OneToOne
     private Answer answer;
+
+    private String nonMemberUuid;
+    public void updateWriter(Member member) {
+        this.writer = member;
+    }
 }

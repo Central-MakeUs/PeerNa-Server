@@ -4,6 +4,8 @@ import cmc.peerna.domain.common.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.UUID;
+
 @Entity
 @Getter
 @Builder
@@ -24,4 +26,10 @@ public class PeerFeedback extends BaseEntity {
     private Member target;
 
     private String contents;
+
+    private String nonMemberUuid;
+
+    public void updateWriter(Member member) {
+        this.writer = member;
+    }
 }

@@ -20,6 +20,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.UUID;
+
 @RestController
 @Slf4j
 @RequiredArgsConstructor
@@ -48,7 +50,7 @@ public class TestController {
     @Parameters({
             @Parameter(name = "member", hidden = true)
     })
-    @PostMapping("member/selfTest")
+    @PostMapping("/member/selfTest")
     public ResponseDto<TestResponseDto.selfTestResultResponseDto> saveSelfTest(@AuthMember Member member, @RequestBody MemberRequestDto.selfTestDto request) {
 
         testService.deleteSelfTestResult(member);
@@ -64,7 +66,7 @@ public class TestController {
     @Parameters({
             @Parameter(name = "member", hidden = true)
     })
-    @DeleteMapping("member/selfTest")
+    @DeleteMapping("/member/selfTest")
     public ResponseDto<MemberResponseDto.MemberStatusDto> deleteSelfTest(@AuthMember Member member) {
         testService.deleteSelfTest(member);
         return ResponseDto.of(MemberConverter.toMemberStatusDto(member.getId(), "DeleteSelfTest"));
@@ -78,26 +80,36 @@ public class TestController {
     @Parameters({
             @Parameter(name = "member", hidden = true)
     })
-    @GetMapping("member/selfTestResult")
+    @GetMapping("/member/selfTestResult")
     public ResponseDto<TestResponseDto.selfTestResultResponseDto> getSelfTestResult(@AuthMember Member member) {
 
         TestResponseDto.selfTestResultResponseDto selfTestResult = testService.getSelfTestResult(member);
         return ResponseDto.of(selfTestResult);
     }
 
-    @Operation(summary = "비회원 피어 테스트 작성 API ✔️🔑", description = "비회원 피어 테스트 작성 API입니다.")
+    @Operation(summary = "비회원 피어 테스트 작성 API ✔️", description = "비회원 피어 테스트 작성 API입니다.")
     @ApiResponses({
             @ApiResponse(responseCode = "2200", description = "BAD_REQUEST, 존재하지 않는 유저입니다."),
             @ApiResponse(responseCode = "4200", description = "BAD_REQUEST, 잘못된 답변 ID 값을 전달했습니다."),
             @ApiResponse(responseCode = "4201", description = "BAD_REQUEST, 답변 개수가 정확하게 18개가 아닙니다.")
     })
-    @PostMapping("test/peerTest/{targetId}") // /UUID 붙여서 target 식별 로직  추가하기 , 임시로 requestParam으로.
+    @PostMapping("/test/peerTest/{targetId}") // /UUID 붙여서 target 식별 로직  추가하기 , 임시로 requestParam으로.
     public ResponseDto<TestResponseDto.peerTestIdResponseDto> savePeerTest(@RequestParam(name = "targetId")Long targetId,  @RequestBody TestRequestDto.peerTestRequestDto requestDto) {
-        Member writer = Member.builder()
-                .id(0L).build();
-        testService.savePeerTest(writer, memberService.findById(targetId), requestDto);
+//        Member writer = Member.builder()
+//                .id(0L).build();
+        testService.savePeerTest(null, memberService.findById(targetId), requestDto);
         return ResponseDto.of(TestResponseDto.peerTestIdResponseDto.builder()
                 .peerTestId(targetId).build());
     }
 
+
+    @Operation(summary = "비회원 유저 회원가입 후 id값 갱신용 API ✔️🔑", description = "비회원 유저 회원가입 후 id값 갱신용 API입니다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "2200", description = "BAD_REQUEST, 존재하지 않는 유저입니다.")
+    })
+    @PostMapping("/test/updateMemberId")
+    public ResponseDto<MemberResponseDto.MemberStatusDto> updateMemberId(@AuthMember Member member, @RequestBody String uuid) {
+        testService.updatePeerTestMemberId(member, uuid);
+        return ResponseDto.of(MemberConverter.toMemberStatusDto(member.getId(), "UpdatePeerTestWriterId"));
+    }
 }

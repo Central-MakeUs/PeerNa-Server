@@ -19,6 +19,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -98,12 +100,14 @@ public class TestServiceImpl implements TestService {
     }
 
     @Override
+    @Transactional
     public void deleteSelfTestResult(Member member) {
         selfTestResultRepository.deleteByMember(member);
     }
 
 
     @Override
+    @Transactional
     public void savePeerTest(Member writer, Member target, TestRequestDto.peerTestRequestDto request) {
 
         List<Long> answerIdList = request.getAnswerIdList();
@@ -121,32 +125,55 @@ public class TestServiceImpl implements TestService {
                                             .target(target)
                                             .question(question)
                                             .answer(answer)
+                                            .nonMemberUuid(request.getUuid().toString())
                                             .build());
                         }
                 ).collect(Collectors.toList());
 
-        savePeerFeedBack(writer, target, request.getFeedback());
-        savePeerGradeResult(writer, target, request.getPeerGrade());
+        savePeerFeedBack(writer, target, request.getFeedback(), request.getUuid());
+        savePeerGradeResult(writer, target, request.getPeerGrade(), request.getUuid());
 
     }
 
     @Override
-    public void savePeerFeedBack(Member writer, Member target, String feedback) {
+    @Transactional
+    public void savePeerFeedBack(Member writer, Member target, String feedback, String uuid) {
         peerFeedbackRepository.save(PeerFeedback.builder()
                 .writer(writer)
                 .target(target)
                 .contents(feedback)
+                .nonMemberUuid(uuid.toString())
                 .build()
         );
     }
     @Override
-    public void savePeerGradeResult(Member writer, Member target, PeerGrade peerGrade) {
+    @Transactional
+    public void savePeerGradeResult(Member writer, Member target, PeerGrade peerGrade, String uuid) {
         peerGradeResultRepository.save(PeerGradeResult.builder()
                 .writer(writer)
                 .target(target)
                 .peerGrade(peerGrade)
+                .nonMemberUuid(uuid.toString())
                 .build()
         );
+    }
+
+    @Override
+    @Transactional
+    public void updatePeerTestMemberId(Member member, String uuid) {
+
+        PeerFeedback peerFeedback = peerFeedbackRepository.findByNonMemberUuid(uuid);
+        peerFeedback.updateWriter(member);
+
+        PeerGradeResult peerGradeResult = peerGradeResultRepository.findByNonMemberUuid(uuid);
+        peerGradeResult.updateWriter(member);
+
+        List<PeerTest> peerTestList = peerTestRepository.findAllByNonMemberUuid(uuid);
+
+        for (PeerTest peerTest : peerTestList) {
+            peerTest.updateWriter(member);
+        }
+
     }
 
 }

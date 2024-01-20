@@ -15,6 +15,8 @@ public class TestRequestDto {
         private List<Long> answerIdList;
         private PeerGrade peerGrade;
         private String feedback;
+
+        private String uuid;
     }
 
 }
