@@ -4,10 +4,12 @@ import cmc.peerna.apiResponse.code.ResponseStatus;
 import cmc.peerna.apiResponse.exception.handler.MemberException;
 import cmc.peerna.converter.MemberConverter;
 import cmc.peerna.domain.Member;
+import cmc.peerna.domain.PeerGradeResult;
 import cmc.peerna.domain.enums.SocialType;
 import cmc.peerna.jwt.JwtProvider;
 import cmc.peerna.jwt.LoginResponseDto;
 import cmc.peerna.repository.MemberRepository;
+import cmc.peerna.repository.PeerGradeResultRepository;
 import cmc.peerna.service.MemberService;
 import cmc.peerna.web.dto.requestDto.MemberRequestDto;
 import cmc.peerna.web.dto.responseDto.MemberResponseDto;
@@ -26,6 +28,8 @@ import java.util.Optional;
 public class MemberServiceImpl implements MemberService {
 
     private final MemberRepository memberRepository;
+    private final PeerGradeResultRepository peerGradeResultRepository;
+
     private final JwtProvider jwtProvider;
 
 
@@ -75,6 +79,10 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public Member findById(Long memberId) {
         return memberRepository.findById(memberId).orElseThrow(() -> new MemberException(ResponseStatus.MEMBER_NOT_FOUND));
-
     }
+
+//    public Long updateTotalScore(Member member) {
+//        List<PeerGradeResult> peerGradeResultList = peerGradeResultRepository.findAllByTarget(member);
+//
+//    }
 }

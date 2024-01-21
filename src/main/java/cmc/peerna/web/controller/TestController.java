@@ -112,4 +112,5 @@ public class TestController {
         testService.updatePeerTestMemberId(member, uuid);
         return ResponseDto.of(MemberConverter.toMemberStatusDto(member.getId(), "UpdatePeerTestWriterId"));
     }
+
 }

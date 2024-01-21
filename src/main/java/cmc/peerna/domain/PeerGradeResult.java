@@ -20,6 +20,7 @@ public class PeerGradeResult extends BaseEntity {
     private Member writer;
     @OneToOne
     private Member target;
+    @Enumerated(EnumType.STRING)
     private PeerGrade peerGrade;
 
     private String nonMemberUuid;
