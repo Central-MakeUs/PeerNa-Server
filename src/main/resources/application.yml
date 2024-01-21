@@ -61,5 +61,5 @@ jwt:
     key: testsecrettestsecrettestsecrettestsecrettestsecrettestsecrettestsecrettestsecrettestsecret
 
 web:
-  redirect-url: https://localhost:5173/login/kakao
+  redirect-url: http://localhost:5173/login/kakao
 #  redirect-url: https://localhost:8080
