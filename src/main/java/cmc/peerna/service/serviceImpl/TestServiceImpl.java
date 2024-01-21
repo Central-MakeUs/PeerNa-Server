@@ -88,6 +88,8 @@ public class TestServiceImpl implements TestService {
                 .group4(peerCards.get(3))
                 .build();
         selfTestResultRepository.save(selfTestResult);
+        member.setTestType(peerType);
+
         return TestConverter.toSelfTestResultDto(selfTestResult);
     }
 

@@ -11,10 +11,10 @@ import cmc.peerna.jwt.LoginResponseDto;
 import cmc.peerna.jwt.handler.annotation.AuthMember;
 import cmc.peerna.redis.service.RedisService;
 import cmc.peerna.service.MemberService;
+import cmc.peerna.service.RootService;
 import cmc.peerna.web.dto.requestDto.MemberRequestDto;
 import cmc.peerna.web.dto.responseDto.MemberResponseDto;
 import cmc.peerna.web.dto.responseDto.RootResponseDto;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
@@ -30,11 +30,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
 import java.io.IOException;
 import java.util.List;
-import java.util.Map;
 
 
 @RestController
@@ -57,6 +54,7 @@ public class MemberController {
     private final AccountService accountService;
     private final MemberService memberService;
     private final RedisService redisService;
+    private final RootService rootService;
     private final JwtProvider jwtProvider;
 
     @Value("${web.redirect-url}")
@@ -129,9 +127,8 @@ public class MemberController {
     })
     @GetMapping("/member/mypage")
     public ResponseDto<RootResponseDto.MypageDto> getMyPage(@AuthMember Member member) {
-
-        return ResponseDto.of(RootResponseDto.MypageDto.builder().build());
+        RootResponseDto.MypageDto myPageDto = rootService.getMyPageDto(member);
+        return ResponseDto.of(myPageDto);
     }
-
 }
 

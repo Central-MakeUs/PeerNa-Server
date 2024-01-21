@@ -33,10 +33,10 @@ public class MemberConverter {
     public static MemberResponseDto.MemberSimpleInfoDto toSimpleInfoDto(Member member) {
         return MemberResponseDto.MemberSimpleInfoDto.builder()
                 .name(member.getName())
-                .testType(member.getTestType())
+                .testType(member.getSelfTestType())
                 .part(member.getPart())
                 .job(member.getJob())
-                .positiveness(member.getPositiveness())
+                .totalScore(member.getTotalScore())
                 .oneLiner(member.getOneliner())
                 .build();
     }

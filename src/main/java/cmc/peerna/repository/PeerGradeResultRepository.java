@@ -5,6 +5,7 @@ import cmc.peerna.domain.PeerGradeResult;
 import cmc.peerna.domain.enums.PeerGrade;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.List;
 import java.util.UUID;
 
 public interface PeerGradeResultRepository extends JpaRepository<PeerGradeResult, Long> {
@@ -12,5 +13,9 @@ public interface PeerGradeResultRepository extends JpaRepository<PeerGradeResult
     PeerGradeResult findByNonMemberUuid(String nonMemberUuid);
 
     Long countByTargetAndPeerGrade(Member target, PeerGrade peerGrade);
+
+    List<PeerGradeResult> findAllByTarget(Member target);
+
+    Long countByTarget(Member target);
 
 }

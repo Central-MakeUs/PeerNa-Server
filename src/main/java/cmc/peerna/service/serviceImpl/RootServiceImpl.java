@@ -2,15 +2,13 @@ package cmc.peerna.service.serviceImpl;
 
 import cmc.peerna.converter.MemberConverter;
 import cmc.peerna.converter.TestConverter;
-import cmc.peerna.domain.Member;
-import cmc.peerna.domain.PeerFeedback;
-import cmc.peerna.domain.PeerTest;
-import cmc.peerna.domain.SelfTestResult;
+import cmc.peerna.domain.*;
 import cmc.peerna.domain.enums.PeerCard;
 import cmc.peerna.domain.enums.PeerGrade;
 import cmc.peerna.domain.enums.TestType;
 import cmc.peerna.repository.*;
 import cmc.peerna.service.RootService;
+import cmc.peerna.utils.MemberCalculator;
 import cmc.peerna.utils.TestResultCalculator;
 import cmc.peerna.web.dto.responseDto.MemberResponseDto;
 import cmc.peerna.web.dto.responseDto.RootResponseDto;
@@ -34,12 +32,13 @@ public class RootServiceImpl implements RootService {
     private final PeerGradeResultRepository peerGradeResultRepository;
     private final PeerTestRepository peerTestRepository;
     private final TestResultCalculator testResultCalculator;
+    private final MemberCalculator memberCalculator;
 
-    private List<Long> getcolorAnswerIdList(Member member, List<Long> selfTestAnswerIdList) {
-        List<PeerTest> peerTestList = peerTestRepository.findALlByTarget(member);
+    @Override
+    public List<Long> getcolorAnswerIdList(Member member, List<Long> selfTestAnswerIdList) {
         List<Long> peerTestAnswerIdList = new ArrayList<>();
         List<Long> colorAnswerIdList = new ArrayList<>();
-        for (Long i = 1L; i <= 18L; i+=2) {
+        for (Long i = 1L; i <= 36L; i+=2) {
             Long answerA = peerTestRepository.countByTargetAndAnswerId(member, i);
             Long answerB = peerTestRepository.countByTargetAndAnswerId(member, i + 1);
             if (answerA > answerB) {
@@ -61,7 +60,8 @@ public class RootServiceImpl implements RootService {
         return colorAnswerIdList;
     }
 
-    private List<TestResponseDto.totalEvaluation> getTop3TotalEvaluation(Member member) {
+    @Override
+    public List<TestResponseDto.totalEvaluation> getTop3TotalEvaluation(Member member) {
         List<PeerGrade> gradeList = Arrays.asList(PeerGrade.values());
         List<TestResponseDto.totalEvaluation> totalEvaluationList = new ArrayList<>();
         for (PeerGrade peerGrade : gradeList) {
@@ -72,11 +72,14 @@ public class RootServiceImpl implements RootService {
                     .build()
             );
         }
-        totalEvaluationList.sort(Comparator.comparing(TestResponseDto.totalEvaluation::getCount));
+        totalEvaluationList.sort(Comparator.comparing(TestResponseDto.totalEvaluation::getCount).reversed());
         return totalEvaluationList.subList(0, 3);
     }
 
-    private RootResponseDto.MypageDto getMyPageDto(Member member) {
+    @Override
+    public RootResponseDto.MypageDto getMyPageDto(Member member) {
+        boolean peerTestMoreThanThree = peerGradeResultRepository.countByTarget(member) >= 3 ? true : false;
+
         MemberResponseDto.MemberSimpleInfoDto memberSimpleInfoDto = MemberConverter.toSimpleInfoDto(member);
 
         SelfTestResult selfTestResult = selfTestResultRepository.findByMember(member);
@@ -91,11 +94,27 @@ public class RootServiceImpl implements RootService {
 
         List<TestResponseDto.totalEvaluation> top3TotalEvaluation = getTop3TotalEvaluation(member);
 
+        List<PeerGradeResult> peerGradeResultList = peerGradeResultRepository.findAllByTarget(member);
+        int totalScore = memberCalculator.getTotalScore(peerGradeResultList);
+
         List<PeerFeedback> peerFeedbackList = peerFeedbackRepository.findTop3ByTargetOrderByCreatedAtDesc(member);
 
         List<Long> selfTestAnswerIdList = TestConverter.selfTestToAnswerId(selfTestRepository.findALlByWriter(member));
 
         List<Long> colorAnswerIdList = getcolorAnswerIdList(member, selfTestAnswerIdList);
+
+        return RootResponseDto.MypageDto.builder()
+                .peerTestMoreThanThree(peerTestMoreThanThree)
+                .memberSimpleInfoDto(memberSimpleInfoDto)
+                .peerTestType(peerTestType)
+                .selfTestCardList(selfTestCardList)
+                .peerCardList(peerCardList)
+                .top3Evaluation(top3TotalEvaluation)
+                .totalScore(totalScore)
+                .peerFeedbackList(TestConverter.peerFeedbackListToStringList(peerFeedbackList))
+                .selfTestAnswerIdList(selfTestAnswerIdList)
+                .colorAnswerIdList(colorAnswerIdList)
+                .build();
 
     }
 }

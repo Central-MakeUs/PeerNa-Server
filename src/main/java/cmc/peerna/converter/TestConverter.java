@@ -1,5 +1,6 @@
 package cmc.peerna.converter;
 
+import cmc.peerna.domain.PeerFeedback;
 import cmc.peerna.domain.SelfTest;
 import cmc.peerna.domain.SelfTestResult;
 import cmc.peerna.domain.enums.PeerCard;
@@ -38,5 +39,13 @@ public class TestConverter {
             answerIdList.add(selfTest.getAnswer().getId());
         }
         return answerIdList;
+    }
+
+    public static List<String> peerFeedbackListToStringList(List<PeerFeedback> peerFeedbackList) {
+        List<String> feedbackContentList = new ArrayList<>();
+        for (PeerFeedback peerFeedback : peerFeedbackList) {
+            feedbackContentList.add(peerFeedback.getContents());
+        }
+        return feedbackContentList;
     }
 }

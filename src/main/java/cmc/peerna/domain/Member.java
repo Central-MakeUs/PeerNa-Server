@@ -24,7 +24,7 @@ public class Member extends BaseEntity {
     private String name;
 
     @Enumerated(EnumType.STRING)
-    private TestType testType;
+    private TestType selfTestType;
 
     @Enumerated(EnumType.STRING)
     private PeerGrade selfPeerGrade;
@@ -37,7 +37,6 @@ public class Member extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private Part part;
 
-    // 업무 적극성
     private Long totalScore;
 
     private String socialId;
@@ -63,7 +62,7 @@ public class Member extends BaseEntity {
         this.oneliner = request.getOneLiner();
     }
 
-    public void setTestType(TestType testType) {
-        this.testType=testType;
+    public void setTestType(TestType selfTestType) {
+        this.selfTestType=selfTestType;
     }
 }

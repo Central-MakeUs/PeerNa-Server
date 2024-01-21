@@ -13,6 +13,7 @@ public class RootResponseDto {
     @AllArgsConstructor(access = AccessLevel.PROTECTED)
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
     public static class MypageDto{
+        private boolean peerTestMoreThanThree;
         private MemberResponseDto.MemberSimpleInfoDto memberSimpleInfoDto;
 
         private TestType peerTestType;
