@@ -2,6 +2,7 @@ package cmc.peerna.web.dto.responseDto;
 
 import cmc.peerna.domain.SelfTestResult;
 import cmc.peerna.domain.enums.PeerCard;
+import cmc.peerna.domain.enums.PeerGrade;
 import cmc.peerna.domain.enums.TestType;
 import lombok.*;
 
@@ -30,5 +31,14 @@ public class TestResponseDto {
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
     public static class peerTestIdResponseDto{
         private Long peerTestId;
+    }
+
+    @Builder
+    @Getter
+    @AllArgsConstructor(access = AccessLevel.PROTECTED)
+    @NoArgsConstructor(access = AccessLevel.PROTECTED)
+    public static class totalEvaluation{
+        private Long count;
+        private PeerGrade peerGrade;
     }
 }

@@ -174,4 +174,40 @@ public class TestResultCalculator {
 
         return peerCardList;
     }
+
+    public TestType peerTestPeerType(List<PeerTest> peerTestList) {
+        Long DCount = 0L;
+        Long ICount = 0L;
+        Long SCount = 0L;
+        Long CCount = 0L;
+
+        for (PeerTest peerTest : peerTestList) {
+            TestType testType = peerTest.getAnswer().getTestType();
+            switch (testType) {
+                case D:
+                    DCount++;
+                    break;
+                case I:
+                    ICount++;
+                    break;
+                case S:
+                    SCount++;
+                    break;
+                case C:
+                    CCount++;
+                    break;
+            }
+        }
+
+        List<Long> counts = Arrays.asList(DCount, ICount, SCount, CCount);
+        Long max = Collections.max(counts);
+        if (DCount == max) {
+            return TestType.D;
+        } else if (ICount == max) {
+            return TestType.I;
+        } else if (SCount == max) {
+            return TestType.S;
+        } else
+            return TestType.C;
+    }
 }

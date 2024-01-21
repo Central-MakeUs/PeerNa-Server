@@ -1,8 +1,13 @@
 package cmc.peerna.converter;
 
+import cmc.peerna.domain.SelfTest;
 import cmc.peerna.domain.SelfTestResult;
+import cmc.peerna.domain.enums.PeerCard;
 import cmc.peerna.web.dto.responseDto.TestResponseDto;
 import lombok.RequiredArgsConstructor;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @RequiredArgsConstructor
 public class TestConverter {
@@ -18,4 +23,20 @@ public class TestConverter {
                 .build();
     }
 
+    public static List<PeerCard> selfTestResultToPeerCardList(SelfTestResult selfTestResult) {
+        List<PeerCard> peerCardList = new ArrayList<>();
+        peerCardList.add(selfTestResult.getGroup1());
+        peerCardList.add(selfTestResult.getGroup2());
+        peerCardList.add(selfTestResult.getGroup3());
+        peerCardList.add(selfTestResult.getGroup4());
+        return peerCardList;
+    }
+
+    public static List<Long> selfTestToAnswerId(List<SelfTest> selfTestList) {
+        List<Long> answerIdList = new ArrayList<>();
+        for (SelfTest selfTest : selfTestList) {
+            answerIdList.add(selfTest.getAnswer().getId());
+        }
+        return answerIdList;
+    }
 }

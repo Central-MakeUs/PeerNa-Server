@@ -37,6 +37,9 @@ public class Member extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private Part part;
 
+    // 업무 적극성
+    private Long totalScore;
+
     private String socialId;
 
     @Enumerated(EnumType.STRING)

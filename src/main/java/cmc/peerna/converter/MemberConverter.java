@@ -29,4 +29,15 @@ public class MemberConverter {
                 .calledAt(LocalDateTime.now())
                 .build();
     }
+
+    public static MemberResponseDto.MemberSimpleInfoDto toSimpleInfoDto(Member member) {
+        return MemberResponseDto.MemberSimpleInfoDto.builder()
+                .name(member.getName())
+                .testType(member.getTestType())
+                .part(member.getPart())
+                .job(member.getJob())
+                .positiveness(member.getPositiveness())
+                .oneLiner(member.getOneliner())
+                .build();
+    }
 }
