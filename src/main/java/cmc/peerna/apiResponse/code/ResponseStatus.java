@@ -42,6 +42,7 @@ public enum ResponseStatus implements BaseCode {
     // Test 관련 에러
     ANSWER_NOT_FOUND(BAD_REQUEST, 4200, "잘못된 답변 ID 값을 전달했습니다."),
     WRONG_ANSWER_COUNT(BAD_REQUEST, 4201, "답변 개수가 정확하게 18개가 아닙니다."),
+    WRONG_TOTAL_ANSWER_COUNT(BAD_REQUEST, 4202, "피어테스트 답변 개수가 18의 배수가 아닙니다. 피어테스트 저장 과정에서 누락 발생"),
 
     // 500번대 에러
     _INTERNAL_SERVER_ERROR(INTERNAL_SERVER_ERROR, 5000, "서버 에러, 관리자에게 문의 바랍니다."),

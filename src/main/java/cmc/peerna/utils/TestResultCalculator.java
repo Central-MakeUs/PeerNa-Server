@@ -1,5 +1,8 @@
 package cmc.peerna.utils;
 
+import cmc.peerna.apiResponse.code.ResponseStatus;
+import cmc.peerna.apiResponse.exception.handler.TestException;
+import cmc.peerna.domain.PeerTest;
 import cmc.peerna.domain.SelfTest;
 import cmc.peerna.domain.enums.AnswerChoice;
 import cmc.peerna.domain.enums.PeerCard;
@@ -10,10 +13,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Component
-public class SelfTestResultCalculator {
+public class TestResultCalculator {
 
     public TestType selfTestPeerType(List<SelfTest> selfTestList) {
         Long DCount = 0L;
@@ -50,7 +52,7 @@ public class SelfTestResultCalculator {
         } else
             return TestType.C;
     }
-    public List<PeerCard> selfTestPeerCard(List<SelfTest> selfTestList) {
+    public List<PeerCard> getSelfTestCard(List<SelfTest> selfTestList) {
         List<PeerCard> peerCardList = new ArrayList<>(4);
 
         Long group1ACount = 0L;
@@ -108,4 +110,68 @@ public class SelfTestResultCalculator {
         return peerCardList;
     }
 
+
+    public List<PeerCard> getPeerTestPeerCard(List<PeerTest> peerTestList) {
+        List<PeerCard> peerCardList = new ArrayList<>(4);
+        if (peerCardList.size() % 18 != 0) {
+            throw new TestException(ResponseStatus.WRONG_TOTAL_ANSWER_COUNT);
+        }
+        int peerTestListSize = peerCardList.size() / 18;
+
+        Long group1ACount = 0L;
+        Long group2ACount = 0L;
+        Long group3ACount = 0L;
+        Long group4ACount = 0L;
+
+        for (PeerTest peerTest : peerTestList) {
+            if (peerTest.getQuestion().getId() <= 5) {
+                if (peerTest.getAnswer().getAnswerChoice().equals(AnswerChoice.A)) {
+                    group1ACount++;
+                }
+            } else if (peerTest.getQuestion().getId() <= 9) {
+                if (peerTest.getAnswer().getAnswerChoice().equals(AnswerChoice.A)) {
+                    group2ACount++;
+                }
+            } else if (peerTest.getQuestion().getId() <= 13) {
+                if (peerTest.getAnswer().getAnswerChoice().equals(AnswerChoice.A)) {
+                    group3ACount++;
+                }
+            } else if (peerTest.getQuestion().getId() <= 18) {
+                if (peerTest.getAnswer().getAnswerChoice().equals(AnswerChoice.A)) {
+                    group4ACount++;
+                }
+            }
+        }
+        peerTestListSize = 2;
+
+        if (group1ACount >= peerTestListSize * 5 / 2) {
+            peerCardList.add(PeerCard.DRIVING);
+        } else{
+            peerCardList.add(PeerCard.COOPERATIVE);
+        }
+
+        if (group2ACount > peerTestListSize * 4 / 2) {
+            peerCardList.add(PeerCard.ANALYTICAL);
+        } else if (group2ACount == peerTestListSize * 4 / 2) {
+            peerCardList.add(PeerCard.COMPREHENSIVE);
+        } else{
+            peerCardList.add(PeerCard.FUTURE_ORIENTED);
+        }
+
+        if (group3ACount > peerTestListSize * 4 / 2) {
+            peerCardList.add(PeerCard.PRAGMATIC);
+        } else if (group3ACount == peerTestListSize * 4 / 2) {
+            peerCardList.add(PeerCard.MULTIDIMENSIONAL);
+        } else{
+            peerCardList.add(PeerCard.WARMHEARTED);
+        }
+
+        if (group4ACount >= peerTestListSize * 5 / 2) {
+            peerCardList.add(PeerCard.CAUTIOUS);
+        } else{
+            peerCardList.add(PeerCard.CHALLENGING);
+        }
+
+        return peerCardList;
+    }
 }

@@ -9,7 +9,7 @@ import cmc.peerna.domain.enums.PeerGrade;
 import cmc.peerna.domain.enums.TestType;
 import cmc.peerna.repository.*;
 import cmc.peerna.service.TestService;
-import cmc.peerna.utils.SelfTestResultCalculator;
+import cmc.peerna.utils.TestResultCalculator;
 import cmc.peerna.web.dto.requestDto.MemberRequestDto;
 import cmc.peerna.web.dto.requestDto.TestRequestDto;
 import cmc.peerna.web.dto.responseDto.TestResponseDto;
@@ -19,8 +19,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -35,7 +33,7 @@ public class TestServiceImpl implements TestService {
     private final PeerGradeResultRepository peerGradeResultRepository;
     private final PeerTestRepository peerTestRepository;
 
-    private final SelfTestResultCalculator selfTestResultCalculator;
+    private final TestResultCalculator testResultCalculator;
 
     @Transactional
     @Override
@@ -78,8 +76,8 @@ public class TestServiceImpl implements TestService {
         }
 
         List<SelfTest> selfTestList = selfTestRepository.findALlByWriter(member);
-        TestType peerType = selfTestResultCalculator.selfTestPeerType(selfTestList);
-        List<PeerCard> peerCards = selfTestResultCalculator.selfTestPeerCard(selfTestList);
+        TestType peerType = testResultCalculator.selfTestPeerType(selfTestList);
+        List<PeerCard> peerCards = testResultCalculator.getSelfTestCard(selfTestList);
 
         SelfTestResult selfTestResult = SelfTestResult.builder()
                 .member(member)
@@ -173,9 +171,15 @@ public class TestServiceImpl implements TestService {
         for (PeerTest peerTest : peerTestList) {
             peerTest.updateWriter(member);
         }
-
     }
 
+    @Override
+    @Transactional
+    public List<PeerCard> getPeerTestCard(Member target) {
+        List<PeerTest> peerTestList = peerTestRepository.findALlByTarget(target);
+        List<PeerCard> peerCardList = testResultCalculator.getPeerTestPeerCard(peerTestList);
+        return peerCardList;
+    }
 }
 
 
