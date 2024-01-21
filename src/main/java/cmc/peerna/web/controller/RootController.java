@@ -42,12 +42,12 @@ public class RootController {
     }
 
     // TEST API
-    @GetMapping("/test/{memberId}")
+    @GetMapping("/test/{member-id}")
     @Operation(summary = "GET 요청 TEST API ✔️", description = "GET 요청 테스트용 API입니다.")
     @ApiResponses({
             @ApiResponse(responseCode = "2200",description = "BAD_REQUEST, 존재하지 않는 유저입니다.")
     })
-    public ResponseDto<MemberResponseDto.MemberBaseDto> searchMember(@PathVariable(name = "memberId") Long memberId) {
+    public ResponseDto<MemberResponseDto.MemberBaseDto> searchMember(@PathVariable(name = "member-id") Long memberId) {
         MemberResponseDto.MemberBaseDto memberDto = memberService.findMember(memberId);
         return ResponseDto.of(memberDto);
     }
