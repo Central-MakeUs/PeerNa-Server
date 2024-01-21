@@ -93,7 +93,7 @@ public class TestController {
             @ApiResponse(responseCode = "4200", description = "BAD_REQUEST, 잘못된 답변 ID 값을 전달했습니다."),
             @ApiResponse(responseCode = "4201", description = "BAD_REQUEST, 답변 개수가 정확하게 18개가 아닙니다.")
     })
-    @PostMapping("/test/peerTest/{targetId}") // /UUID 붙여서 target 식별 로직  추가하기 , 임시로 requestParam으로.
+    @PostMapping("/review/peerTest/{targetId}") // /UUID 붙여서 target 식별 로직  추가하기 , 임시로 requestParam으로.
     public ResponseDto<TestResponseDto.peerTestIdResponseDto> savePeerTest(@RequestParam(name = "targetId")Long targetId,  @RequestBody TestRequestDto.peerTestRequestDto requestDto) {
 //        Member writer = Member.builder()
 //                .id(0L).build();
@@ -107,7 +107,7 @@ public class TestController {
     @ApiResponses({
             @ApiResponse(responseCode = "2200", description = "BAD_REQUEST, 존재하지 않는 유저입니다.")
     })
-    @PostMapping("/test/updateMemberId")
+    @PostMapping("/review/updateMemberId")
     public ResponseDto<MemberResponseDto.MemberStatusDto> updateMemberId(@AuthMember Member member, @RequestBody String uuid) {
         testService.updatePeerTestMemberId(member, uuid);
         return ResponseDto.of(MemberConverter.toMemberStatusDto(member.getId(), "UpdatePeerTestWriterId"));
