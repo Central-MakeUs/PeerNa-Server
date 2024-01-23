@@ -37,7 +37,8 @@ public class Member extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private Part part;
 
-    private Long totalScore;
+    @ColumnDefault("0")
+    private Integer totalScore;
 
     private String socialId;
 
@@ -65,4 +66,6 @@ public class Member extends BaseEntity {
     public void setTestType(TestType selfTestType) {
         this.selfTestType=selfTestType;
     }
+
+    public void updateTotalScore(Integer totalScore){ this.totalScore=totalScore;}
 }

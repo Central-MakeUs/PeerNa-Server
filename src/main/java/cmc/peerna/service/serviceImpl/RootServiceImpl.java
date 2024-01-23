@@ -8,7 +8,6 @@ import cmc.peerna.domain.enums.PeerGrade;
 import cmc.peerna.domain.enums.TestType;
 import cmc.peerna.repository.*;
 import cmc.peerna.service.RootService;
-import cmc.peerna.utils.MemberCalculator;
 import cmc.peerna.utils.TestResultCalculator;
 import cmc.peerna.web.dto.responseDto.MemberResponseDto;
 import cmc.peerna.web.dto.responseDto.RootResponseDto;
@@ -32,7 +31,6 @@ public class RootServiceImpl implements RootService {
     private final PeerGradeResultRepository peerGradeResultRepository;
     private final PeerTestRepository peerTestRepository;
     private final TestResultCalculator testResultCalculator;
-    private final MemberCalculator memberCalculator;
 
     @Override
     public List<Long> getcolorAnswerIdList(Member member, List<Long> selfTestAnswerIdList) {
@@ -95,7 +93,6 @@ public class RootServiceImpl implements RootService {
         List<TestResponseDto.totalEvaluation> top3TotalEvaluation = getTop3TotalEvaluation(member);
 
         List<PeerGradeResult> peerGradeResultList = peerGradeResultRepository.findAllByTarget(member);
-        int totalScore = memberCalculator.getTotalScore(peerGradeResultList);
 
         List<PeerFeedback> peerFeedbackList = peerFeedbackRepository.findTop3ByTargetOrderByCreatedAtDesc(member);
 
@@ -110,7 +107,7 @@ public class RootServiceImpl implements RootService {
                 .selfTestCardList(selfTestCardList)
                 .peerCardList(peerCardList)
                 .top3Evaluation(top3TotalEvaluation)
-                .totalScore(totalScore)
+                .totalScore(member.getTotalScore())
                 .peerFeedbackList(TestConverter.peerFeedbackListToStringList(peerFeedbackList))
                 .selfTestAnswerIdList(selfTestAnswerIdList)
                 .colorAnswerIdList(colorAnswerIdList)
