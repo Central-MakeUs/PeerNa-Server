@@ -53,4 +53,12 @@ public class MemberResponseDto {
         private String uuid;
     }
 
+    @Builder
+    @Getter
+    @AllArgsConstructor(access = AccessLevel.PROTECTED)
+    @NoArgsConstructor(access = AccessLevel.PROTECTED)
+    public static class memberNameResponseDto{
+        private String name;
+    }
+
 }

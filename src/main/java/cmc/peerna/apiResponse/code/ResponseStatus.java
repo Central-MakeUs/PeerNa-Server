@@ -25,6 +25,8 @@ public enum ResponseStatus implements BaseCode {
     // member 에러
     MEMBER_NOT_FOUND(OK, 2200, "존재하지 않는 유저입니다."),
 
+    // test 에러
+    UUID_NOT_FOUND(OK, 2250, "잘못된 UUID 값입니다."),
 
     // 400번대 에러
 

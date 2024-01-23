@@ -88,11 +88,11 @@ public class TestController {
 
     @Operation(summary = "비회원 피어 테스트 작성 API ✔️", description = "비회원 피어 테스트 작성 API입니다.")
     @ApiResponses({
-            @ApiResponse(responseCode = "2200", description = "BAD_REQUEST, 존재하지 않는 유저입니다."),
+            @ApiResponse(responseCode = "2250", description = "BAD_REQUEST, 잘못된 UUID 값입니다."),
             @ApiResponse(responseCode = "4200", description = "BAD_REQUEST, 잘못된 답변 ID 값을 전달했습니다."),
             @ApiResponse(responseCode = "4201", description = "BAD_REQUEST, 답변 개수가 정확하게 18개가 아닙니다.")
     })
-    @PostMapping("/review/peer-test/{target-uuid}")
+    @PostMapping("/review/peer-test")
     public ResponseDto<TestResponseDto.peerTestIdResponseDto> savePeerTest(@RequestParam(name = "target-uuid") String targetUuid,  @RequestBody TestRequestDto.peerTestRequestDto requestDto) {
         Member target = memberService.findMemberByUuid(targetUuid);
         testService.savePeerTest(null, target, requestDto);
@@ -103,11 +103,12 @@ public class TestController {
 
     @Operation(summary = "비회원 유저 회원가입 후 id값 갱신용 API ✔️🔑", description = "비회원 유저 회원가입 후 id값 갱신용 API입니다.")
     @ApiResponses({
-            @ApiResponse(responseCode = "2200", description = "BAD_REQUEST, 존재하지 않는 유저입니다.")
+            @ApiResponse(responseCode = "2200", description = "BAD_REQUEST, 존재하지 않는 유저입니다."),
+            @ApiResponse(responseCode = "2250", description = "BAD_REQUEST, 해당 UUID로 작성된 정보가 존재하지 않습니다. 잘못된 UUID 값 입니다."),
     })
     @PostMapping("/review/update-member-id")
-    public ResponseDto<MemberResponseDto.MemberStatusDto> updateMemberId(@AuthMember Member member, @RequestBody String uuid) {
-        testService.updatePeerTestMemberId(member, uuid);
+    public ResponseDto<MemberResponseDto.MemberStatusDto> updateMemberId(@AuthMember Member member, @RequestBody MemberRequestDto.uuidRequestDto uuid) {
+        testService.updatePeerTestMemberId(member, uuid.getUuid());
         return ResponseDto.of(MemberConverter.toMemberStatusDto(member.getId(), "UpdatePeerTestWriterId"));
     }
 
