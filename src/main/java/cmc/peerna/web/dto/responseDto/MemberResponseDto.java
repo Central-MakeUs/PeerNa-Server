@@ -61,4 +61,13 @@ public class MemberResponseDto {
         private String name;
     }
 
+    @Builder
+    @Getter
+    @AllArgsConstructor(access = AccessLevel.PROTECTED)
+    @NoArgsConstructor(access = AccessLevel.PROTECTED)
+    public static class newTokenDto {
+        private String accessToken;
+        private String refreshToken;
+    }
+
 }
