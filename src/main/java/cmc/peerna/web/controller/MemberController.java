@@ -3,7 +3,6 @@ package cmc.peerna.web.controller;
 import cmc.peerna.apiResponse.code.ResponseStatus;
 import cmc.peerna.apiResponse.exception.handler.MemberException;
 import cmc.peerna.apiResponse.response.ResponseDto;
-import cmc.peerna.converter.MemberConverter;
 import cmc.peerna.domain.Member;
 import cmc.peerna.domain.enums.UserRole;
 import cmc.peerna.feign.dto.KakaoTokenInfoResponseDto;
@@ -11,6 +10,7 @@ import cmc.peerna.feign.service.AccountService;
 import cmc.peerna.jwt.JwtProvider;
 import cmc.peerna.jwt.LoginResponseDto;
 import cmc.peerna.jwt.handler.annotation.AuthMember;
+import cmc.peerna.redis.domain.RefreshToken;
 import cmc.peerna.redis.service.RedisService;
 import cmc.peerna.service.MemberService;
 import cmc.peerna.service.RootService;
@@ -195,5 +195,19 @@ public class MemberController {
         Member memberByUuid = memberService.findMemberByUuid(uuid);
         return ResponseDto.of(MemberResponseDto.memberNameResponseDto.builder().name(memberByUuid.getName()).build());
     }
+
+    @Operation(summary = "refresh token 통해 access token 재발급 API ✔️", description = "refresh token 통해 access token 재발급 API입니다.")
+    @PostMapping("member/new-token")
+    public ResponseDto<MemberResponseDto.newTokenDto> getNewAccessToken(@RequestBody MemberRequestDto.ReissueDTO request) {
+        RefreshToken newRefreshToken = redisService.reGenerateRefreshToken(request);
+        String accessToken = memberService.regenerateAccessToken(newRefreshToken);
+
+        return ResponseDto.of(MemberResponseDto.newTokenDto.builder()
+                .accessToken(accessToken)
+                .refreshToken(newRefreshToken.getToken())
+                .build());
+    }
+
+
 }
 

@@ -7,6 +7,7 @@ import cmc.peerna.domain.Member;
 import cmc.peerna.domain.PeerGradeResult;
 import cmc.peerna.domain.enums.SocialType;
 import cmc.peerna.jwt.JwtProvider;
+import cmc.peerna.redis.domain.RefreshToken;
 import cmc.peerna.repository.MemberRepository;
 import cmc.peerna.repository.PeerGradeResultRepository;
 import cmc.peerna.service.MemberService;
@@ -14,9 +15,11 @@ import cmc.peerna.web.dto.requestDto.MemberRequestDto;
 import cmc.peerna.web.dto.responseDto.MemberResponseDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -108,5 +111,13 @@ public class MemberServiceImpl implements MemberService {
     public MemberRequestDto.profileUpdateDto updateMemberProfile(Member member, MemberRequestDto.profileUpdateDto request) {
         member.updateProfile(request);
         return MemberConverter.toProfileUpdateDto(member);
+    }
+
+    @Override
+    public String regenerateAccessToken(RefreshToken refreshToken) {
+        Member member = memberRepository.findById(refreshToken.getMemberId()).orElseThrow(() -> new MemberException(ResponseStatus.MEMBER_NOT_FOUND));
+        log.info("Member Id값 : " + member.getId());
+        String accessToken = jwtProvider.createAccessToken(member.getId(), member.getSocialType().toString(), member.getSocialId(), Arrays.asList(new SimpleGrantedAuthority("USER")));
+        return accessToken;
     }
 }

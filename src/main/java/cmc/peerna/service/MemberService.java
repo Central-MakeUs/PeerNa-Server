@@ -1,6 +1,7 @@
 package cmc.peerna.service;
 
 import cmc.peerna.domain.Member;
+import cmc.peerna.redis.domain.RefreshToken;
 import cmc.peerna.web.dto.requestDto.MemberRequestDto;
 import cmc.peerna.web.dto.responseDto.MemberResponseDto;
 
@@ -17,4 +18,6 @@ public interface MemberService {
 
     Member findMemberByUuid(String uuid);
     MemberRequestDto.profileUpdateDto updateMemberProfile(Member member, MemberRequestDto.profileUpdateDto request);
+
+    String regenerateAccessToken(RefreshToken refreshToken);
 }

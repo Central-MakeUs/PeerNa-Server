@@ -13,6 +13,7 @@ import cmc.peerna.web.dto.requestDto.MemberRequestDto;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,8 +29,13 @@ public class RedisServiceImpl implements RedisService{
     Logger logger = LoggerFactory.getLogger(RedisService.class);
 
     private final MemberRepository memberRepository;
-
     private final RefreshTokenRepository refreshTokenRepository;
+
+    @Value("${jwt.access-token-validity-in-seconds}000")
+    private long accessTokenValidityInMilliseconds;
+
+    @Value("${jwt.refresh-token-validity-in-seconds}000")
+    private long refreshTokenValidityInMilliseconds;
 
     @Override
     @Transactional
@@ -45,7 +51,7 @@ public class RedisServiceImpl implements RedisService{
 
         LocalDateTime currentTime = LocalDateTime.now();
 
-        LocalDateTime expireTime = currentTime.plus(1000, ChronoUnit.MINUTES);
+        LocalDateTime expireTime = currentTime.plus(refreshTokenValidityInMilliseconds, ChronoUnit.MILLIS);
 
         return refreshTokenRepository.save(
                 RefreshToken.builder()
@@ -57,6 +63,7 @@ public class RedisServiceImpl implements RedisService{
 
     @Override
     public RefreshToken reGenerateRefreshToken(MemberRequestDto.ReissueDTO request) {
+        logger.info("전달받은 리프레쉬 토큰 : " + request.getRefreshToken());
         if (request.getRefreshToken() == null)
             throw new MemberException(ResponseStatus.INVALID_TOKEN_EXCEPTION);
         RefreshToken findRefreshToken =
@@ -67,8 +74,7 @@ public class RedisServiceImpl implements RedisService{
         LocalDateTime expireTime = findRefreshToken.getExpireTime();
         LocalDateTime current = LocalDateTime.now();
 
-        // 테스트용, 실제로는 현재 시간 + accessToken 만료 시간
-        LocalDateTime expireDeadLine = current.plusSeconds(20);
+        LocalDateTime expireDeadLine = current.plusSeconds(accessTokenValidityInMilliseconds);
 
         Member member =
                 memberRepository
@@ -85,7 +91,7 @@ public class RedisServiceImpl implements RedisService{
             logger.info("기존 리프레시 토큰 발급");
             return findRefreshToken;
         } else {
-            logger.info("accessToken보다 먼저 만료될 예정인 리프레시 토큰 발견");
+            logger.info("accessToken보다 먼저 만료될 예정인 refresh 토큰 발견");
             deleteRefreshToken(request.getRefreshToken());
             return generateRefreshToken(member.getSocialId(), member.getSocialType());
         }

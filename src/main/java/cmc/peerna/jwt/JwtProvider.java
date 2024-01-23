@@ -32,7 +32,7 @@ public class JwtProvider {
     private Key secretKey;
 
     // 만료시간 : 5Hour, 추후 수정
-    private final long accessTokenValidityInMilliseconds = 1000L * 60 * 60 * 5;
+    private final long accessTokenValidityInMilliseconds;
 
 
 //    private final CustomUserDetailsService userDetailsService;
@@ -43,8 +43,11 @@ public class JwtProvider {
     }
 
     public JwtProvider(
-            @Value("${jwt.secret.key}") String secret){
+            @Value("${jwt.secret.key}") String secret,
+            @Value("${jwt.access-token-validity-in-seconds}000") long accessTokenValidityInMilliseconds){
         this.secret = secret;
+        this.accessTokenValidityInMilliseconds = accessTokenValidityInMilliseconds;
+
     }
 
     public String createToken(Long memberId, Collection<? extends GrantedAuthority> authorities) {
