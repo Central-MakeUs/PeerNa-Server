@@ -39,7 +39,7 @@ public class MemberResponseDto {
         private Part part;
         private Job job;
 
-        private Long totalScore;
+        private Integer totalScore;
         private String oneLiner;
     }
 

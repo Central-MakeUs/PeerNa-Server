@@ -81,8 +81,20 @@ public class MemberServiceImpl implements MemberService {
         return memberRepository.findById(memberId).orElseThrow(() -> new MemberException(ResponseStatus.MEMBER_NOT_FOUND));
     }
 
-//    public Long updateTotalScore(Member member) {
-//        List<PeerGradeResult> peerGradeResultList = peerGradeResultRepository.findAllByTarget(member);
-//
-//    }
+    @Override
+    @Transactional
+    public void updateTotalScore(Member member) {
+        Integer totalScore = 0;
+        List<PeerGradeResult> peerGradeResultList = peerGradeResultRepository.findAllByTarget(member);
+        if (peerGradeResultList.size() < 3) {
+            return;
+        }
+        int scoreSum=0;
+        for (PeerGradeResult peerGradeResult : peerGradeResultList) {
+            scoreSum += peerGradeResult.getPeerGrade().getScore();
+        }
+        totalScore = scoreSum / peerGradeResultList.size();
+        if(totalScore>100) totalScore=100;
+        member.updateTotalScore(totalScore);
+    }
 }

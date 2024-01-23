@@ -13,4 +13,6 @@ public interface MemberService {
     void saveMemberBasicInfo(Member member, MemberRequestDto.basicInfoDTO request);
 
     Member findById(Long memberId);
+
+    void updateTotalScore(Member member);
 }

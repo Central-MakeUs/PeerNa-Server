@@ -98,6 +98,7 @@ public class TestController {
 //        Member writer = Member.builder()
 //                .id(0L).build();
         testService.savePeerTest(null, memberService.findById(targetId), requestDto);
+        memberService.updateTotalScore(memberService.findById(targetId));
         return ResponseDto.of(TestResponseDto.peerTestIdResponseDto.builder()
                 .peerTestId(targetId).build());
     }

@@ -11,6 +11,7 @@ public enum PeerGrade {
     GOOD(70),
     AVERAGE(56),
     BELOW_AVERAGE(42),
-    POOR(28);
+    POOR(28),
+    WORST(14);
     private final int score;
 }

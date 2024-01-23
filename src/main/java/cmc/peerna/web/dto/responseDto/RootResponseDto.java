@@ -27,7 +27,7 @@ public class RootResponseDto {
         private List<TestResponseDto.totalEvaluation> top3Evaluation;
 
         // 종합점수
-        private int totalScore;
+        private Integer totalScore;
 
         // 유저 피드백 최신 3개
         List<String> peerFeedbackList;
