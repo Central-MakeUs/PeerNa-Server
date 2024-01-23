@@ -15,6 +15,7 @@ import cmc.peerna.service.RootService;
 import cmc.peerna.web.dto.requestDto.MemberRequestDto;
 import cmc.peerna.web.dto.responseDto.MemberResponseDto;
 import cmc.peerna.web.dto.responseDto.RootResponseDto;
+import cmc.peerna.web.dto.responseDto.TestResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
@@ -129,6 +130,21 @@ public class MemberController {
     public ResponseDto<RootResponseDto.MypageDto> getMyPage(@AuthMember Member member) {
         RootResponseDto.MypageDto myPageDto = rootService.getMyPageDto(member);
         return ResponseDto.of(myPageDto);
+    }
+
+    @Operation(summary = "종합 평가 더보기 API 🔑", description = "종합 평가 더보기 API입니다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "2200", description = "BAD_REQUEST, 존재하지 않는 유저를 조회한 경우.")
+    })
+    @Parameters({
+            @Parameter(name = "member", hidden = true)
+    })
+    @GetMapping("/member/mypage/total-evaluation")
+    public ResponseDto<RootResponseDto.TotalEvaluationSeeMoreDto> seeMoreEvaluation(@AuthMember Member member) {
+        List<TestResponseDto.totalEvaluation> totalEvaluationList = rootService.getTotalEvaluationList(member);
+        return ResponseDto.of(RootResponseDto.TotalEvaluationSeeMoreDto.builder()
+                .totalEvaluationList(totalEvaluationList)
+                .build());
     }
 }
 

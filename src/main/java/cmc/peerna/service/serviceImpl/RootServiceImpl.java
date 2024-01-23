@@ -59,7 +59,7 @@ public class RootServiceImpl implements RootService {
     }
 
     @Override
-    public List<TestResponseDto.totalEvaluation> getTop3TotalEvaluation(Member member) {
+    public List<TestResponseDto.totalEvaluation> getTotalEvaluationList(Member member) {
         List<PeerGrade> gradeList = Arrays.asList(PeerGrade.values());
         List<TestResponseDto.totalEvaluation> totalEvaluationList = new ArrayList<>();
         for (PeerGrade peerGrade : gradeList) {
@@ -71,6 +71,12 @@ public class RootServiceImpl implements RootService {
             );
         }
         totalEvaluationList.sort(Comparator.comparing(TestResponseDto.totalEvaluation::getCount).reversed());
+        return totalEvaluationList;
+    }
+
+    @Override
+    public List<TestResponseDto.totalEvaluation> getTop3TotalEvaluation(Member member) {
+        List<TestResponseDto.totalEvaluation> totalEvaluationList = getTotalEvaluationList(member);
         return totalEvaluationList.subList(0, 3);
     }
 
@@ -112,6 +118,7 @@ public class RootServiceImpl implements RootService {
                 .selfTestAnswerIdList(selfTestAnswerIdList)
                 .colorAnswerIdList(colorAnswerIdList)
                 .build();
-
     }
+
+
 }

@@ -35,4 +35,12 @@ public class RootResponseDto {
         private List<Long> selfTestAnswerIdList;
         private List<Long> colorAnswerIdList;
     }
+
+    @Builder
+    @Getter
+    @AllArgsConstructor(access = AccessLevel.PROTECTED)
+    @NoArgsConstructor(access = AccessLevel.PROTECTED)
+    public static class TotalEvaluationSeeMoreDto{
+        private List<TestResponseDto.totalEvaluation> totalEvaluationList;
+    }
 }
