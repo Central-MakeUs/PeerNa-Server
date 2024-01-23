@@ -1,12 +1,17 @@
 package cmc.peerna.converter;
 
 import cmc.peerna.domain.Member;
+import cmc.peerna.domain.PeerFeedback;
 import cmc.peerna.domain.enums.SocialType;
 import cmc.peerna.service.MemberService;
 import cmc.peerna.web.dto.responseDto.MemberResponseDto;
+import cmc.peerna.web.dto.responseDto.RootResponseDto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 public class MemberConverter {
@@ -38,6 +43,21 @@ public class MemberConverter {
                 .job(member.getJob())
                 .totalScore(member.getTotalScore())
                 .oneLiner(member.getOneliner())
+                .build();
+    }
+
+    public static RootResponseDto.AllFeedbackDto toFeedbackString(Page<PeerFeedback> feedbackList, Member member) {
+        List<String> feedbackContentList = feedbackList.stream()
+                .map(feedback -> feedback.getContents())
+                .collect(Collectors.toList());
+
+        return RootResponseDto.AllFeedbackDto.builder()
+                .feedbackList(feedbackContentList)
+                .isFirst(feedbackList.isFirst())
+                .isLast(feedbackList.isLast())
+                .totalPage(feedbackList.getTotalPages())
+                .totalElements(feedbackList.getTotalElements())
+                .currentPageElements(feedbackList.getNumberOfElements())
                 .build();
     }
 }

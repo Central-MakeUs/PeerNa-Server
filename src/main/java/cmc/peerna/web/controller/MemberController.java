@@ -1,8 +1,11 @@
 package cmc.peerna.web.controller;
 
+import cmc.peerna.apiResponse.code.ResponseStatus;
+import cmc.peerna.apiResponse.exception.handler.MemberException;
 import cmc.peerna.apiResponse.response.ResponseDto;
 import cmc.peerna.converter.MemberConverter;
 import cmc.peerna.domain.Member;
+import cmc.peerna.domain.PeerFeedback;
 import cmc.peerna.domain.enums.UserRole;
 import cmc.peerna.feign.dto.KakaoTokenInfoResponseDto;
 import cmc.peerna.feign.service.AccountService;
@@ -12,6 +15,7 @@ import cmc.peerna.jwt.handler.annotation.AuthMember;
 import cmc.peerna.redis.service.RedisService;
 import cmc.peerna.service.MemberService;
 import cmc.peerna.service.RootService;
+import cmc.peerna.validation.annotation.CheckPage;
 import cmc.peerna.web.dto.requestDto.MemberRequestDto;
 import cmc.peerna.web.dto.responseDto.MemberResponseDto;
 import cmc.peerna.web.dto.responseDto.RootResponseDto;
@@ -19,6 +23,8 @@ import cmc.peerna.web.dto.responseDto.TestResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -26,6 +32,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -146,5 +153,26 @@ public class MemberController {
                 .totalEvaluationList(totalEvaluationList)
                 .build());
     }
+
+    @Operation(summary = "피드백 더보기 API 🔑", description = "피드백 더보기 API입니다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "2200", description = "BAD_REQUEST, 존재하지 않는 유저를 조회한 경우."),
+            @ApiResponse(responseCode = "4012", description = "BAD_REQUEST , 페이지 번호는 1 이상이여야 합니다.", content = @Content(schema = @Schema(implementation = ResponseDto.class))),
+            @ApiResponse(responseCode = "4013", description = "BAD_REQUEST , 페이지 번호가 페이징 범위를 초과했습니다.", content = @Content(schema = @Schema(implementation = ResponseDto.class))),
+    })
+    @Parameters({
+            @Parameter(name = "member", hidden = true)
+    })
+    @GetMapping("member/mypage/feedback")
+    public ResponseDto<RootResponseDto.AllFeedbackDto> seeMoreFeedback(@CheckPage @RequestParam(name = "page") Integer page, @AuthMember Member member) {
+        if (page == null)
+            page = 1;
+        else if (page < 1)
+            throw new MemberException(ResponseStatus.UNDER_PAGE_INDEX_ERROR);
+        page -= 1;
+        RootResponseDto.AllFeedbackDto feedbackList = rootService.getFeedbackList(member, page);
+        return ResponseDto.of(feedbackList);
+    }
+
 }
 

@@ -1,5 +1,7 @@
 package cmc.peerna.service.serviceImpl;
 
+import cmc.peerna.apiResponse.code.ResponseStatus;
+import cmc.peerna.apiResponse.exception.handler.MemberException;
 import cmc.peerna.converter.MemberConverter;
 import cmc.peerna.converter.TestConverter;
 import cmc.peerna.domain.*;
@@ -14,6 +16,10 @@ import cmc.peerna.web.dto.responseDto.RootResponseDto;
 import cmc.peerna.web.dto.responseDto.TestResponseDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -31,7 +37,8 @@ public class RootServiceImpl implements RootService {
     private final PeerGradeResultRepository peerGradeResultRepository;
     private final PeerTestRepository peerTestRepository;
     private final TestResultCalculator testResultCalculator;
-
+    @Value("${paging.size}")
+    private Integer pageSize;
     @Override
     public List<Long> getcolorAnswerIdList(Member member, List<Long> selfTestAnswerIdList) {
         List<Long> peerTestAnswerIdList = new ArrayList<>();
@@ -120,5 +127,13 @@ public class RootServiceImpl implements RootService {
                 .build();
     }
 
+    @Override
+    public RootResponseDto.AllFeedbackDto getFeedbackList(Member member, Integer page) {
+        Page<PeerFeedback> peerFeedbacks = peerFeedbackRepository.findAllByTarget(member, PageRequest.of(page, pageSize, Sort.by(Sort.Direction.DESC, "createdAt")));
+        if(peerFeedbacks.getTotalPages() <= page)
+            throw new MemberException(ResponseStatus.OVER_PAGE_INDEX_ERROR);
+        RootResponseDto.AllFeedbackDto allFeedbackDto = MemberConverter.toFeedbackString(peerFeedbacks, member);
+        return allFeedbackDto;
+    }
 
 }
