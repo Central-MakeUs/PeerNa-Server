@@ -11,6 +11,8 @@ public interface RootService {
     List<TestResponseDto.totalEvaluation> getTop3TotalEvaluation(Member member);
     RootResponseDto.MypageDto getMyPageDto(Member member);
 
+    List<TestResponseDto.totalEvaluation> getTotalEvaluationList(Member member);
 
+    RootResponseDto.AllFeedbackDto getFeedbackList(Member member, Integer page);
 }
 

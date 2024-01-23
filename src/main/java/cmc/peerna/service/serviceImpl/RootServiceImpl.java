@@ -1,5 +1,7 @@
 package cmc.peerna.service.serviceImpl;
 
+import cmc.peerna.apiResponse.code.ResponseStatus;
+import cmc.peerna.apiResponse.exception.handler.MemberException;
 import cmc.peerna.converter.MemberConverter;
 import cmc.peerna.converter.TestConverter;
 import cmc.peerna.domain.*;
@@ -14,6 +16,10 @@ import cmc.peerna.web.dto.responseDto.RootResponseDto;
 import cmc.peerna.web.dto.responseDto.TestResponseDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -31,7 +37,8 @@ public class RootServiceImpl implements RootService {
     private final PeerGradeResultRepository peerGradeResultRepository;
     private final PeerTestRepository peerTestRepository;
     private final TestResultCalculator testResultCalculator;
-
+    @Value("${paging.size}")
+    private Integer pageSize;
     @Override
     public List<Long> getcolorAnswerIdList(Member member, List<Long> selfTestAnswerIdList) {
         List<Long> peerTestAnswerIdList = new ArrayList<>();
@@ -59,7 +66,7 @@ public class RootServiceImpl implements RootService {
     }
 
     @Override
-    public List<TestResponseDto.totalEvaluation> getTop3TotalEvaluation(Member member) {
+    public List<TestResponseDto.totalEvaluation> getTotalEvaluationList(Member member) {
         List<PeerGrade> gradeList = Arrays.asList(PeerGrade.values());
         List<TestResponseDto.totalEvaluation> totalEvaluationList = new ArrayList<>();
         for (PeerGrade peerGrade : gradeList) {
@@ -71,6 +78,12 @@ public class RootServiceImpl implements RootService {
             );
         }
         totalEvaluationList.sort(Comparator.comparing(TestResponseDto.totalEvaluation::getCount).reversed());
+        return totalEvaluationList;
+    }
+
+    @Override
+    public List<TestResponseDto.totalEvaluation> getTop3TotalEvaluation(Member member) {
+        List<TestResponseDto.totalEvaluation> totalEvaluationList = getTotalEvaluationList(member);
         return totalEvaluationList.subList(0, 3);
     }
 
@@ -112,6 +125,15 @@ public class RootServiceImpl implements RootService {
                 .selfTestAnswerIdList(selfTestAnswerIdList)
                 .colorAnswerIdList(colorAnswerIdList)
                 .build();
-
     }
+
+    @Override
+    public RootResponseDto.AllFeedbackDto getFeedbackList(Member member, Integer page) {
+        Page<PeerFeedback> peerFeedbacks = peerFeedbackRepository.findAllByTarget(member, PageRequest.of(page, pageSize, Sort.by(Sort.Direction.DESC, "createdAt")));
+        if(peerFeedbacks.getTotalPages() <= page)
+            throw new MemberException(ResponseStatus.OVER_PAGE_INDEX_ERROR);
+        RootResponseDto.AllFeedbackDto allFeedbackDto = MemberConverter.toFeedbackString(peerFeedbacks, member);
+        return allFeedbackDto;
+    }
+
 }

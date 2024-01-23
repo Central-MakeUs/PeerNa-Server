@@ -36,6 +36,9 @@ public enum ResponseStatus implements BaseCode {
     EXPIRED_JWT_EXCEPTION(UNAUTHORIZED, 4010, "기존 토큰이 만료되었습니다. 토큰을 재발급해주세요."),
     RE_LOGIN_EXCEPTION(UNAUTHORIZED, 4011, "모든 토큰이 만료되었습니다. 다시 로그인해주세요."),
 
+    UNDER_PAGE_INDEX_ERROR(HttpStatus.BAD_REQUEST, 4012, "페이지 번호는 1 이상이여야 합니다."),
+    //BAD_REQUEST
+    OVER_PAGE_INDEX_ERROR(HttpStatus.BAD_REQUEST, 4013, "페이지 번호가 페이징 범위를 초과했습니다."),
 
     WRONG_POST_TEST(BAD_REQUEST, 4101, "잘못된 POST 테스트 요청입니다."),
 
