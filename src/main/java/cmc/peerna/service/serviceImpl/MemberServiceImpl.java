@@ -99,7 +99,7 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public Member findMemberByUuid(String uuid) {
-        Member member = memberRepository.findByUuid(uuid).orElseThrow(() -> new MemberException(ResponseStatus.MEMBER_NOT_FOUND));
+        Member member = memberRepository.findByUuid(uuid).orElseThrow(() -> new MemberException(ResponseStatus.UUID_NOT_FOUND));
         return member;
     }
 

@@ -182,5 +182,18 @@ public class MemberController {
     public ResponseDto<MemberRequestDto.profileUpdateDto> updateMemberProfile(@AuthMember Member member, @RequestBody MemberRequestDto.profileUpdateDto request) {
         return ResponseDto.of(memberService.updateMemberProfile(member, request));
     }
+
+    @Operation(summary = "UUID로 유저 이름 조회 API ✔️🔑", description = "UUID로 유저 이름 조회 API입니다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "2250", description = "BAD_REQUEST, 잘못된 UUID 값입니다."),
+    })
+    @Parameters({
+            @Parameter(name = "member", hidden = true)
+    })
+    @GetMapping("member/name")
+    public ResponseDto<MemberResponseDto.memberNameResponseDto> getUserNameByUuid(@RequestParam(name = "uuid") String uuid) {
+        Member memberByUuid = memberService.findMemberByUuid(uuid);
+        return ResponseDto.of(MemberResponseDto.memberNameResponseDto.builder().name(memberByUuid.getName()).build());
+    }
 }
 
