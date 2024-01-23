@@ -16,4 +16,5 @@ public interface MemberService {
     void updateTotalScore(Member member);
 
     Member findMemberByUuid(String uuid);
+    MemberRequestDto.profileUpdateDto updateMemberProfile(Member member, MemberRequestDto.profileUpdateDto request);
 }

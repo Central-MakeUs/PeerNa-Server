@@ -171,5 +171,16 @@ public class MemberController {
         return ResponseDto.of(feedbackList);
     }
 
+
+    @Operation(summary = "유저 프로필 편집 API ✔️🔑", description = "유저 프로필 편집 API입니다.")
+    @ApiResponses({
+    })
+    @Parameters({
+            @Parameter(name = "member", hidden = true)
+    })
+    @PatchMapping("member/mypage/profile")
+    public ResponseDto<MemberRequestDto.profileUpdateDto> updateMemberProfile(@AuthMember Member member, @RequestBody MemberRequestDto.profileUpdateDto request) {
+        return ResponseDto.of(memberService.updateMemberProfile(member, request));
+    }
 }
 

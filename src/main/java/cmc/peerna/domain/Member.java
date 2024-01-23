@@ -72,4 +72,10 @@ public class Member extends BaseEntity {
     }
 
     public void updateTotalScore(Integer totalScore){ this.totalScore=totalScore;}
+
+    public void updateProfile(MemberRequestDto.profileUpdateDto request) {
+        this.job = request.getJob();
+        this.part = request.getPart();
+        this.oneliner = request.getOneLiner();
+    }
 }

@@ -102,4 +102,11 @@ public class MemberServiceImpl implements MemberService {
         Member member = memberRepository.findByUuid(uuid).orElseThrow(() -> new MemberException(ResponseStatus.MEMBER_NOT_FOUND));
         return member;
     }
+
+    @Override
+    @Transactional
+    public MemberRequestDto.profileUpdateDto updateMemberProfile(Member member, MemberRequestDto.profileUpdateDto request) {
+        member.updateProfile(request);
+        return MemberConverter.toProfileUpdateDto(member);
+    }
 }
