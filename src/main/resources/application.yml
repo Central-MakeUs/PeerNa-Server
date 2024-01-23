@@ -59,6 +59,8 @@ debug: true
 jwt:
   secret:
     key: testsecrettestsecrettestsecrettestsecrettestsecrettestsecrettestsecrettestsecrettestsecret
+  access-token-validity-in-seconds: 1800 # 30 m
+  refresh-token-validity-in-seconds: 1210000000 # 14 d
 
 web:
   redirect-url: http://localhost:5173/login/kakao
