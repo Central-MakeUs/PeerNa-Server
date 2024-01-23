@@ -63,3 +63,6 @@ jwt:
 web:
   redirect-url: http://localhost:5173/login/kakao
 #  redirect-url: https://localhost:8080
+
+paging:
+  size : 10
