@@ -5,7 +5,6 @@ import cmc.peerna.apiResponse.exception.handler.MemberException;
 import cmc.peerna.apiResponse.response.ResponseDto;
 import cmc.peerna.converter.MemberConverter;
 import cmc.peerna.domain.Member;
-import cmc.peerna.domain.PeerFeedback;
 import cmc.peerna.domain.enums.UserRole;
 import cmc.peerna.feign.dto.KakaoTokenInfoResponseDto;
 import cmc.peerna.feign.service.AccountService;
@@ -32,7 +31,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.Page;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -126,7 +124,7 @@ public class MemberController {
         return ResponseDto.of(MemberConverter.toMemberStatusDto(member.getId(), "SaveMemberBasicInfo"));
     }
 
-    @Operation(summary = "마이페이지 조회 API 🔑", description = "마이페이지 조회 API입니다.")
+    @Operation(summary = "마이페이지 조회 API ✔️🔑", description = "마이페이지 조회 API입니다.")
     @ApiResponses({
             @ApiResponse(responseCode = "2200", description = "BAD_REQUEST, 존재하지 않는 유저를 조회한 경우.")
     })
@@ -139,7 +137,7 @@ public class MemberController {
         return ResponseDto.of(myPageDto);
     }
 
-    @Operation(summary = "종합 평가 더보기 API 🔑", description = "종합 평가 더보기 API입니다.")
+    @Operation(summary = "종합 평가 더보기 API ✔️🔑", description = "종합 평가 더보기 API입니다.")
     @ApiResponses({
             @ApiResponse(responseCode = "2200", description = "BAD_REQUEST, 존재하지 않는 유저를 조회한 경우.")
     })
@@ -154,7 +152,7 @@ public class MemberController {
                 .build());
     }
 
-    @Operation(summary = "피드백 더보기 API 🔑", description = "피드백 더보기 API입니다.")
+    @Operation(summary = "피드백 더보기 API ✔️🔑", description = "피드백 더보기 API입니다.")
     @ApiResponses({
             @ApiResponse(responseCode = "2200", description = "BAD_REQUEST, 존재하지 않는 유저를 조회한 경우."),
             @ApiResponse(responseCode = "4012", description = "BAD_REQUEST , 페이지 번호는 1 이상이여야 합니다.", content = @Content(schema = @Schema(implementation = ResponseDto.class))),

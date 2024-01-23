@@ -20,7 +20,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.UUID;
 
 @RestController
 @Slf4j
@@ -95,8 +94,6 @@ public class TestController {
     })
     @PostMapping("/review/peer-test/{target-id}") // /UUID 붙여서 target 식별 로직  추가하기 , 임시로 requestParam으로.
     public ResponseDto<TestResponseDto.peerTestIdResponseDto> savePeerTest(@RequestParam(name = "target-id")Long targetId,  @RequestBody TestRequestDto.peerTestRequestDto requestDto) {
-//        Member writer = Member.builder()
-//                .id(0L).build();
         testService.savePeerTest(null, memberService.findById(targetId), requestDto);
         memberService.updateTotalScore(memberService.findById(targetId));
         return ResponseDto.of(TestResponseDto.peerTestIdResponseDto.builder()
