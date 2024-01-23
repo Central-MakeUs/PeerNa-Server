@@ -1,11 +1,9 @@
 package cmc.peerna.web.dto.responseDto;
 
-import cmc.peerna.domain.PeerFeedback;
 import cmc.peerna.domain.enums.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 public class MemberResponseDto {
 
@@ -13,7 +11,7 @@ public class MemberResponseDto {
     @Getter
     @AllArgsConstructor(access = AccessLevel.PROTECTED)
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
-    public static class MemberBaseDto{
+    public static class MemberGetTestDto {
         private Long id;
         private String name;
         private String oneLiner;
@@ -43,5 +41,16 @@ public class MemberResponseDto {
         private String oneLiner;
     }
 
+    @Builder
+    @Getter
+    @AllArgsConstructor(access = AccessLevel.PROTECTED)
+    @NoArgsConstructor(access = AccessLevel.PROTECTED)
+    public static class memberBasicInfoDto{
+        private String name;
+        private Job job;
+        private Part part;
+        private String oneLiner;
+        private String uuid;
+    }
 
 }

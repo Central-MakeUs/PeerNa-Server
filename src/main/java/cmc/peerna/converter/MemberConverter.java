@@ -4,6 +4,7 @@ import cmc.peerna.domain.Member;
 import cmc.peerna.domain.PeerFeedback;
 import cmc.peerna.domain.enums.SocialType;
 import cmc.peerna.service.MemberService;
+import cmc.peerna.web.dto.requestDto.MemberRequestDto;
 import cmc.peerna.web.dto.responseDto.MemberResponseDto;
 import cmc.peerna.web.dto.responseDto.RootResponseDto;
 import lombok.RequiredArgsConstructor;
@@ -60,4 +61,23 @@ public class MemberConverter {
                 .currentPageElements(feedbackList.getNumberOfElements())
                 .build();
     }
+
+    public static MemberResponseDto.memberBasicInfoDto toMemberBasicInfoDto(Member member) {
+        return MemberResponseDto.memberBasicInfoDto.builder()
+                .name(member.getName())
+                .job(member.getJob())
+                .part(member.getPart())
+                .uuid(member.getUuid())
+                .oneLiner(member.getOneliner())
+                .build();
+    }
+
+    public static MemberRequestDto.profileUpdateDto toProfileUpdateDto(Member member) {
+        return MemberRequestDto.profileUpdateDto.builder()
+                .job(member.getJob())
+                .part(member.getPart())
+                .oneLiner(member.getOneliner())
+                .build();
+    }
+
 }

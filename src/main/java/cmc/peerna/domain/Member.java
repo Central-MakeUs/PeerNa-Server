@@ -9,6 +9,7 @@ import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 
 import java.util.List;
+import java.util.UUID;
 
 @Entity
 @Getter
@@ -41,6 +42,7 @@ public class Member extends BaseEntity {
     private Integer totalScore;
 
     private String socialId;
+    private String uuid;
 
     @Enumerated(EnumType.STRING)
     private SocialType socialType;
@@ -61,6 +63,8 @@ public class Member extends BaseEntity {
         this.part = request.getPart();
         this.selfPeerGrade = request.getSelfPeerGrade();
         this.oneliner = request.getOneLiner();
+        if(this.uuid == null)
+            this.uuid = UUID.randomUUID().toString();
     }
 
     public void setTestType(TestType selfTestType) {
@@ -68,4 +72,10 @@ public class Member extends BaseEntity {
     }
 
     public void updateTotalScore(Integer totalScore){ this.totalScore=totalScore;}
+
+    public void updateProfile(MemberRequestDto.profileUpdateDto request) {
+        this.job = request.getJob();
+        this.part = request.getPart();
+        this.oneliner = request.getOneLiner();
+    }
 }

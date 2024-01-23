@@ -7,7 +7,6 @@ import cmc.peerna.domain.Member;
 import cmc.peerna.domain.PeerGradeResult;
 import cmc.peerna.domain.enums.SocialType;
 import cmc.peerna.jwt.JwtProvider;
-import cmc.peerna.jwt.LoginResponseDto;
 import cmc.peerna.repository.MemberRepository;
 import cmc.peerna.repository.PeerGradeResultRepository;
 import cmc.peerna.service.MemberService;
@@ -15,7 +14,6 @@ import cmc.peerna.web.dto.requestDto.MemberRequestDto;
 import cmc.peerna.web.dto.responseDto.MemberResponseDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,9 +32,9 @@ public class MemberServiceImpl implements MemberService {
 
 
     @Override
-    public MemberResponseDto.MemberBaseDto findMember(Long memberId) {
+    public MemberResponseDto.MemberGetTestDto findMember(Long memberId) {
         Member member = memberRepository.findById(memberId).orElseThrow(() -> new MemberException(ResponseStatus.MEMBER_NOT_FOUND));
-        return MemberResponseDto.MemberBaseDto.builder()
+        return MemberResponseDto.MemberGetTestDto.builder()
                 .id(member.getId())
                 .oneLiner(member.getOneliner())
                 .name(member.getName())
@@ -71,8 +69,9 @@ public class MemberServiceImpl implements MemberService {
 
     @Transactional
     @Override
-    public void saveMemberBasicInfo(Member member, MemberRequestDto.basicInfoDTO request) {
+    public MemberResponseDto.memberBasicInfoDto saveMemberBasicInfo(Member member, MemberRequestDto.basicInfoDTO request) {
         member.setBasicInfo(request);
+        return MemberConverter.toMemberBasicInfoDto(member);
 
     }
 
@@ -96,5 +95,18 @@ public class MemberServiceImpl implements MemberService {
         totalScore = scoreSum / peerGradeResultList.size();
         if(totalScore>100) totalScore=100;
         member.updateTotalScore(totalScore);
+    }
+
+    @Override
+    public Member findMemberByUuid(String uuid) {
+        Member member = memberRepository.findByUuid(uuid).orElseThrow(() -> new MemberException(ResponseStatus.MEMBER_NOT_FOUND));
+        return member;
+    }
+
+    @Override
+    @Transactional
+    public MemberRequestDto.profileUpdateDto updateMemberProfile(Member member, MemberRequestDto.profileUpdateDto request) {
+        member.updateProfile(request);
+        return MemberConverter.toProfileUpdateDto(member);
     }
 }

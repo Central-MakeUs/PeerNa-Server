@@ -92,14 +92,14 @@ public class TestController {
             @ApiResponse(responseCode = "4200", description = "BAD_REQUEST, 잘못된 답변 ID 값을 전달했습니다."),
             @ApiResponse(responseCode = "4201", description = "BAD_REQUEST, 답변 개수가 정확하게 18개가 아닙니다.")
     })
-    @PostMapping("/review/peer-test/{target-id}") // /UUID 붙여서 target 식별 로직  추가하기 , 임시로 requestParam으로.
-    public ResponseDto<TestResponseDto.peerTestIdResponseDto> savePeerTest(@RequestParam(name = "target-id")Long targetId,  @RequestBody TestRequestDto.peerTestRequestDto requestDto) {
-        testService.savePeerTest(null, memberService.findById(targetId), requestDto);
-        memberService.updateTotalScore(memberService.findById(targetId));
+    @PostMapping("/review/peer-test/{target-uuid}")
+    public ResponseDto<TestResponseDto.peerTestIdResponseDto> savePeerTest(@RequestParam(name = "target-uuid") String targetUuid,  @RequestBody TestRequestDto.peerTestRequestDto requestDto) {
+        Member target = memberService.findMemberByUuid(targetUuid);
+        testService.savePeerTest(null, target, requestDto);
+        memberService.updateTotalScore(target);
         return ResponseDto.of(TestResponseDto.peerTestIdResponseDto.builder()
-                .peerTestId(targetId).build());
+                .peerTestId(target.getId()).build());
     }
-
 
     @Operation(summary = "비회원 유저 회원가입 후 id값 갱신용 API ✔️🔑", description = "비회원 유저 회원가입 후 id값 갱신용 API입니다.")
     @ApiResponses({

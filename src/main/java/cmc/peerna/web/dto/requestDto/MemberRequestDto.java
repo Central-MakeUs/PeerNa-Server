@@ -4,7 +4,7 @@ import cmc.peerna.domain.enums.Job;
 import cmc.peerna.domain.enums.Part;
 import cmc.peerna.domain.enums.PeerGrade;
 import jakarta.validation.constraints.NotBlank;
-import lombok.Getter;
+import lombok.*;
 
 import java.util.List;
 
@@ -32,5 +32,15 @@ public class MemberRequestDto {
     @Getter
     public static class selfTestDto{
         List<Long> answerIdList;
+    }
+
+    @Builder
+    @Getter
+    @AllArgsConstructor(access = AccessLevel.PROTECTED)
+    @NoArgsConstructor(access = AccessLevel.PROTECTED)
+    public static class profileUpdateDto{
+        private Job job;
+        private Part part;
+        private String oneLiner;
     }
 }
