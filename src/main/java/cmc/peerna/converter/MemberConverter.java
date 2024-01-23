@@ -60,4 +60,15 @@ public class MemberConverter {
                 .currentPageElements(feedbackList.getNumberOfElements())
                 .build();
     }
+
+    public static MemberResponseDto.memberBasicInfoDto toMemberBasicInfoDto(Member member) {
+        return MemberResponseDto.memberBasicInfoDto.builder()
+                .name(member.getName())
+                .job(member.getJob())
+                .part(member.getPart())
+                .uuid(member.getUuid())
+                .oneLiner(member.getOneliner())
+                .build();
+    }
+
 }

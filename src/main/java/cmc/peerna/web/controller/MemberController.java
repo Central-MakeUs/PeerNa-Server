@@ -119,9 +119,8 @@ public class MemberController {
             @Parameter(name = "member", hidden = true)
     })
     @PostMapping("/member/basic-info")
-    public ResponseDto<MemberResponseDto.MemberStatusDto> saveMemberInfo(@AuthMember Member member, @RequestBody MemberRequestDto.basicInfoDTO request) {
-        memberService.saveMemberBasicInfo(member, request);
-        return ResponseDto.of(MemberConverter.toMemberStatusDto(member.getId(), "SaveMemberBasicInfo"));
+    public ResponseDto<MemberResponseDto.memberBasicInfoDto> saveMemberInfo(@AuthMember Member member, @RequestBody MemberRequestDto.basicInfoDTO request) {
+        return ResponseDto.of(memberService.saveMemberBasicInfo(member, request));
     }
 
     @Operation(summary = "마이페이지 조회 API ✔️🔑", description = "마이페이지 조회 API입니다.")

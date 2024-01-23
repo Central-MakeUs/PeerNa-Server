@@ -47,8 +47,8 @@ public class RootController {
     @ApiResponses({
             @ApiResponse(responseCode = "2200",description = "BAD_REQUEST, 존재하지 않는 유저입니다.")
     })
-    public ResponseDto<MemberResponseDto.MemberBaseDto> searchMember(@PathVariable(name = "member-id") Long memberId) {
-        MemberResponseDto.MemberBaseDto memberDto = memberService.findMember(memberId);
+    public ResponseDto<MemberResponseDto.MemberGetTestDto> searchMember(@PathVariable(name = "member-id") Long memberId) {
+        MemberResponseDto.MemberGetTestDto memberDto = memberService.findMember(memberId);
         return ResponseDto.of(memberDto);
     }
 }
