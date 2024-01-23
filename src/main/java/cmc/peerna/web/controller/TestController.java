@@ -92,7 +92,7 @@ public class TestController {
             @ApiResponse(responseCode = "4200", description = "BAD_REQUEST, 잘못된 답변 ID 값을 전달했습니다."),
             @ApiResponse(responseCode = "4201", description = "BAD_REQUEST, 답변 개수가 정확하게 18개가 아닙니다.")
     })
-    @PostMapping("/review/peer-test/{target-uuid}")
+    @PostMapping("/review/peer-test")
     public ResponseDto<TestResponseDto.peerTestIdResponseDto> savePeerTest(@RequestParam(name = "target-uuid") String targetUuid,  @RequestBody TestRequestDto.peerTestRequestDto requestDto) {
         Member target = memberService.findMemberByUuid(targetUuid);
         testService.savePeerTest(null, target, requestDto);
@@ -106,8 +106,8 @@ public class TestController {
             @ApiResponse(responseCode = "2200", description = "BAD_REQUEST, 존재하지 않는 유저입니다.")
     })
     @PostMapping("/review/update-member-id")
-    public ResponseDto<MemberResponseDto.MemberStatusDto> updateMemberId(@AuthMember Member member, @RequestBody String uuid) {
-        testService.updatePeerTestMemberId(member, uuid);
+    public ResponseDto<MemberResponseDto.MemberStatusDto> updateMemberId(@AuthMember Member member, @RequestBody MemberRequestDto.uuidRequestDto uuid) {
+        testService.updatePeerTestMemberId(member, uuid.getUuid());
         return ResponseDto.of(MemberConverter.toMemberStatusDto(member.getId(), "UpdatePeerTestWriterId"));
     }
 

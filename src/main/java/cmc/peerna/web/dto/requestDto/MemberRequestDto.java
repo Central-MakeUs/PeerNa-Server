@@ -43,4 +43,12 @@ public class MemberRequestDto {
         private Part part;
         private String oneLiner;
     }
+
+    @Builder
+    @Getter
+    @AllArgsConstructor(access = AccessLevel.PROTECTED)
+    @NoArgsConstructor(access = AccessLevel.PROTECTED)
+    public static class uuidRequestDto{
+        private String uuid;
+    }
 }

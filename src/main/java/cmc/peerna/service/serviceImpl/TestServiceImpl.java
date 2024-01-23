@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -163,7 +164,8 @@ public class TestServiceImpl implements TestService {
     @Transactional
     public void updatePeerTestMemberId(Member member, String uuid) {
 
-        PeerFeedback peerFeedback = peerFeedbackRepository.findByNonMemberUuid(uuid);
+        PeerFeedback peerFeedback = peerFeedbackRepository.findByNonMemberUuid(uuid).orElseThrow(() -> new TestException(ResponseStatus.UUID_NOT_FOUND));
+
         peerFeedback.updateWriter(member);
 
         PeerGradeResult peerGradeResult = peerGradeResultRepository.findByNonMemberUuid(uuid);
