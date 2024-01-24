@@ -4,6 +4,7 @@ import cmc.peerna.apiResponse.code.ResponseStatus;
 import cmc.peerna.apiResponse.exception.handler.MemberException;
 import cmc.peerna.apiResponse.response.ResponseDto;
 import cmc.peerna.domain.Member;
+import cmc.peerna.domain.enums.SocialType;
 import cmc.peerna.domain.enums.UserRole;
 import cmc.peerna.feign.dto.KakaoTokenInfoResponseDto;
 import cmc.peerna.feign.service.AccountService;
@@ -12,6 +13,7 @@ import cmc.peerna.jwt.LoginResponseDto;
 import cmc.peerna.jwt.handler.annotation.AuthMember;
 import cmc.peerna.redis.domain.RefreshToken;
 import cmc.peerna.redis.service.RedisService;
+import cmc.peerna.service.AppleService;
 import cmc.peerna.service.MemberService;
 import cmc.peerna.service.RootService;
 import cmc.peerna.validation.annotation.CheckPage;
@@ -62,6 +64,7 @@ public class MemberController {
     private final RedisService redisService;
     private final RootService rootService;
     private final JwtProvider jwtProvider;
+    private final AppleService appleService;
 
     @Value("${web.redirect-url}")
     String webRedirectUrl;
@@ -83,7 +86,7 @@ public class MemberController {
     @GetMapping("/login/oauth2/kakao")
     public ResponseDto<LoginResponseDto> kakaoLogin(@RequestParam(value = "code") String code, HttpServletResponse response) throws IOException {
         KakaoTokenInfoResponseDto kakaoUserInfo = accountService.getKakaoUserInfo(code);
-        Member member = memberService.loginWithKakao(kakaoUserInfo.getId());
+        Member member = memberService.socialLogin(kakaoUserInfo.getId(), SocialType.KAKAO);
         String accessToken =
                 jwtProvider.createAccessToken(
                         member.getId(),
@@ -110,6 +113,37 @@ public class MemberController {
                 .refreshToken(refreshToken)
                 .build());
     }
+
+    @Operation(summary = "애플 소셜 로그인 ✔️", description = "애플 소셜 로그인 API 입니다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "4014", description = "Identity Token에서 유효한 값을 찾지 못했습니다."),
+            @ApiResponse(responseCode = "4015", description = "BAD_REQUEST, Identity Token의 형태가 잘못되었습니다.")
+    })
+    @PostMapping("/member/login/oauth2/apple")
+    public ResponseDto<LoginResponseDto> appleLogin(@RequestBody MemberRequestDto.AppleSocialDto request) throws IOException {
+        String identityToken = request.getIdentityToken();
+        String socialId = appleService.userIdFromApple(identityToken);
+        log.info("Apple 인증 서버로부터 받은 userId : " + socialId);
+        Member member = memberService.socialLogin(socialId, SocialType.APPLE);
+
+        String accessToken =
+                jwtProvider.createAccessToken(
+                        member.getId(),
+                        member.getSocialType().toString(),
+                        member.getSocialId(),
+                        List.of(new SimpleGrantedAuthority(UserRole.USER.name())));
+
+        String refreshToken =
+                redisService
+                        .generateRefreshToken(member.getSocialId(), member.getSocialType())
+                        .getToken();
+        return ResponseDto.of(LoginResponseDto.builder()
+                .memberId(member.getId())
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
+                .build());
+    }
+
 
     @Operation(summary = "유저 기본 정보 저장 API ✔️🔑", description = "유저의 기본 정보를 저장하는 API입니다.")
     @ApiResponses({
@@ -160,7 +194,7 @@ public class MemberController {
     @Parameters({
             @Parameter(name = "member", hidden = true)
     })
-    @GetMapping("member/mypage/feedback")
+    @GetMapping("/member/mypage/feedback")
     public ResponseDto<RootResponseDto.AllFeedbackDto> seeMoreFeedback(@CheckPage @RequestParam(name = "page") Integer page, @AuthMember Member member) {
         if (page == null)
             page = 1;
@@ -178,7 +212,7 @@ public class MemberController {
     @Parameters({
             @Parameter(name = "member", hidden = true)
     })
-    @PatchMapping("member/mypage/profile")
+    @PatchMapping("/member/mypage/profile")
     public ResponseDto<MemberRequestDto.profileUpdateDto> updateMemberProfile(@AuthMember Member member, @RequestBody MemberRequestDto.profileUpdateDto request) {
         return ResponseDto.of(memberService.updateMemberProfile(member, request));
     }
@@ -190,14 +224,14 @@ public class MemberController {
     @Parameters({
             @Parameter(name = "member", hidden = true)
     })
-    @GetMapping("member/name")
+    @GetMapping("/member/name")
     public ResponseDto<MemberResponseDto.memberNameResponseDto> getUserNameByUuid(@RequestParam(name = "uuid") String uuid) {
         Member memberByUuid = memberService.findMemberByUuid(uuid);
         return ResponseDto.of(MemberResponseDto.memberNameResponseDto.builder().name(memberByUuid.getName()).build());
     }
 
     @Operation(summary = "refresh token 통해 access token 재발급 API ✔️", description = "refresh token 통해 access token 재발급 API입니다.")
-    @PostMapping("member/new-token")
+    @PostMapping("/member/new-token")
     public ResponseDto<MemberResponseDto.newTokenDto> getNewAccessToken(@RequestBody MemberRequestDto.ReissueDTO request) {
         RefreshToken newRefreshToken = redisService.reGenerateRefreshToken(request);
         String accessToken = memberService.regenerateAccessToken(newRefreshToken);
@@ -207,6 +241,7 @@ public class MemberController {
                 .refreshToken(newRefreshToken.getToken())
                 .build());
     }
+
 
 
 }

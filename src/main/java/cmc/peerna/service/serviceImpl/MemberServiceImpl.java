@@ -45,29 +45,15 @@ public class MemberServiceImpl implements MemberService {
 
     }
 
-    @Override
     @Transactional
-    public Member loginWithKakao(String kakaoId) {
-        Optional<Member> oauthMember = memberRepository.findBySocialTypeAndSocialId(SocialType.KAKAO, kakaoId);
+    public Member socialLogin(String socialId, SocialType socialType) {
+        Optional<Member> oauthMember = memberRepository.findBySocialTypeAndSocialId(socialType, socialId);
 
         if (!oauthMember.isPresent()) {
-            Member savedMember = memberRepository.save(MemberConverter.toMember(kakaoId, SocialType.KAKAO));
+            Member savedMember = memberRepository.save(MemberConverter.toMember(socialId, socialType));
             return savedMember;
         } else return oauthMember.get();
 
-//        if (oauthMember.isPresent()) {
-//            String token = jwtProvider.createToken(oauthMember.get().getId(), List.of(new SimpleGrantedAuthority("USER")));
-//            return LoginResponseDto.builder()
-//                    .accessToken(token)
-//                    .build();
-//        } else{
-//            Member savedMember = memberRepository.save(MemberConverter.toMember(kakaoId, SocialType.KAKAO));
-//            String token = jwtProvider.createToken(savedMember.getId(), List.of(new SimpleGrantedAuthority("USER")));
-//            return LoginResponseDto.builder()
-//                    .accessToken(token)
-//                    .build();
-//
-//        }
     }
 
     @Transactional
