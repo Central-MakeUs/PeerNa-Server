@@ -243,6 +243,20 @@ public class MemberController {
     }
 
 
+    @Operation(summary = "유저 기본 정보 조회 API ✔️🔑", description = "UUID 포함 유저 기본 정보 조회 API입니다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "2200", description = "BAD_REQUEST, 존재하지 않는 유저를 조회한 경우.")
+    })
+    @Parameters({
+            @Parameter(name = "member", hidden = true)
+    })
+    @GetMapping("/member/me")
+    ResponseDto<MemberResponseDto.memberBasicInfoDto> getMemberBasicInfo(@AuthMember Member member) {
+        MemberResponseDto.memberBasicInfoDto memberBasicInfo = memberService.getMemberBasicInfo(member);
+        return ResponseDto.of(memberBasicInfo);
+    }
+
+
 
 }
 

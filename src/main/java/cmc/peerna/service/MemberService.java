@@ -13,6 +13,8 @@ public interface MemberService {
     Member socialLogin(String socialId, SocialType socialType);
     MemberResponseDto.memberBasicInfoDto saveMemberBasicInfo(Member member, MemberRequestDto.basicInfoDTO request);
 
+    MemberResponseDto.memberBasicInfoDto getMemberBasicInfo(Member member);
+
     Member findById(Long memberId);
 
     void updateTotalScore(Member member);
