@@ -65,6 +65,12 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
+    public MemberResponseDto.memberBasicInfoDto getMemberBasicInfo(Member member) {
+        return MemberConverter.toMemberBasicInfoDto(member);
+    }
+
+
+    @Override
     public Member findById(Long memberId) {
         return memberRepository.findById(memberId).orElseThrow(() -> new MemberException(ResponseStatus.MEMBER_NOT_FOUND));
     }
