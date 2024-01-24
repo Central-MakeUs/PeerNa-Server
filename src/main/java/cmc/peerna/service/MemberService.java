@@ -1,6 +1,7 @@
 package cmc.peerna.service;
 
 import cmc.peerna.domain.Member;
+import cmc.peerna.domain.enums.SocialType;
 import cmc.peerna.redis.domain.RefreshToken;
 import cmc.peerna.web.dto.requestDto.MemberRequestDto;
 import cmc.peerna.web.dto.responseDto.MemberResponseDto;
@@ -9,7 +10,7 @@ public interface MemberService {
 
     MemberResponseDto.MemberGetTestDto findMember(Long memberId);
 
-    Member loginWithKakao(String kakaoId);
+    Member socialLogin(String socialId, SocialType socialType);
     MemberResponseDto.memberBasicInfoDto saveMemberBasicInfo(Member member, MemberRequestDto.basicInfoDTO request);
 
     Member findById(Long memberId);

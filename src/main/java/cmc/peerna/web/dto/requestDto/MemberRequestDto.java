@@ -58,4 +58,13 @@ public class MemberRequestDto {
     public static class IssueTokenDto {
         String refreshToken;
     }
+
+    @Builder
+    @Getter
+    @AllArgsConstructor(access = AccessLevel.PROTECTED)
+    @NoArgsConstructor(access = AccessLevel.PROTECTED)
+    public static class AppleSocialDto{
+        private String identityToken;
+    }
+
 }
