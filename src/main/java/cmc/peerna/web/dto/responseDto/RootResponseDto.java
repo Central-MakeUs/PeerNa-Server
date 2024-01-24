@@ -23,8 +23,7 @@ public class RootResponseDto {
         // 동료들이 생각하는 내 모습
         private List<PeerCard> peerCardList;
 
-        // 종합평가 탑3개 (PeerGrade)
-        private List<TestResponseDto.totalEvaluation> top3Evaluation;
+        private List<TestResponseDto.totalEvaluation> totalEvaluation;
 
         // 종합점수
         private Integer totalScore;

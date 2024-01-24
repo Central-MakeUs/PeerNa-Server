@@ -71,6 +71,7 @@ public class RootServiceImpl implements RootService {
         List<TestResponseDto.totalEvaluation> totalEvaluationList = new ArrayList<>();
         for (PeerGrade peerGrade : gradeList) {
             Long count = peerGradeResultRepository.countByTargetAndPeerGrade(member, peerGrade);
+            if(count==0L) continue;
             totalEvaluationList.add(TestResponseDto.totalEvaluation.builder()
                     .count(count)
                     .peerGrade(peerGrade)
@@ -81,11 +82,6 @@ public class RootServiceImpl implements RootService {
         return totalEvaluationList;
     }
 
-    @Override
-    public List<TestResponseDto.totalEvaluation> getTop3TotalEvaluation(Member member) {
-        List<TestResponseDto.totalEvaluation> totalEvaluationList = getTotalEvaluationList(member);
-        return totalEvaluationList.subList(0, 3);
-    }
 
     @Override
     public RootResponseDto.MypageDto getMyPageDto(Member member) {
@@ -103,9 +99,7 @@ public class RootServiceImpl implements RootService {
 
         List<PeerCard> peerCardList = testResultCalculator.getPeerTestPeerCard(peerTestList);
 
-        List<TestResponseDto.totalEvaluation> top3TotalEvaluation = getTop3TotalEvaluation(member);
-
-        List<PeerGradeResult> peerGradeResultList = peerGradeResultRepository.findAllByTarget(member);
+        List<TestResponseDto.totalEvaluation> totalEvaluation = getTotalEvaluationList(member);
 
         List<PeerFeedback> peerFeedbackList = peerFeedbackRepository.findTop3ByTargetOrderByCreatedAtDesc(member);
 
@@ -119,7 +113,7 @@ public class RootServiceImpl implements RootService {
                 .peerTestType(peerTestType)
                 .selfTestCardList(selfTestCardList)
                 .peerCardList(peerCardList)
-                .top3Evaluation(top3TotalEvaluation)
+                .totalEvaluation(totalEvaluation)
                 .totalScore(member.getTotalScore())
                 .peerFeedbackList(TestConverter.peerFeedbackListToStringList(peerFeedbackList))
                 .selfTestAnswerIdList(selfTestAnswerIdList)
