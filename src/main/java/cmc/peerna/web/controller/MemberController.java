@@ -21,7 +21,6 @@ import cmc.peerna.validation.annotation.CheckPage;
 import cmc.peerna.web.dto.requestDto.MemberRequestDto;
 import cmc.peerna.web.dto.responseDto.MemberResponseDto;
 import cmc.peerna.web.dto.responseDto.RootResponseDto;
-import cmc.peerna.web.dto.responseDto.TestResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
@@ -36,6 +35,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.web.bind.annotation.*;
@@ -122,10 +122,9 @@ public class MemberController {
             @ApiResponse(responseCode = "4014", description = "Identity Token에서 유효한 값을 찾지 못했습니다."),
             @ApiResponse(responseCode = "4015", description = "BAD_REQUEST, Identity Token의 형태가 잘못되었습니다.")
     })
-    @PostMapping("/member/login/oauth2/apple")
-    public ResponseDto<LoginResponseDto> appleLogin(@RequestBody MemberRequestDto.AppleSocialDto request, HttpServletResponse response) throws IOException {
-        String identityToken = request.getIdentityToken();
-        String socialId = appleService.userIdFromApple(identityToken);
+    @PostMapping(value = "/member/login/oauth2/apple")
+    public ResponseDto<LoginResponseDto> appleLogin(@RequestParam(value = "code") String code, @RequestParam(value = "id_token") String id_token, HttpServletResponse response) throws IOException {
+        String socialId = appleService.userIdFromApple(id_token);
         log.info("Apple 인증 서버로부터 받은 userId : " + socialId);
         Member member = memberService.socialLogin(socialId, SocialType.APPLE);
 
