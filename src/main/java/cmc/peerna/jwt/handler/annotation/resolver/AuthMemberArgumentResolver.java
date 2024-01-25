@@ -1,6 +1,7 @@
 package cmc.peerna.jwt.handler.annotation.resolver;
 
 import cmc.peerna.apiResponse.code.ResponseStatus;
+import cmc.peerna.apiResponse.exception.handler.JwtAuthenticationException;
 import cmc.peerna.apiResponse.exception.handler.MemberException;
 import cmc.peerna.converter.MemberConverter;
 import cmc.peerna.domain.Member;
@@ -59,7 +60,7 @@ public class AuthMemberArgumentResolver implements HandlerMethodArgumentResolver
             // 토큰에서 사용자 ID (subject) 추출
             String userId = jwtProvider.getAuthentication(jwt).getName();
             return memberService.findById(Long.valueOf(userId));
-        }
-        return null; // 토큰이 없거나 유효하지 않은 경우
+        } else throw new MemberException(ResponseStatus.INVALID_ACCESS_TOKEN);
+//        return null; // 토큰이 없거나 유효하지 않은 경우
     }
 }

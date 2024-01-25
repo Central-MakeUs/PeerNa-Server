@@ -46,6 +46,9 @@ public enum ResponseStatus implements BaseCode {
     FAILED_TO_FIND_AVAILABLE_RSA(HttpStatus.UNAUTHORIZED, 4014, "Identity Token에서 유효한 값을 찾지 못했습니다"),
     WRONG_IDENTITY_TOKEN(BAD_REQUEST, 4015, "Identity Token의 형태가 잘못되었습니다."),
 
+    INVALID_ACCESS_TOKEN(UNAUTHORIZED, 4016, "액세스 토큰이 없거나 유효하지 않습니다."),
+
+
     WRONG_POST_TEST(BAD_REQUEST, 4101, "잘못된 POST 테스트 요청입니다."),
 
     // Test 관련 에러
