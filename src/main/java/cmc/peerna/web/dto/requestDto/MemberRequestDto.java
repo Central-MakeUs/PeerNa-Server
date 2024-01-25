@@ -3,7 +3,6 @@ package cmc.peerna.web.dto.requestDto;
 import cmc.peerna.domain.enums.Job;
 import cmc.peerna.domain.enums.Part;
 import cmc.peerna.domain.enums.PeerGrade;
-import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
 import java.util.List;
@@ -57,15 +56,6 @@ public class MemberRequestDto {
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
     public static class IssueTokenDto {
         String refreshToken;
-    }
-
-    @Builder
-    @Getter
-    @AllArgsConstructor(access = AccessLevel.PROTECTED)
-    @NoArgsConstructor(access = AccessLevel.PROTECTED)
-    public static class AppleSocialDto{
-        private String code;
-        private String identityToken;
     }
 
 }
