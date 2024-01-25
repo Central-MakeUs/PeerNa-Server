@@ -25,6 +25,7 @@ public class TestConverter {
     }
 
     public static List<PeerCard> selfTestResultToPeerCardList(SelfTestResult selfTestResult) {
+        if(selfTestResult==null) return null;
         List<PeerCard> peerCardList = new ArrayList<>();
         peerCardList.add(selfTestResult.getGroup1());
         peerCardList.add(selfTestResult.getGroup2());

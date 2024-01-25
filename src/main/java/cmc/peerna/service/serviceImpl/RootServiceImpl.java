@@ -123,6 +123,7 @@ public class RootServiceImpl implements RootService {
 
     @Override
     public RootResponseDto.AllFeedbackDto getFeedbackList(Member member, Integer page) {
+        if(!peerFeedbackRepository.existsByTarget(member)) return null;
         Page<PeerFeedback> peerFeedbacks = peerFeedbackRepository.findAllByTarget(member, PageRequest.of(page, pageSize, Sort.by(Sort.Direction.DESC, "createdAt")));
         if(peerFeedbacks.getTotalPages() <= page)
             throw new MemberException(ResponseStatus.OVER_PAGE_INDEX_ERROR);
