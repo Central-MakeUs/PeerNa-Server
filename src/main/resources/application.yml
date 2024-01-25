@@ -65,6 +65,8 @@ jwt:
 web:
   redirect-url: http://localhost:5173/login/kakao
 #  redirect-url: https://localhost:8080
+  apple-redirect-url: ${apple.redirect.url}
+
 
 paging:
   size : 10

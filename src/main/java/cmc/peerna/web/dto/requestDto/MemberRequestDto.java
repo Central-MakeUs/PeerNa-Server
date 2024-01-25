@@ -64,6 +64,7 @@ public class MemberRequestDto {
     @AllArgsConstructor(access = AccessLevel.PROTECTED)
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
     public static class AppleSocialDto{
+        private String code;
         private String identityToken;
     }
 
