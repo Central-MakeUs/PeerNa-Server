@@ -21,4 +21,6 @@ public interface PeerFeedbackRepository extends JpaRepository<PeerFeedback, Long
     List<PeerFeedback> findAllByWriter(Member writer);
 
     void deleteAllByTarget(Member target);
+
+    boolean existsByTarget(Member target);
 }

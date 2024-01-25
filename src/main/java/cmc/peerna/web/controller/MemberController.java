@@ -171,21 +171,6 @@ public class MemberController {
         return ResponseDto.of(myPageDto);
     }
 
-    @Operation(summary = "종합 평가 더보기 API ✔️🔑", description = "종합 평가 더보기 API입니다.")
-    @ApiResponses({
-            @ApiResponse(responseCode = "2200", description = "BAD_REQUEST, 존재하지 않는 유저를 조회한 경우.")
-    })
-    @Parameters({
-            @Parameter(name = "member", hidden = true)
-    })
-    @GetMapping("/member/mypage/total-evaluation")
-    public ResponseDto<RootResponseDto.TotalEvaluationSeeMoreDto> seeMoreEvaluation(@AuthMember Member member) {
-        List<TestResponseDto.totalEvaluation> totalEvaluationList = rootService.getTotalEvaluationList(member);
-        return ResponseDto.of(RootResponseDto.TotalEvaluationSeeMoreDto.builder()
-                .totalEvaluationList(totalEvaluationList)
-                .build());
-    }
-
     @Operation(summary = "피드백 더보기 API ✔️🔑", description = "피드백 더보기 API입니다.")
     @ApiResponses({
             @ApiResponse(responseCode = "2200", description = "BAD_REQUEST, 존재하지 않는 유저를 조회한 경우."),
@@ -218,7 +203,7 @@ public class MemberController {
         return ResponseDto.of(memberService.updateMemberProfile(member, request));
     }
 
-    @Operation(summary = "UUID로 유저 이름 조회 API ✔️🔑", description = "UUID로 유저 이름 조회 API입니다.")
+    @Operation(summary = "UUID로 유저 이름 조회 API ✔️", description = "UUID로 유저 이름 조회 API입니다.")
     @ApiResponses({
             @ApiResponse(responseCode = "2250", description = "BAD_REQUEST, 잘못된 UUID 값입니다."),
     })

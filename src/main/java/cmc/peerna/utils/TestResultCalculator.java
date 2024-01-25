@@ -112,6 +112,7 @@ public class TestResultCalculator {
 
 
     public List<PeerCard> getPeerTestPeerCard(List<PeerTest> peerTestList) {
+        if(peerTestList.size()==0) return null;
         List<PeerCard> peerCardList = new ArrayList<>(4);
         if (peerCardList.size() % 18 != 0) {
             throw new TestException(ResponseStatus.WRONG_TOTAL_ANSWER_COUNT);
@@ -176,6 +177,7 @@ public class TestResultCalculator {
     }
 
     public TestType peerTestPeerType(List<PeerTest> peerTestList) {
+        if(peerTestList.size()==0) return null;
         Long DCount = 0L;
         Long ICount = 0L;
         Long SCount = 0L;
