@@ -9,7 +9,11 @@ import java.util.List;
 
 public interface PeerTestRepository extends JpaRepository<PeerTest, Long> {
     List<PeerTest> findALlByTarget(Member target);
+    List<PeerTest> findALlByWriter(Member writer);
     List<PeerTest> findAllByNonMemberUuid(String nonMemberUuid);
 
     Long countByTargetAndAnswerId(Member target, Long answerId);
+
+    void deleteAllByTarget(Member target);
+
 }

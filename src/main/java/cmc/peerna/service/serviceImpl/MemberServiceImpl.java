@@ -3,13 +3,11 @@ package cmc.peerna.service.serviceImpl;
 import cmc.peerna.apiResponse.code.ResponseStatus;
 import cmc.peerna.apiResponse.exception.handler.MemberException;
 import cmc.peerna.converter.MemberConverter;
-import cmc.peerna.domain.Member;
-import cmc.peerna.domain.PeerGradeResult;
+import cmc.peerna.domain.*;
 import cmc.peerna.domain.enums.SocialType;
 import cmc.peerna.jwt.JwtProvider;
 import cmc.peerna.redis.domain.RefreshToken;
-import cmc.peerna.repository.MemberRepository;
-import cmc.peerna.repository.PeerGradeResultRepository;
+import cmc.peerna.repository.*;
 import cmc.peerna.service.MemberService;
 import cmc.peerna.web.dto.requestDto.MemberRequestDto;
 import cmc.peerna.web.dto.responseDto.MemberResponseDto;
@@ -29,7 +27,11 @@ import java.util.Optional;
 public class MemberServiceImpl implements MemberService {
 
     private final MemberRepository memberRepository;
+    private final SelfTestRepository selfTestRepository;
+    private final SelfTestResultRepository selfTestResultRepository;
     private final PeerGradeResultRepository peerGradeResultRepository;
+    private final PeerFeedbackRepository peerFeedbackRepository;
+    private final PeerTestRepository peerTestRepository;
 
     private final JwtProvider jwtProvider;
 
@@ -111,5 +113,31 @@ public class MemberServiceImpl implements MemberService {
         log.info("Member Id값 : " + member.getId());
         String accessToken = jwtProvider.createAccessToken(member.getId(), member.getSocialType().toString(), member.getSocialId(), Arrays.asList(new SimpleGrantedAuthority("USER")));
         return accessToken;
+    }
+
+    @Override
+    @Transactional
+    public void withdrawal(Member member) {
+        selfTestRepository.deleteAllByWriter(member);
+        selfTestResultRepository.deleteByMember(member);
+        peerTestRepository.deleteAllByTarget(member);
+        peerFeedbackRepository.deleteAllByTarget(member);
+        peerGradeResultRepository.deleteAllByTarget(member);
+
+        List<PeerTest> peerTestListByWriter = peerTestRepository.findALlByWriter(member);
+        for (PeerTest peerTest : peerTestListByWriter) {
+            peerTest.updateWriterToNull();
+        }
+
+        List<PeerFeedback> peerFeedbackListByWriter = peerFeedbackRepository.findAllByWriter(member);
+        for (PeerFeedback peerFeedback : peerFeedbackListByWriter) {
+            peerFeedback.updateWriterToNull();
+        }
+
+        List<PeerGradeResult> peerGradeResultListByWriter = peerGradeResultRepository.findAllByWriter(member);
+        for (PeerGradeResult peerGradeResult : peerGradeResultListByWriter) {
+            peerGradeResult.updateWriterToNull();
+        }
+        memberRepository.deleteById(member.getId());
     }
 }
