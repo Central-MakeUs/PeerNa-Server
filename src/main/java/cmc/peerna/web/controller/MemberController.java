@@ -3,6 +3,7 @@ package cmc.peerna.web.controller;
 import cmc.peerna.apiResponse.code.ResponseStatus;
 import cmc.peerna.apiResponse.exception.handler.MemberException;
 import cmc.peerna.apiResponse.response.ResponseDto;
+import cmc.peerna.converter.MemberConverter;
 import cmc.peerna.domain.Member;
 import cmc.peerna.domain.enums.SocialType;
 import cmc.peerna.domain.enums.UserRole;
@@ -257,6 +258,17 @@ public class MemberController {
     }
 
 
-
+    @Operation(summary = "회원탈퇴 API ✔️🔑", description = "회원탈퇴 API입니다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "2200", description = "BAD_REQUEST, 존재하지 않는 유저를 조회한 경우.")
+    })
+    @Parameters({
+            @Parameter(name = "member", hidden = true)
+    })
+    @PostMapping("/member/withdrawal")
+    ResponseDto<MemberResponseDto.MemberStatusDto> withdrawal(@AuthMember Member member) {
+        memberService.withdrawal(member);
+        return ResponseDto.of(MemberConverter.toMemberStatusDto(member.getId(), "회원탈퇴 완료"));
+    }
 }
 

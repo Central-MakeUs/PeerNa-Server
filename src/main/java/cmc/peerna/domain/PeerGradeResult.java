@@ -27,4 +27,8 @@ public class PeerGradeResult extends BaseEntity {
     public void updateWriter(Member member) {
         this.writer = member;
     }
+    public void updateWriterToNull(){
+        this.writer = null;
+    }
+
 }

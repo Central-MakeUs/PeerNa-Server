@@ -15,7 +15,10 @@ public interface PeerGradeResultRepository extends JpaRepository<PeerGradeResult
     Long countByTargetAndPeerGrade(Member target, PeerGrade peerGrade);
 
     List<PeerGradeResult> findAllByTarget(Member target);
+    List<PeerGradeResult> findAllByWriter(Member writer);
 
     Long countByTarget(Member target);
+
+    void deleteAllByTarget(Member target);
 
 }

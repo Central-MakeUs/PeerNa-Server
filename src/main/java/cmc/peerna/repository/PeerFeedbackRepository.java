@@ -17,4 +17,8 @@ public interface PeerFeedbackRepository extends JpaRepository<PeerFeedback, Long
     List<PeerFeedback> findTop3ByTargetOrderByCreatedAtDesc(Member target);
 
     Page<PeerFeedback> findAllByTarget(Member target, PageRequest pageRequest);
+
+    List<PeerFeedback> findAllByWriter(Member writer);
+
+    void deleteAllByTarget(Member target);
 }

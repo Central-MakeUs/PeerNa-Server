@@ -23,4 +23,6 @@ public interface MemberService {
     MemberRequestDto.profileUpdateDto updateMemberProfile(Member member, MemberRequestDto.profileUpdateDto request);
 
     String regenerateAccessToken(RefreshToken refreshToken);
+
+    void withdrawal(Member member);
 }
