@@ -70,6 +70,8 @@ public class MemberController {
     @Value("${web.redirect-url}")
     String webRedirectUrl;
 
+    @Value("${web.apple-redirect-url}")
+    String appleRedirectUrl;
 
     // 카카오 로그인 정보 입력 테스트용
     @Operation(summary = "XX 백엔드 테스트용, 사용XX")
@@ -115,13 +117,13 @@ public class MemberController {
                 .build());
     }
 
-    @Operation(summary = "애플 소셜 로그인 ✔️", description = "애플 소셜 로그인 API 입니다.")
+    @Operation(summary = "XX 애플 소셜 로그인 Redirect 주소, 사용XX")
     @ApiResponses({
             @ApiResponse(responseCode = "4014", description = "Identity Token에서 유효한 값을 찾지 못했습니다."),
             @ApiResponse(responseCode = "4015", description = "BAD_REQUEST, Identity Token의 형태가 잘못되었습니다.")
     })
     @PostMapping("/member/login/oauth2/apple")
-    public ResponseDto<LoginResponseDto> appleLogin(@RequestBody MemberRequestDto.AppleSocialDto request) throws IOException {
+    public ResponseDto<LoginResponseDto> appleLogin(@RequestBody MemberRequestDto.AppleSocialDto request, HttpServletResponse response) throws IOException {
         String identityToken = request.getIdentityToken();
         String socialId = appleService.userIdFromApple(identityToken);
         log.info("Apple 인증 서버로부터 받은 userId : " + socialId);
@@ -138,6 +140,15 @@ public class MemberController {
                 redisService
                         .generateRefreshToken(member.getSocialId(), member.getSocialType())
                         .getToken();
+
+        String redirectUrl = appleRedirectUrl;
+        redirectUrl += "?" +
+                "memberId=" + member.getId()
+                + "&accessToken=" + accessToken
+                + "&refreshToken=" + refreshToken;
+
+        response.sendRedirect(redirectUrl);
+
         return ResponseDto.of(LoginResponseDto.builder()
                 .memberId(member.getId())
                 .accessToken(accessToken)
