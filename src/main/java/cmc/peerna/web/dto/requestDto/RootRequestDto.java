@@ -10,4 +10,12 @@ public class RootRequestDto {
     public static class PostTestDto{
         private String body;
     }
+
+    @Builder
+    @Getter
+    @AllArgsConstructor(access = AccessLevel.PROTECTED)
+    @NoArgsConstructor(access = AccessLevel.PROTECTED)
+    public static class FCMTestDto{
+        String fcmToken;
+    }
 }

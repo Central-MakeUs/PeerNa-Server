@@ -8,6 +8,7 @@ import cmc.peerna.domain.*;
 import cmc.peerna.domain.enums.PeerCard;
 import cmc.peerna.domain.enums.PeerGrade;
 import cmc.peerna.domain.enums.TestType;
+import cmc.peerna.fcm.service.FcmService;
 import cmc.peerna.repository.*;
 import cmc.peerna.service.RootService;
 import cmc.peerna.utils.TestResultCalculator;
@@ -21,7 +22,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -36,7 +39,9 @@ public class RootServiceImpl implements RootService {
     private final PeerFeedbackRepository peerFeedbackRepository;
     private final PeerGradeResultRepository peerGradeResultRepository;
     private final PeerTestRepository peerTestRepository;
+    private final PushAlarmRepository pushAlarmRepository;
     private final TestResultCalculator testResultCalculator;
+    private final FcmService fcmService;
     @Value("${paging.size}")
     private Integer pageSize;
     @Override
@@ -129,6 +134,24 @@ public class RootServiceImpl implements RootService {
             throw new MemberException(ResponseStatus.OVER_PAGE_INDEX_ERROR);
         RootResponseDto.AllFeedbackDto allFeedbackDto = MemberConverter.toFeedbackString(peerFeedbacks, member);
         return allFeedbackDto;
+    }
+
+
+    @Override
+    @Transactional
+    public void testFCMService(String fcmToken) throws IOException
+    {
+        String title = "피어나 FCM 테스트";
+        String body = "피어나 안드로이드 FCM 테스트";
+
+        PushAlarm pushAlarm = pushAlarmRepository.save(PushAlarm.builder()
+                .title(title)
+                .body(body)
+                .isConfirmed(false)
+                .build());
+
+
+        fcmService.sendMessageTo(fcmToken,title,body,pushAlarm.getId().toString());
     }
 
 }

@@ -4,6 +4,7 @@ import cmc.peerna.apiResponse.code.ResponseStatus;
 import cmc.peerna.apiResponse.exception.handler.MemberException;
 import cmc.peerna.apiResponse.response.ResponseDto;
 import cmc.peerna.service.MemberService;
+import cmc.peerna.service.RootService;
 import cmc.peerna.web.dto.requestDto.RootRequestDto;
 import cmc.peerna.web.dto.responseDto.MemberResponseDto;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -12,6 +13,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+
+import java.io.IOException;
 
 @RestController
 @RequiredArgsConstructor
@@ -23,6 +26,7 @@ import org.springframework.web.bind.annotation.*;
 public class RootController {
 
     private final MemberService memberService;
+    private final RootService rootService;
 
     @GetMapping("/health")
     public String healthCheck() {
@@ -50,5 +54,13 @@ public class RootController {
     public ResponseDto<MemberResponseDto.MemberGetTestDto> searchMember(@PathVariable(name = "member-id") Long memberId) {
         MemberResponseDto.MemberGetTestDto memberDto = memberService.findMember(memberId);
         return ResponseDto.of(memberDto);
+    }
+
+    @Operation(summary = "FCM 테스트 API", description = "테스트용")
+    @PostMapping("/test/fcm")
+    public ResponseDto<Object> testFCM(@RequestBody RootRequestDto.FCMTestDto fcmToken) throws IOException
+    {
+        rootService.testFCMService(fcmToken.getFcmToken());
+        return ResponseDto.of(null);
     }
 }

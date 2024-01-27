@@ -70,3 +70,7 @@ web:
 
 paging:
   size : 10
+
+firebase:
+  project:
+    id: ${firebase.project.id}
