@@ -14,12 +14,15 @@ import cmc.peerna.web.dto.responseDto.RootResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -53,7 +56,7 @@ public class HomeController {
             @ApiResponse(responseCode = "4012",description = "BAD_REQUEST, 페이지 번호는 1 이상이여야 합니다."),
             @ApiResponse(responseCode = "4013",description = "BAD_REQUEST, 페이지 번호가 페이징 범위를 초과했습니다.")
     })
-    @GetMapping("/home/peer-type")
+    @GetMapping("/home/search/peer-type")
     public ResponseDto<RootResponseDto.memberSimpleDtoPage> searchByPeerType(@RequestParam(name = "peerType") String peerType, @CheckPage @RequestParam(name = "page") Integer page, @AuthMember Member member) {
         if (page == null)
             page = 1;
@@ -77,7 +80,7 @@ public class HomeController {
             @ApiResponse(responseCode = "4012", description = "BAD_REQUEST, 페이지 번호는 1 이상이여야 합니다."),
             @ApiResponse(responseCode = "4013", description = "BAD_REQUEST, 페이지 번호가 페이징 범위를 초과했습니다.")
     })
-    @GetMapping("/home/peer-part")
+    @GetMapping("/home/search/peer-part")
     public ResponseDto<RootResponseDto.memberSimpleDtoPage> searchByPart(@RequestParam(name = "part") String part, @CheckPage @RequestParam(name = "page") Integer page, @AuthMember Member member) {
         if (page == null)
             page = 1;
@@ -97,9 +100,31 @@ public class HomeController {
     @Parameters({
             @Parameter(name = "member", hidden = true)
     })
-    @GetMapping("/home/peer-detail")
-    public ResponseDto<HomeResponseDto.peerDetailPageDto> getPeerDetailPage(@RequestParam(name="peer-id") Long peerId, @AuthMember Member member) {
+    @GetMapping("/home/{peer-id}/peer-detail")
+    public ResponseDto<HomeResponseDto.peerDetailPageDto> getPeerDetailPage(@PathVariable(name="peer-id") Long peerId, @AuthMember Member member) {
         HomeResponseDto.peerDetailPageDto peerDetailPageDto = rootService.getPeerDetailPageDto(member, memberService.findById(peerId));
         return ResponseDto.of(peerDetailPageDto);
+    }
+
+    @Operation(summary = "동료 상세 - 피드백 더보기 API ✔️🔑", description = "동료 상세 - 피드백 더보기 API입니다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "2200", description = "BAD_REQUEST, 존재하지 않는 유저를 조회한 경우."),
+            @ApiResponse(responseCode = "4012", description = "BAD_REQUEST , 페이지 번호는 1 이상이여야 합니다.", content = @Content(schema = @Schema(implementation = ResponseDto.class))),
+            @ApiResponse(responseCode = "4013", description = "BAD_REQUEST , 페이지 번호가 페이징 범위를 초과했습니다.", content = @Content(schema = @Schema(implementation = ResponseDto.class))),
+    })
+    @Parameters({
+            @Parameter(name = "member", hidden = true)
+    })
+    @GetMapping("/home/{peer-id}/peer-feedback")
+    public ResponseDto<RootResponseDto.AllFeedbackDto> seeMoreFeedback(@PathVariable(name="peer-id") Long peerId, @CheckPage @RequestParam(name = "page") Integer page, @AuthMember Member member) {
+        if (page == null)
+            page = 1;
+        else if (page < 1)
+            throw new MemberException(ResponseStatus.UNDER_PAGE_INDEX_ERROR);
+        page -= 1;
+
+        Member peer = memberService.findById(peerId);
+        RootResponseDto.AllFeedbackDto feedbackList = rootService.getFeedbackList(peer, page);
+        return ResponseDto.of(feedbackList);
     }
 }
