@@ -36,8 +36,8 @@ public class MemberConverter {
                 .build();
     }
 
-    public static MemberResponseDto.MemberSimpleInfoDto toSimpleInfoDto(Member member) {
-        return MemberResponseDto.MemberSimpleInfoDto.builder()
+    public static MemberResponseDto.MemberMyPageInfoDto toSimpleInfoDto(Member member) {
+        return MemberResponseDto.MemberMyPageInfoDto.builder()
                 .name(member.getName())
                 .testType(member.getSelfTestType())
                 .part(member.getPart())
@@ -59,6 +59,35 @@ public class MemberConverter {
                 .totalPage(feedbackList.getTotalPages())
                 .totalElements(feedbackList.getTotalElements())
                 .currentPageElements(feedbackList.getNumberOfElements())
+                .build();
+    }
+
+    public static MemberResponseDto.memberSimpleProfileDto toMemberSimpleProfileDto(Member member) {
+
+        return MemberResponseDto.memberSimpleProfileDto.builder()
+                .memberId(member.getId())
+                .name(member.getName())
+                .job(member.getJob())
+                .part(member.getPart())
+                .peerTestType(member.getPeerTestType())
+                .oneLiner(member.getOneliner())
+                .totalScore(member.getTotalScore())
+                .build();
+    }
+
+    public static RootResponseDto.memberSimpleDtoPage toSearchByPeerTypeDto(Page<Member> memberPage) {
+        if(memberPage.getTotalElements()==0L) return null;
+        List<MemberResponseDto.memberSimpleProfileDto> memberSimpleProfileDtoList = memberPage.stream()
+                .map(member -> toMemberSimpleProfileDto(member))
+                .collect(Collectors.toList());
+
+        return RootResponseDto.memberSimpleDtoPage.builder()
+                .memberSimpleProfileDtoList(memberSimpleProfileDtoList)
+                .isFirst(memberPage.isFirst())
+                .isLast(memberPage.isLast())
+                .totalPage(memberPage.getTotalPages())
+                .totalElements(memberPage.getTotalElements())
+                .currentPageElements(memberPage.getNumberOfElements())
                 .build();
     }
 

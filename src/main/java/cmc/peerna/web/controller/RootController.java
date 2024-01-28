@@ -3,12 +3,17 @@ package cmc.peerna.web.controller;
 import cmc.peerna.apiResponse.code.ResponseStatus;
 import cmc.peerna.apiResponse.exception.handler.MemberException;
 import cmc.peerna.apiResponse.response.ResponseDto;
-import cmc.peerna.converter.MemberConverter;
+import cmc.peerna.domain.Member;
 import cmc.peerna.fcm.service.FcmService;
+import cmc.peerna.jwt.handler.annotation.AuthMember;
 import cmc.peerna.service.MemberService;
 import cmc.peerna.service.RootService;
+import cmc.peerna.validation.annotation.CheckPage;
 import cmc.peerna.web.dto.requestDto.RootRequestDto;
 import cmc.peerna.web.dto.responseDto.MemberResponseDto;
+import cmc.peerna.web.dto.responseDto.RootResponseDto;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.Parameters;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -66,4 +71,8 @@ public class RootController {
         fcmService.testFCMService(fcmToken.getFcmToken());
         return ResponseDto.of("FCM 테스트 성공!");
     }
+
+
+
+
 }

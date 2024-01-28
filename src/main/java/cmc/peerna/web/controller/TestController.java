@@ -97,6 +97,7 @@ public class TestController {
         Member target = memberService.findMemberByUuid(targetUuid);
         testService.savePeerTest(null, target, requestDto);
         memberService.updateTotalScore(target);
+        memberService.updatePeerTestType(target);
         return ResponseDto.of(TestResponseDto.peerTestIdResponseDto.builder()
                 .peerTestId(target.getId()).build());
     }

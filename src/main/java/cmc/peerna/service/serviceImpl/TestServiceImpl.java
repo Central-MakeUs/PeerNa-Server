@@ -19,7 +19,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -76,7 +75,7 @@ public class TestServiceImpl implements TestService {
             deleteSelfTestResult(member);
         }
 
-        List<SelfTest> selfTestList = selfTestRepository.findALlByWriter(member);
+        List<SelfTest> selfTestList = selfTestRepository.findAllByWriter(member);
         TestType peerType = testResultCalculator.selfTestPeerType(selfTestList);
         List<PeerCard> peerCards = testResultCalculator.getSelfTestCard(selfTestList);
 

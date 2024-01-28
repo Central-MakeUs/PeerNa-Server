@@ -1,5 +1,6 @@
 package cmc.peerna.web.dto.requestDto;
 
+import cmc.peerna.domain.enums.TestType;
 import lombok.*;
 
 public class RootRequestDto {
@@ -17,5 +18,13 @@ public class RootRequestDto {
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
     public static class FCMTestDto{
         String fcmToken;
+    }
+
+    @Builder
+    @Getter
+    @AllArgsConstructor(access = AccessLevel.PROTECTED)
+    @NoArgsConstructor(access = AccessLevel.PROTECTED)
+    public static class PeerTypeDto{
+        TestType peerType;
     }
 }

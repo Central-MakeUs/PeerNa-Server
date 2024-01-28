@@ -2,9 +2,11 @@ package cmc.peerna.service.serviceImpl;
 
 import cmc.peerna.apiResponse.code.ResponseStatus;
 import cmc.peerna.apiResponse.exception.handler.MemberException;
+import cmc.peerna.apiResponse.exception.handler.RootException;
 import cmc.peerna.converter.MemberConverter;
 import cmc.peerna.converter.TestConverter;
 import cmc.peerna.domain.*;
+import cmc.peerna.domain.enums.Part;
 import cmc.peerna.domain.enums.PeerCard;
 import cmc.peerna.domain.enums.PeerGrade;
 import cmc.peerna.domain.enums.TestType;
@@ -12,13 +14,10 @@ import cmc.peerna.fcm.service.FcmService;
 import cmc.peerna.repository.*;
 import cmc.peerna.service.RootService;
 import cmc.peerna.utils.TestResultCalculator;
+import cmc.peerna.web.dto.responseDto.HomeResponseDto;
 import cmc.peerna.web.dto.responseDto.MemberResponseDto;
 import cmc.peerna.web.dto.responseDto.RootResponseDto;
 import cmc.peerna.web.dto.responseDto.TestResponseDto;
-import com.google.firebase.messaging.FirebaseMessaging;
-import com.google.firebase.messaging.FirebaseMessagingException;
-import com.google.firebase.messaging.Message;
-import com.google.firebase.messaging.Notification;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -26,9 +25,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -43,25 +40,27 @@ public class RootServiceImpl implements RootService {
     private final PeerFeedbackRepository peerFeedbackRepository;
     private final PeerGradeResultRepository peerGradeResultRepository;
     private final PeerTestRepository peerTestRepository;
+    private final MemberRepository memberRepository;
     private final PushAlarmRepository pushAlarmRepository;
     private final TestResultCalculator testResultCalculator;
     private final FcmService fcmService;
     @Value("${paging.size}")
     private Integer pageSize;
+
     @Override
-    public List<Long> getcolorAnswerIdList(Member member, List<Long> selfTestAnswerIdList) {
+    public List<Long> getMyPageColorAnswerIdList(Member member, List<Long> selfTestAnswerIdList) {
         List<Long> peerTestAnswerIdList = new ArrayList<>();
         List<Long> colorAnswerIdList = new ArrayList<>();
-        for (Long i = 1L; i <= 36L; i+=2) {
+        for (Long i = 1L; i <= 36L; i += 2) {
             Long answerA = peerTestRepository.countByTargetAndAnswerId(member, i);
             Long answerB = peerTestRepository.countByTargetAndAnswerId(member, i + 1);
             if (answerA > answerB) {
                 peerTestAnswerIdList.add(i);
             } else if (answerA < answerB) {
                 peerTestAnswerIdList.add(i + 1);
-            } else{
+            } else {
                 peerTestAnswerIdList.add(i);
-                peerTestAnswerIdList.add(i+1);
+                peerTestAnswerIdList.add(i + 1);
             }
         }
 
@@ -75,12 +74,35 @@ public class RootServiceImpl implements RootService {
     }
 
     @Override
+    public List<Long> getPeerTestAnswerIdList(Member member) {
+        List<Long> peerTestAnswerIdList = new ArrayList<>();
+        for (Long i = 1L; i <= 36L; i += 2) {
+            Long answerA = peerTestRepository.countByTargetAndAnswerId(member, i);
+            Long answerB = peerTestRepository.countByTargetAndAnswerId(member, i + 1);
+            if (answerA >= answerB) {
+                peerTestAnswerIdList.add(i);
+            } else {
+                peerTestAnswerIdList.add(i + 1);
+            }
+        }
+
+        return peerTestAnswerIdList;
+    }
+
+    @Override
+    public List<Long> getPeerAndMyCommonAnswerIdList(List<Long> peerAnswerIdList, List<Long> myAnswerIdList) {
+        peerAnswerIdList.retainAll(myAnswerIdList);
+        return peerAnswerIdList;
+    }
+
+
+    @Override
     public List<TestResponseDto.totalEvaluation> getTotalEvaluationList(Member member) {
         List<PeerGrade> gradeList = Arrays.asList(PeerGrade.values());
         List<TestResponseDto.totalEvaluation> totalEvaluationList = new ArrayList<>();
         for (PeerGrade peerGrade : gradeList) {
             Long count = peerGradeResultRepository.countByTargetAndPeerGrade(member, peerGrade);
-            if(count==0L) continue;
+            if (count == 0L) continue;
             totalEvaluationList.add(TestResponseDto.totalEvaluation.builder()
                     .count(count)
                     .peerGrade(peerGrade)
@@ -96,15 +118,13 @@ public class RootServiceImpl implements RootService {
     public RootResponseDto.MypageDto getMyPageDto(Member member) {
         boolean peerTestMoreThanThree = peerGradeResultRepository.countByTarget(member) >= 3 ? true : false;
 
-        MemberResponseDto.MemberSimpleInfoDto memberSimpleInfoDto = MemberConverter.toSimpleInfoDto(member);
+        MemberResponseDto.MemberMyPageInfoDto memberMyPageInfoDto = MemberConverter.toSimpleInfoDto(member);
 
         SelfTestResult selfTestResult = selfTestResultRepository.findByMember(member);
 
-        List<PeerTest> peerTestList = peerTestRepository.findALlByTarget(member);
-
-        TestType peerTestType = testResultCalculator.peerTestPeerType(peerTestList);
-
         List<PeerCard> selfTestCardList = TestConverter.selfTestResultToPeerCardList(selfTestResult);
+
+        List<PeerTest> peerTestList = peerTestRepository.findALlByTarget(member);
 
         List<PeerCard> peerCardList = testResultCalculator.getPeerTestPeerCard(peerTestList);
 
@@ -112,14 +132,14 @@ public class RootServiceImpl implements RootService {
 
         List<PeerFeedback> peerFeedbackList = peerFeedbackRepository.findTop3ByTargetOrderByCreatedAtDesc(member);
 
-        List<Long> selfTestAnswerIdList = TestConverter.selfTestToAnswerId(selfTestRepository.findALlByWriter(member));
+        List<Long> selfTestAnswerIdList = TestConverter.selfTestToAnswerId(selfTestRepository.findAllByWriter(member));
 
-        List<Long> colorAnswerIdList = getcolorAnswerIdList(member, selfTestAnswerIdList);
+        List<Long> colorAnswerIdList = getMyPageColorAnswerIdList(member, selfTestAnswerIdList);
 
         return RootResponseDto.MypageDto.builder()
                 .peerTestMoreThanThree(peerTestMoreThanThree)
-                .memberSimpleInfoDto(memberSimpleInfoDto)
-                .peerTestType(peerTestType)
+                .memberMyPageInfoDto(memberMyPageInfoDto)
+                .peerTestType(member.getPeerTestType())
                 .selfTestCardList(selfTestCardList)
                 .peerCardList(peerCardList)
                 .totalEvaluation(totalEvaluation)
@@ -131,14 +151,84 @@ public class RootServiceImpl implements RootService {
     }
 
     @Override
+    public HomeResponseDto.peerDetailPageDto getPeerDetailPageDto(Member me, Member target){
+        boolean peerTestMoreThanThree = peerGradeResultRepository.countByTarget(target) >= 3 ? true : false;
+
+        MemberResponseDto.memberSimpleProfileDto memberSimpleProfileDto = MemberConverter.toMemberSimpleProfileDto(target);
+
+        // 동료의 피어카드 리스트
+        List<PeerTest> peerPeerTestList = peerTestRepository.findALlByTarget(target);
+        List<PeerCard> peerCardList = testResultCalculator.getPeerTestPeerCard(peerPeerTestList);
+
+        // 나의 피어카드 리스트
+        List<PeerTest> myPeerTestList = peerTestRepository.findALlByTarget(me);
+        List<PeerCard> myPeerCardList = testResultCalculator.getPeerTestPeerCard(myPeerTestList);
+
+        List<TestResponseDto.totalEvaluation> totalEvaluation = getTotalEvaluationList(target);
+
+        List<PeerFeedback> peerFeedbackList = peerFeedbackRepository.findTop3ByTargetOrderByCreatedAtDesc(target);
+
+        List<Long> peerAnswerIdList = getPeerTestAnswerIdList(target);
+        List<Long> myAnswerIdList = getPeerTestAnswerIdList(me);
+
+        List<Long> colorAnswerIdList = getPeerAndMyCommonAnswerIdList(peerAnswerIdList, myAnswerIdList);
+
+
+        return HomeResponseDto.peerDetailPageDto.builder()
+                .peerTestMoreThanThree(peerTestMoreThanThree)
+                .memberSimpleProfileDto(memberSimpleProfileDto)
+                .peerCardList(peerCardList)
+                .myCardList(myPeerCardList)
+                .totalEvaluation(totalEvaluation)
+                .totalScore(target.getTotalScore())
+                .peerFeedbackList(TestConverter.peerFeedbackListToStringList(peerFeedbackList))
+                .peerAnswerIdList(peerAnswerIdList)
+                .colorAnswerIdList(colorAnswerIdList)
+                .build();
+    }
+
+    @Override
     public RootResponseDto.AllFeedbackDto getFeedbackList(Member member, Integer page) {
-        if(!peerFeedbackRepository.existsByTarget(member)) return null;
+        if (!peerFeedbackRepository.existsByTarget(member)) return null;
         Page<PeerFeedback> peerFeedbacks = peerFeedbackRepository.findAllByTarget(member, PageRequest.of(page, pageSize, Sort.by(Sort.Direction.DESC, "createdAt")));
-        if(peerFeedbacks.getTotalPages() <= page)
+        if (peerFeedbacks.getTotalPages() <= page)
             throw new MemberException(ResponseStatus.OVER_PAGE_INDEX_ERROR);
         RootResponseDto.AllFeedbackDto allFeedbackDto = MemberConverter.toFeedbackString(peerFeedbacks, member);
         return allFeedbackDto;
     }
 
+    @Override
+    public RootResponseDto.memberSimpleDtoPage getMemberListByPeerType(Member member, String testType, Integer page) {
 
+        if (!TestType.isValidTestType(testType)) {
+            throw new RootException(ResponseStatus.WRONG_TEST_TYPE);
+        }
+
+        PageRequest pageRequest = PageRequest.of(page, pageSize, Sort.by(Sort.Order.desc("totalScore"), Sort.Order.asc("name")));
+        Page<Member> memberByPeerTypePage = memberRepository.findAllByPeerTestTypeAndIdNot(TestType.valueOf(testType), member.getId(), pageRequest);
+        if (memberByPeerTypePage.getTotalElements() == 0L) {
+            throw new RootException(ResponseStatus.MEMBER_COUNT_ZERO);
+        }
+        if (memberByPeerTypePage.getTotalPages() <= page)
+            throw new MemberException(ResponseStatus.OVER_PAGE_INDEX_ERROR);
+        RootResponseDto.memberSimpleDtoPage memberByPeerTypeDto = MemberConverter.toSearchByPeerTypeDto(memberByPeerTypePage);
+        return memberByPeerTypeDto;
+    }
+
+    @Override
+    public RootResponseDto.memberSimpleDtoPage getMemberListByPart(Member member, String part, Integer page) {
+        if (!Part.isValidPart(part)) {
+            throw new RootException(ResponseStatus.WRONG_PART);
+        }
+
+        PageRequest pageRequest = PageRequest.of(page, pageSize, Sort.by(Sort.Order.desc("totalScore"), Sort.Order.asc("name")));
+        Page<Member> memberByPeerTypePage = memberRepository.findAllByPartAndIdNot(Part.valueOf(part), member.getId(), pageRequest);
+        if (memberByPeerTypePage.getTotalElements() == 0L) {
+            throw new RootException(ResponseStatus.MEMBER_COUNT_ZERO);
+        }
+        if (memberByPeerTypePage.getTotalPages() <= page)
+            throw new MemberException(ResponseStatus.OVER_PAGE_INDEX_ERROR);
+        RootResponseDto.memberSimpleDtoPage memberByPeerTypeDto = MemberConverter.toSearchByPeerTypeDto(memberByPeerTypePage);
+        return memberByPeerTypeDto;
+    }
 }

@@ -252,6 +252,20 @@ public class MemberController {
         return ResponseDto.of(memberBasicInfo);
     }
 
+    @Operation(summary = "푸시 알림 동의 API ✔️🔑", description = "푸시 알림 동의 API입니다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "2200", description = "BAD_REQUEST, 존재하지 않는 유저를 조회한 경우.")
+    })
+    @Parameters({
+            @Parameter(name = "member", hidden = true)
+    })
+    @PostMapping("/member/push-agree")
+    ResponseDto<MemberResponseDto.MemberStatusDto> pushAgree(@AuthMember Member member, @RequestBody MemberRequestDto.pushAgreeDto request) {
+        boolean pushAgree = memberService.agreePush(member, request);
+        String responseMessage = pushAgree==true ? "푸시 알림 허용" : "푸시 알림 거부";
+        return ResponseDto.of(MemberConverter.toMemberStatusDto(member.getId(), responseMessage));
+    }
+
 
     @Operation(summary = "회원탈퇴 API ✔️🔑", description = "회원탈퇴 API입니다.")
     @ApiResponses({
@@ -265,5 +279,7 @@ public class MemberController {
         memberService.withdrawal(member);
         return ResponseDto.of(MemberConverter.toMemberStatusDto(member.getId(), "회원탈퇴 완료"));
     }
+
+
 }
 

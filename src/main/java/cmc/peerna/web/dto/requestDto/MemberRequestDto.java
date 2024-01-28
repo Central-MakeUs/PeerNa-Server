@@ -57,5 +57,11 @@ public class MemberRequestDto {
     public static class IssueTokenDto {
         String refreshToken;
     }
-
+    @Builder
+    @Getter
+    @AllArgsConstructor(access = AccessLevel.PROTECTED)
+    @NoArgsConstructor(access = AccessLevel.PROTECTED)
+    public static class pushAgreeDto{
+        boolean pushAgree;
+    }
 }
