@@ -1,5 +1,6 @@
 package cmc.peerna.apiResponse.code;
 
+import com.google.api.Http;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
@@ -48,6 +49,7 @@ public enum ResponseStatus implements BaseCode {
 
     INVALID_ACCESS_TOKEN(UNAUTHORIZED, 4016, "액세스 토큰이 없거나 유효하지 않습니다."),
 
+    FCM_TOKEN_NOT_FOUND(BAD_REQUEST, 4017, "해당 유저의 FCM 토큰이 존재하지 않습니다."),
 
     WRONG_POST_TEST(BAD_REQUEST, 4101, "잘못된 POST 테스트 요청입니다."),
 
@@ -58,8 +60,9 @@ public enum ResponseStatus implements BaseCode {
 
     // 500번대 에러
     _INTERNAL_SERVER_ERROR(INTERNAL_SERVER_ERROR, 5000, "서버 에러, 관리자에게 문의 바랍니다."),
-    FEIGN_CLIENT_ERROR_500(HttpStatus.INTERNAL_SERVER_ERROR, 5001, "Inter server Error in feign client");
+    FEIGN_CLIENT_ERROR_500(HttpStatus.INTERNAL_SERVER_ERROR, 5001, "Inter server Error in feign client"),
 
+    FCM_ACCESS_TOKEN_REQUEST_ERROR(INTERNAL_SERVER_ERROR, 5002, "서버 에러, FCM 서버에 AccessToken 요청할 때 에러 발생.");
 
     private final HttpStatus httpStatus;
     private final Integer code;

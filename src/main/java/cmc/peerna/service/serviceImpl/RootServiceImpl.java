@@ -8,12 +8,17 @@ import cmc.peerna.domain.*;
 import cmc.peerna.domain.enums.PeerCard;
 import cmc.peerna.domain.enums.PeerGrade;
 import cmc.peerna.domain.enums.TestType;
+import cmc.peerna.fcm.service.FcmService;
 import cmc.peerna.repository.*;
 import cmc.peerna.service.RootService;
 import cmc.peerna.utils.TestResultCalculator;
 import cmc.peerna.web.dto.responseDto.MemberResponseDto;
 import cmc.peerna.web.dto.responseDto.RootResponseDto;
 import cmc.peerna.web.dto.responseDto.TestResponseDto;
+import com.google.firebase.messaging.FirebaseMessaging;
+import com.google.firebase.messaging.FirebaseMessagingException;
+import com.google.firebase.messaging.Message;
+import com.google.firebase.messaging.Notification;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -21,7 +26,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -36,7 +43,9 @@ public class RootServiceImpl implements RootService {
     private final PeerFeedbackRepository peerFeedbackRepository;
     private final PeerGradeResultRepository peerGradeResultRepository;
     private final PeerTestRepository peerTestRepository;
+    private final PushAlarmRepository pushAlarmRepository;
     private final TestResultCalculator testResultCalculator;
+    private final FcmService fcmService;
     @Value("${paging.size}")
     private Integer pageSize;
     @Override
@@ -130,5 +139,6 @@ public class RootServiceImpl implements RootService {
         RootResponseDto.AllFeedbackDto allFeedbackDto = MemberConverter.toFeedbackString(peerFeedbacks, member);
         return allFeedbackDto;
     }
+
 
 }
