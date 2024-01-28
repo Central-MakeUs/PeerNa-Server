@@ -14,7 +14,7 @@ public class RootResponseDto {
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
     public static class MypageDto{
         private boolean peerTestMoreThanThree;
-        private MemberResponseDto.MemberSimpleInfoDto memberSimpleInfoDto;
+        private MemberResponseDto.MemberMyPageInfoDto memberMyPageInfoDto;
 
         private TestType peerTestType;
 
@@ -49,6 +49,20 @@ public class RootResponseDto {
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
     public static class AllFeedbackDto{
         List<String> feedbackList;
+        Long totalElements;
+        Integer currentPageElements;
+        Integer totalPage;
+        Boolean isFirst;
+        Boolean isLast;
+    }
+
+
+    @Builder
+    @Getter
+    @AllArgsConstructor(access = AccessLevel.PROTECTED)
+    @NoArgsConstructor(access = AccessLevel.PROTECTED)
+    public static class SearchByPeerTypeDto{
+        List<MemberResponseDto.memberSimpleProfileDto> memberSimpleProfileDtoList;
         Long totalElements;
         Integer currentPageElements;
         Integer totalPage;

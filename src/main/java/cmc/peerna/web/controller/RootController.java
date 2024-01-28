@@ -4,11 +4,17 @@ import cmc.peerna.apiResponse.code.ResponseStatus;
 import cmc.peerna.apiResponse.exception.handler.MemberException;
 import cmc.peerna.apiResponse.response.ResponseDto;
 import cmc.peerna.converter.MemberConverter;
+import cmc.peerna.domain.Member;
 import cmc.peerna.fcm.service.FcmService;
+import cmc.peerna.jwt.handler.annotation.AuthMember;
 import cmc.peerna.service.MemberService;
 import cmc.peerna.service.RootService;
+import cmc.peerna.validation.annotation.CheckPage;
 import cmc.peerna.web.dto.requestDto.RootRequestDto;
 import cmc.peerna.web.dto.responseDto.MemberResponseDto;
+import cmc.peerna.web.dto.responseDto.RootResponseDto;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.Parameters;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -65,5 +71,29 @@ public class RootController {
     {
         fcmService.testFCMService(fcmToken.getFcmToken());
         return ResponseDto.of("FCM 테스트 성공!");
+    }
+
+
+    @Operation(summary = "피어 유형으로 동료 찾기 API ✔️🔑", description = "피어 유형으로 동료 찾기 API입니다.")
+    @Parameters({
+            @Parameter(name = "member", hidden = true)
+    })
+    @ApiResponses({
+            @ApiResponse(responseCode = "2103",description = "OK, 해당 조건을 만족하는 멤버가 존재하지 않습니다."),
+            @ApiResponse(responseCode = "4012",description = "BAD_REQUEST, 페이지 번호는 1 이상이여야 합니다."),
+            @ApiResponse(responseCode = "4013",description = "BAD_REQUEST, 페이지 번호가 페이징 범위를 초과했습니다.")
+
+    })
+    @GetMapping("/home/peer-type")
+    public ResponseDto<RootResponseDto.SearchByPeerTypeDto> searchByPeerType(@RequestParam(name = "peerType") String request, @CheckPage @RequestParam(name = "page") Integer page, @AuthMember Member member) {
+        if (page == null)
+            page = 1;
+        else if (page < 1)
+            throw new MemberException(ResponseStatus.UNDER_PAGE_INDEX_ERROR);
+        page -= 1;
+
+        RootResponseDto.SearchByPeerTypeDto memberListByPeerType = rootService.getMemberListByPeerType(member, request, page);
+        return ResponseDto.of(memberListByPeerType);
+
     }
 }

@@ -5,10 +5,12 @@ import cmc.peerna.apiResponse.exception.handler.MemberException;
 import cmc.peerna.converter.MemberConverter;
 import cmc.peerna.domain.*;
 import cmc.peerna.domain.enums.SocialType;
+import cmc.peerna.domain.enums.TestType;
 import cmc.peerna.jwt.JwtProvider;
 import cmc.peerna.redis.domain.RefreshToken;
 import cmc.peerna.repository.*;
 import cmc.peerna.service.MemberService;
+import cmc.peerna.utils.TestResultCalculator;
 import cmc.peerna.web.dto.requestDto.MemberRequestDto;
 import cmc.peerna.web.dto.responseDto.MemberResponseDto;
 import lombok.RequiredArgsConstructor;
@@ -34,6 +36,8 @@ public class MemberServiceImpl implements MemberService {
     private final PeerTestRepository peerTestRepository;
 
     private final JwtProvider jwtProvider;
+    private final TestResultCalculator testResultCalculator;
+
 
 
     @Override
@@ -92,6 +96,14 @@ public class MemberServiceImpl implements MemberService {
         totalScore = scoreSum / peerGradeResultList.size();
         if(totalScore>100) totalScore=100;
         member.updateTotalScore(totalScore);
+    }
+
+    @Override
+    @Transactional
+    public void updatePeerTestType(Member member) {
+        List<PeerTest> peerTestList = peerTestRepository.findALlByTarget(member);
+        TestType peerTestType = testResultCalculator.peerTestPeerType(peerTestList);
+        member.updatePeerTestType(peerTestType);
     }
 
     @Override

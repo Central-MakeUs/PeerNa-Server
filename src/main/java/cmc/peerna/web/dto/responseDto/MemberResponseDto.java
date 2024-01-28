@@ -31,7 +31,7 @@ public class MemberResponseDto {
     @Getter
     @AllArgsConstructor(access = AccessLevel.PROTECTED)
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
-    public static class MemberSimpleInfoDto{
+    public static class MemberMyPageInfoDto {
         private String name;
         private TestType testType;
         private Part part;
@@ -70,4 +70,18 @@ public class MemberResponseDto {
         private String refreshToken;
     }
 
+    @Builder
+    @Getter
+    @AllArgsConstructor(access = AccessLevel.PROTECTED)
+    @NoArgsConstructor(access = AccessLevel.PROTECTED)
+    public static class memberSimpleProfileDto {
+        private Long memberId;
+        private String name;
+        private Job job;
+        private Part part;
+        private TestType peerTestType;
+        private String oneLiner;
+        private Integer totalScore;
+
+    }
 }

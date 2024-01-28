@@ -28,6 +28,9 @@ public class Member extends BaseEntity {
     private TestType selfTestType;
 
     @Enumerated(EnumType.STRING)
+    private TestType peerTestType;
+
+    @Enumerated(EnumType.STRING)
     private PeerGrade selfPeerGrade;
 
     private String oneliner;
@@ -75,6 +78,7 @@ public class Member extends BaseEntity {
     }
 
     public void updateTotalScore(Integer totalScore){ this.totalScore=totalScore;}
+    public void updatePeerTestType(TestType peerTestType){ this.peerTestType = peerTestType;}
 
     public boolean updatePushAgree(boolean pushAgree){
         this.pushAgree=pushAgree;

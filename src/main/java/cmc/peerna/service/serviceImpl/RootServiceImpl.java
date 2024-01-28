@@ -2,6 +2,7 @@ package cmc.peerna.service.serviceImpl;
 
 import cmc.peerna.apiResponse.code.ResponseStatus;
 import cmc.peerna.apiResponse.exception.handler.MemberException;
+import cmc.peerna.apiResponse.exception.handler.RootException;
 import cmc.peerna.converter.MemberConverter;
 import cmc.peerna.converter.TestConverter;
 import cmc.peerna.domain.*;
@@ -15,10 +16,6 @@ import cmc.peerna.utils.TestResultCalculator;
 import cmc.peerna.web.dto.responseDto.MemberResponseDto;
 import cmc.peerna.web.dto.responseDto.RootResponseDto;
 import cmc.peerna.web.dto.responseDto.TestResponseDto;
-import com.google.firebase.messaging.FirebaseMessaging;
-import com.google.firebase.messaging.FirebaseMessagingException;
-import com.google.firebase.messaging.Message;
-import com.google.firebase.messaging.Notification;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -26,9 +23,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -43,6 +38,7 @@ public class RootServiceImpl implements RootService {
     private final PeerFeedbackRepository peerFeedbackRepository;
     private final PeerGradeResultRepository peerGradeResultRepository;
     private final PeerTestRepository peerTestRepository;
+    private final MemberRepository memberRepository;
     private final PushAlarmRepository pushAlarmRepository;
     private final TestResultCalculator testResultCalculator;
     private final FcmService fcmService;
@@ -96,15 +92,13 @@ public class RootServiceImpl implements RootService {
     public RootResponseDto.MypageDto getMyPageDto(Member member) {
         boolean peerTestMoreThanThree = peerGradeResultRepository.countByTarget(member) >= 3 ? true : false;
 
-        MemberResponseDto.MemberSimpleInfoDto memberSimpleInfoDto = MemberConverter.toSimpleInfoDto(member);
+        MemberResponseDto.MemberMyPageInfoDto memberMyPageInfoDto = MemberConverter.toSimpleInfoDto(member);
 
         SelfTestResult selfTestResult = selfTestResultRepository.findByMember(member);
 
-        List<PeerTest> peerTestList = peerTestRepository.findALlByTarget(member);
-
-        TestType peerTestType = testResultCalculator.peerTestPeerType(peerTestList);
-
         List<PeerCard> selfTestCardList = TestConverter.selfTestResultToPeerCardList(selfTestResult);
+
+        List<PeerTest> peerTestList = peerTestRepository.findALlByTarget(member);
 
         List<PeerCard> peerCardList = testResultCalculator.getPeerTestPeerCard(peerTestList);
 
@@ -118,8 +112,8 @@ public class RootServiceImpl implements RootService {
 
         return RootResponseDto.MypageDto.builder()
                 .peerTestMoreThanThree(peerTestMoreThanThree)
-                .memberSimpleInfoDto(memberSimpleInfoDto)
-                .peerTestType(peerTestType)
+                .memberMyPageInfoDto(memberMyPageInfoDto)
+                .peerTestType(member.getPeerTestType())
                 .selfTestCardList(selfTestCardList)
                 .peerCardList(peerCardList)
                 .totalEvaluation(totalEvaluation)
@@ -140,5 +134,17 @@ public class RootServiceImpl implements RootService {
         return allFeedbackDto;
     }
 
+    @Override
+    public RootResponseDto.SearchByPeerTypeDto getMemberListByPeerType(Member member, String testType, Integer page) {
+        PageRequest pageRequest = PageRequest.of(page, pageSize, Sort.by(Sort.Order.desc("totalScore"), Sort.Order.asc("name")));
+        Page<Member> memberByPeerTypePage = memberRepository.findAllByPeerTestTypeAndIdNot(TestType.valueOf(testType), member.getId(), pageRequest);
+        if(memberByPeerTypePage.getTotalElements()==0L){
+            throw new RootException(ResponseStatus.MEMBER_COUNT_ZERO);
+        }
+        if(memberByPeerTypePage.getTotalPages() <= page)
+            throw new MemberException(ResponseStatus.OVER_PAGE_INDEX_ERROR);
+        RootResponseDto.SearchByPeerTypeDto memberByPeerTypeDto = MemberConverter.toSearchByPeerTypeDto(memberByPeerTypePage);
+        return memberByPeerTypeDto;
+    }
 
 }

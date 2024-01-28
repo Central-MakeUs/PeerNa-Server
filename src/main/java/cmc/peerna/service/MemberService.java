@@ -19,6 +19,8 @@ public interface MemberService {
 
     void updateTotalScore(Member member);
 
+    void updatePeerTestType(Member member);
+
     Member findMemberByUuid(String uuid);
     MemberRequestDto.profileUpdateDto updateMemberProfile(Member member, MemberRequestDto.profileUpdateDto request);
 
@@ -27,4 +29,5 @@ public interface MemberService {
     boolean agreePush(Member member, MemberRequestDto.pushAgreeDto request);
 
     void withdrawal(Member member);
+
 }
