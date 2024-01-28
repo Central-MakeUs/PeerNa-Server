@@ -6,6 +6,7 @@ import cmc.peerna.apiResponse.exception.handler.RootException;
 import cmc.peerna.converter.MemberConverter;
 import cmc.peerna.converter.TestConverter;
 import cmc.peerna.domain.*;
+import cmc.peerna.domain.enums.Part;
 import cmc.peerna.domain.enums.PeerCard;
 import cmc.peerna.domain.enums.PeerGrade;
 import cmc.peerna.domain.enums.TestType;
@@ -44,20 +45,21 @@ public class RootServiceImpl implements RootService {
     private final FcmService fcmService;
     @Value("${paging.size}")
     private Integer pageSize;
+
     @Override
     public List<Long> getcolorAnswerIdList(Member member, List<Long> selfTestAnswerIdList) {
         List<Long> peerTestAnswerIdList = new ArrayList<>();
         List<Long> colorAnswerIdList = new ArrayList<>();
-        for (Long i = 1L; i <= 36L; i+=2) {
+        for (Long i = 1L; i <= 36L; i += 2) {
             Long answerA = peerTestRepository.countByTargetAndAnswerId(member, i);
             Long answerB = peerTestRepository.countByTargetAndAnswerId(member, i + 1);
             if (answerA > answerB) {
                 peerTestAnswerIdList.add(i);
             } else if (answerA < answerB) {
                 peerTestAnswerIdList.add(i + 1);
-            } else{
+            } else {
                 peerTestAnswerIdList.add(i);
-                peerTestAnswerIdList.add(i+1);
+                peerTestAnswerIdList.add(i + 1);
             }
         }
 
@@ -76,7 +78,7 @@ public class RootServiceImpl implements RootService {
         List<TestResponseDto.totalEvaluation> totalEvaluationList = new ArrayList<>();
         for (PeerGrade peerGrade : gradeList) {
             Long count = peerGradeResultRepository.countByTargetAndPeerGrade(member, peerGrade);
-            if(count==0L) continue;
+            if (count == 0L) continue;
             totalEvaluationList.add(TestResponseDto.totalEvaluation.builder()
                     .count(count)
                     .peerGrade(peerGrade)
@@ -126,16 +128,16 @@ public class RootServiceImpl implements RootService {
 
     @Override
     public RootResponseDto.AllFeedbackDto getFeedbackList(Member member, Integer page) {
-        if(!peerFeedbackRepository.existsByTarget(member)) return null;
+        if (!peerFeedbackRepository.existsByTarget(member)) return null;
         Page<PeerFeedback> peerFeedbacks = peerFeedbackRepository.findAllByTarget(member, PageRequest.of(page, pageSize, Sort.by(Sort.Direction.DESC, "createdAt")));
-        if(peerFeedbacks.getTotalPages() <= page)
+        if (peerFeedbacks.getTotalPages() <= page)
             throw new MemberException(ResponseStatus.OVER_PAGE_INDEX_ERROR);
         RootResponseDto.AllFeedbackDto allFeedbackDto = MemberConverter.toFeedbackString(peerFeedbacks, member);
         return allFeedbackDto;
     }
 
     @Override
-    public RootResponseDto.SearchByPeerTypeDto getMemberListByPeerType(Member member, String testType, Integer page) {
+    public RootResponseDto.memberSimpleDtoPage getMemberListByPeerType(Member member, String testType, Integer page) {
 
         if (!TestType.isValidTestType(testType)) {
             throw new RootException(ResponseStatus.WRONG_TEST_TYPE);
@@ -143,13 +145,29 @@ public class RootServiceImpl implements RootService {
 
         PageRequest pageRequest = PageRequest.of(page, pageSize, Sort.by(Sort.Order.desc("totalScore"), Sort.Order.asc("name")));
         Page<Member> memberByPeerTypePage = memberRepository.findAllByPeerTestTypeAndIdNot(TestType.valueOf(testType), member.getId(), pageRequest);
-        if(memberByPeerTypePage.getTotalElements()==0L){
+        if (memberByPeerTypePage.getTotalElements() == 0L) {
             throw new RootException(ResponseStatus.MEMBER_COUNT_ZERO);
         }
-        if(memberByPeerTypePage.getTotalPages() <= page)
+        if (memberByPeerTypePage.getTotalPages() <= page)
             throw new MemberException(ResponseStatus.OVER_PAGE_INDEX_ERROR);
-        RootResponseDto.SearchByPeerTypeDto memberByPeerTypeDto = MemberConverter.toSearchByPeerTypeDto(memberByPeerTypePage);
+        RootResponseDto.memberSimpleDtoPage memberByPeerTypeDto = MemberConverter.toSearchByPeerTypeDto(memberByPeerTypePage);
         return memberByPeerTypeDto;
     }
 
+    @Override
+    public RootResponseDto.memberSimpleDtoPage getMemberListByPart(Member member, String part, Integer page) {
+        if (!Part.isValidPart(part)) {
+            throw new RootException(ResponseStatus.WRONG_PART);
+        }
+
+        PageRequest pageRequest = PageRequest.of(page, pageSize, Sort.by(Sort.Order.desc("totalScore"), Sort.Order.asc("name")));
+        Page<Member> memberByPeerTypePage = memberRepository.findAllByPartAndIdNot(Part.valueOf(part), member.getId(), pageRequest);
+        if (memberByPeerTypePage.getTotalElements() == 0L) {
+            throw new RootException(ResponseStatus.MEMBER_COUNT_ZERO);
+        }
+        if (memberByPeerTypePage.getTotalPages() <= page)
+            throw new MemberException(ResponseStatus.OVER_PAGE_INDEX_ERROR);
+        RootResponseDto.memberSimpleDtoPage memberByPeerTypeDto = MemberConverter.toSearchByPeerTypeDto(memberByPeerTypePage);
+        return memberByPeerTypeDto;
+    }
 }

@@ -61,7 +61,7 @@ public class RootResponseDto {
     @Getter
     @AllArgsConstructor(access = AccessLevel.PROTECTED)
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
-    public static class SearchByPeerTypeDto{
+    public static class memberSimpleDtoPage {
         List<MemberResponseDto.memberSimpleProfileDto> memberSimpleProfileDtoList;
         Long totalElements;
         Integer currentPageElements;

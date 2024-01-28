@@ -1,6 +1,7 @@
 package cmc.peerna.repository;
 
 import cmc.peerna.domain.Member;
+import cmc.peerna.domain.enums.Part;
 import cmc.peerna.domain.enums.SocialType;
 import cmc.peerna.domain.enums.TestType;
 import org.springframework.data.domain.Page;
@@ -15,8 +16,10 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     Optional<Member> findBySocialTypeAndSocialId(SocialType socialType, String socialId);
 
     Optional<Member> findByUuid(String uuid);
-    List<Member> findALlByPeerTestTypeAndIdNotOrderByTotalScoreDescNameAsc(TestType peerTestType, Long memberId);
-
 
     Page<Member> findAllByPeerTestTypeAndIdNot(TestType peerTestType, Long memberId, PageRequest pageRequest);
+
+    Page<Member> findAllByPartAndIdNot(Part part, Long memberId, PageRequest pageRequest);
+
+
 }

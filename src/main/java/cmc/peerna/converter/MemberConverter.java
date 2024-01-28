@@ -75,13 +75,13 @@ public class MemberConverter {
                 .build();
     }
 
-    public static RootResponseDto.SearchByPeerTypeDto toSearchByPeerTypeDto(Page<Member> memberPage) {
+    public static RootResponseDto.memberSimpleDtoPage toSearchByPeerTypeDto(Page<Member> memberPage) {
         if(memberPage.getTotalElements()==0L) return null;
         List<MemberResponseDto.memberSimpleProfileDto> memberSimpleProfileDtoList = memberPage.stream()
                 .map(member -> toMemberSimpleProfileDto(member))
                 .collect(Collectors.toList());
 
-        return RootResponseDto.SearchByPeerTypeDto.builder()
+        return RootResponseDto.memberSimpleDtoPage.builder()
                 .memberSimpleProfileDtoList(memberSimpleProfileDtoList)
                 .isFirst(memberPage.isFirst())
                 .isLast(memberPage.isLast())
