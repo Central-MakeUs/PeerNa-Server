@@ -14,7 +14,5 @@ public interface RootService {
     List<TestResponseDto.totalEvaluation> getTotalEvaluationList(Member member);
 
     RootResponseDto.AllFeedbackDto getFeedbackList(Member member, Integer page);
-
-    void testFCMService(String fcmToken) throws IOException;
 }
 

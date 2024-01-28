@@ -3,6 +3,8 @@ package cmc.peerna.web.controller;
 import cmc.peerna.apiResponse.code.ResponseStatus;
 import cmc.peerna.apiResponse.exception.handler.MemberException;
 import cmc.peerna.apiResponse.response.ResponseDto;
+import cmc.peerna.converter.MemberConverter;
+import cmc.peerna.fcm.service.FcmService;
 import cmc.peerna.service.MemberService;
 import cmc.peerna.service.RootService;
 import cmc.peerna.web.dto.requestDto.RootRequestDto;
@@ -26,6 +28,7 @@ import java.io.IOException;
 public class RootController {
 
     private final MemberService memberService;
+    private final FcmService fcmService;
     private final RootService rootService;
 
     @GetMapping("/health")
@@ -60,7 +63,7 @@ public class RootController {
     @PostMapping("/test/fcm")
     public ResponseDto<Object> testFCM(@RequestBody RootRequestDto.FCMTestDto fcmToken) throws IOException
     {
-        rootService.testFCMService(fcmToken.getFcmToken());
-        return ResponseDto.of(null);
+        fcmService.testFCMService(fcmToken.getFcmToken());
+        return ResponseDto.of("FCM 테스트 성공!");
     }
 }

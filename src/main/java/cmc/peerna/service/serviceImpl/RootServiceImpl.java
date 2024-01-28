@@ -15,6 +15,10 @@ import cmc.peerna.utils.TestResultCalculator;
 import cmc.peerna.web.dto.responseDto.MemberResponseDto;
 import cmc.peerna.web.dto.responseDto.RootResponseDto;
 import cmc.peerna.web.dto.responseDto.TestResponseDto;
+import com.google.firebase.messaging.FirebaseMessaging;
+import com.google.firebase.messaging.FirebaseMessagingException;
+import com.google.firebase.messaging.Message;
+import com.google.firebase.messaging.Notification;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -136,22 +140,5 @@ public class RootServiceImpl implements RootService {
         return allFeedbackDto;
     }
 
-
-    @Override
-    @Transactional
-    public void testFCMService(String fcmToken) throws IOException
-    {
-        String title = "피어나 FCM 테스트";
-        String body = "피어나 안드로이드 FCM 테스트";
-
-        PushAlarm pushAlarm = pushAlarmRepository.save(PushAlarm.builder()
-                .title(title)
-                .body(body)
-                .isConfirmed(false)
-                .build());
-
-
-        fcmService.sendMessageTo(fcmToken,title,body,pushAlarm.getId().toString());
-    }
 
 }

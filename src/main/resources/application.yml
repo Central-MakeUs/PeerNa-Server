@@ -72,5 +72,4 @@ paging:
   size : 10
 
 firebase:
-  project:
-    id: ${firebase.project.id}
+  admin-sdk: firebase-adminsdk-key.json
