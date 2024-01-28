@@ -24,5 +24,7 @@ public interface MemberService {
 
     String regenerateAccessToken(RefreshToken refreshToken);
 
+    boolean agreePush(Member member, MemberRequestDto.pushAgreeDto request);
+
     void withdrawal(Member member);
 }

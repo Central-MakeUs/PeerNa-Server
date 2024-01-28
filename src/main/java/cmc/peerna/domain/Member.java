@@ -47,6 +47,9 @@ public class Member extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private SocialType socialType;
 
+    @ColumnDefault("false")
+    private boolean pushAgree;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "user_role")
     @ColumnDefault("'USER'")
@@ -72,6 +75,11 @@ public class Member extends BaseEntity {
     }
 
     public void updateTotalScore(Integer totalScore){ this.totalScore=totalScore;}
+
+    public boolean updatePushAgree(boolean pushAgree){
+        this.pushAgree=pushAgree;
+        return this.pushAgree;
+    }
 
     public void updateProfile(MemberRequestDto.profileUpdateDto request) {
         this.job = request.getJob();

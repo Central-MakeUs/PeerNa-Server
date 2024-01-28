@@ -117,6 +117,14 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     @Transactional
+    public boolean agreePush(Member member, MemberRequestDto.pushAgreeDto request) {
+
+        return member.updatePushAgree(request.isPushAgree());
+    }
+
+
+    @Override
+    @Transactional
     public void withdrawal(Member member) {
         selfTestRepository.deleteAllByWriter(member);
         selfTestResultRepository.deleteByMember(member);
