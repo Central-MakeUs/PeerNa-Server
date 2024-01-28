@@ -73,50 +73,6 @@ public class RootController {
     }
 
 
-    @Operation(summary = "피어 유형으로 동료 찾기 API ✔️🔑", description = "피어 유형으로 동료 찾기 API입니다.")
-    @Parameters({
-            @Parameter(name = "member", hidden = true)
-    })
-    @ApiResponses({
-            @ApiResponse(responseCode = "2103",description = "OK, 해당 조건을 만족하는 멤버가 존재하지 않습니다."),
-            @ApiResponse(responseCode = "2104",description = "BAD_REQUEST, TestType은 D,I,S,C 중 하나의 값이어야 합니다."),
-            @ApiResponse(responseCode = "4012",description = "BAD_REQUEST, 페이지 번호는 1 이상이여야 합니다."),
-            @ApiResponse(responseCode = "4013",description = "BAD_REQUEST, 페이지 번호가 페이징 범위를 초과했습니다.")
-    })
-    @GetMapping("/home/peer-type")
-    public ResponseDto<RootResponseDto.memberSimpleDtoPage> searchByPeerType(@RequestParam(name = "peerType") String peerType, @CheckPage @RequestParam(name = "page") Integer page, @AuthMember Member member) {
-        if (page == null)
-            page = 1;
-        else if (page < 1)
-            throw new MemberException(ResponseStatus.UNDER_PAGE_INDEX_ERROR);
-        page -= 1;
 
-
-        RootResponseDto.memberSimpleDtoPage memberListByPeerType = rootService.getMemberListByPeerType(member, peerType, page);
-        return ResponseDto.of(memberListByPeerType);
-    }
-
-
-    @Operation(summary = "파트(역할군)로 동료 찾기 API ✔️🔑", description = "파트(역할군)로 동료 찾기 API입니다.")
-    @Parameters({
-            @Parameter(name = "member", hidden = true)
-    })
-    @ApiResponses({
-            @ApiResponse(responseCode = "2103", description = "OK, 해당 조건을 만족하는 멤버가 존재하지 않습니다."),
-            @ApiResponse(responseCode = "2105",description = "BAD_REQUEST, Part는 PLANNER, DESIGNER, FRONT_END, BACK_END, MARKETER, OTHER 중 하나의 값이어야 합니다."),
-            @ApiResponse(responseCode = "4012", description = "BAD_REQUEST, 페이지 번호는 1 이상이여야 합니다."),
-            @ApiResponse(responseCode = "4013", description = "BAD_REQUEST, 페이지 번호가 페이징 범위를 초과했습니다.")
-    })
-    @GetMapping("/home/peer-part")
-    public ResponseDto<RootResponseDto.memberSimpleDtoPage> searchByPart(@RequestParam(name = "part") String part, @CheckPage @RequestParam(name = "page") Integer page, @AuthMember Member member) {
-        if (page == null)
-            page = 1;
-        else if (page < 1)
-            throw new MemberException(ResponseStatus.UNDER_PAGE_INDEX_ERROR);
-        page -= 1;
-
-        RootResponseDto.memberSimpleDtoPage memberListByPart = rootService.getMemberListByPart(member, part, page);
-        return ResponseDto.of(memberListByPart);
-    }
 
 }
