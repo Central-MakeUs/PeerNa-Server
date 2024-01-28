@@ -136,6 +136,11 @@ public class RootServiceImpl implements RootService {
 
     @Override
     public RootResponseDto.SearchByPeerTypeDto getMemberListByPeerType(Member member, String testType, Integer page) {
+
+        if (!TestType.isValidTestType(testType)) {
+            throw new RootException(ResponseStatus.WRONG_TEST_TYPE);
+        }
+
         PageRequest pageRequest = PageRequest.of(page, pageSize, Sort.by(Sort.Order.desc("totalScore"), Sort.Order.asc("name")));
         Page<Member> memberByPeerTypePage = memberRepository.findAllByPeerTestTypeAndIdNot(TestType.valueOf(testType), member.getId(), pageRequest);
         if(memberByPeerTypePage.getTotalElements()==0L){
