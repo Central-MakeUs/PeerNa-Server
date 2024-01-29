@@ -21,5 +21,7 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 
     Page<Member> findAllByPartAndIdNot(Part part, Long memberId, PageRequest pageRequest);
 
+    Page<Member> findAllByIdNotAndPartNotNull(Long memberId, PageRequest pageRequest);
+
 
 }

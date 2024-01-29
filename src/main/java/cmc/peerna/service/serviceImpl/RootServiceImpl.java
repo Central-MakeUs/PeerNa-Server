@@ -217,12 +217,20 @@ public class RootServiceImpl implements RootService {
 
     @Override
     public RootResponseDto.memberSimpleDtoPage getMemberListByPart(Member member, String part, Integer page) {
-        if (!Part.isValidPart(part)) {
+        if (!Part.isValidPart(part) && !part.equals("ALL")) {
             throw new RootException(ResponseStatus.WRONG_PART);
         }
 
+        Page<Member> memberByPeerTypePage;
+
         PageRequest pageRequest = PageRequest.of(page, pageSize, Sort.by(Sort.Order.desc("totalScore"), Sort.Order.asc("name")));
-        Page<Member> memberByPeerTypePage = memberRepository.findAllByPartAndIdNot(Part.valueOf(part), member.getId(), pageRequest);
+
+        if (part.equals("ALL")) {
+            memberByPeerTypePage = memberRepository.findAllByIdNotAndPartNotNull(member.getId(), pageRequest);
+        } else {
+            memberByPeerTypePage = memberRepository.findAllByPartAndIdNot(Part.valueOf(part), member.getId(), pageRequest);
+        }
+
         if (memberByPeerTypePage.getTotalElements() == 0L) {
             throw new RootException(ResponseStatus.MEMBER_COUNT_ZERO);
         }
