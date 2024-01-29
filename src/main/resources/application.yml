@@ -72,4 +72,4 @@ paging:
   size : 10
 
 firebase:
-  admin-sdk: firebase-adminsdk-key.json
+  admin-sdk: firebase-adminsdk-keyfile.json
