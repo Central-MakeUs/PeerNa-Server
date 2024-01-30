@@ -44,7 +44,7 @@ public class ExceptionAdvice extends ResponseEntityExceptionHandler {
                     String errorMessage = Optional.ofNullable(fieldError.getDefaultMessage()).orElse("");
                     errors.merge(fieldName, errorMessage, (existingErrorMessage, newErrorMessage) -> existingErrorMessage + ", " + newErrorMessage);
                 });
-        return handleExceptionInternal(ex, ResponseStatus.valueOf("_BAD_REQUEST").getMessage(), HttpHeaders.EMPTY, ResponseStatus.valueOf("_BAD_REQUEST").getHttpStatus(), request);
+        return handleExceptionInternalArgs(ex, HttpHeaders.EMPTY, ResponseStatus._BAD_REQUEST, request, errors);
 
     }
 
