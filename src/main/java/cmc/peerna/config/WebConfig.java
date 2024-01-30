@@ -34,8 +34,8 @@ public class WebConfig implements WebMvcConfigurer {
                         "https://peerna.me",
                         "http://localhost:5173",
                         "https://localhost:5173",
-                        "https://ngrok-free.app"
-
+                        "https://ngrok-free.app",
+                        "https://b6d2-58-76-161-229.ngrok-free.app/"
 
                 )
                 // 모든 HTTP Method를 허용한다.
