@@ -33,7 +33,8 @@ public class WebConfig implements WebMvcConfigurer {
                         "https://www.peerna.me",
                         "https://peerna.me",
                         "http://localhost:5173",
-                        "https://localhost:5173"
+                        "https://localhost:5173",
+                        "https://ngrok-free.app"
 
 
                 )
