@@ -27,4 +27,17 @@ public class RootRequestDto {
     public static class PeerTypeDto{
         TestType peerType;
     }
+
+
+    @Builder
+    @Getter
+    @AllArgsConstructor(access = AccessLevel.PROTECTED)
+    @NoArgsConstructor(access = AccessLevel.PROTECTED)
+    public static class PageRequestDto{
+        Long totalElements;
+        Integer currentPageElements;
+        Integer totalPage;
+        Boolean isFirst;
+        Boolean isLast;
+    }
 }

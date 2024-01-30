@@ -2,6 +2,7 @@ package cmc.peerna.web.controller;
 
 import cmc.peerna.apiResponse.code.ResponseStatus;
 import cmc.peerna.apiResponse.exception.handler.MemberException;
+import cmc.peerna.apiResponse.response.PageResponseDto;
 import cmc.peerna.apiResponse.response.ResponseDto;
 import cmc.peerna.converter.MemberConverter;
 import cmc.peerna.domain.Member;
@@ -10,6 +11,7 @@ import cmc.peerna.service.ProjectService;
 import cmc.peerna.validation.annotation.CheckPage;
 import cmc.peerna.web.dto.requestDto.MemberRequestDto;
 import cmc.peerna.web.dto.requestDto.ProjectRequestDto;
+import cmc.peerna.web.dto.requestDto.RootRequestDto;
 import cmc.peerna.web.dto.responseDto.MemberResponseDto;
 import cmc.peerna.web.dto.responseDto.ProjectResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
@@ -25,6 +27,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @Slf4j
@@ -53,6 +57,28 @@ public class ProjectController {
         return ResponseDto.of(MemberConverter.toMemberStatusDto(member.getId(), "프로젝트 생성 완료"));
     }
 
+//    @Operation(summary = "전체 프로젝트 조회 API ✔️🔑", description = "전체 프로젝트 조회 API입니다.")
+//    @ApiResponses({
+//            @ApiResponse(responseCode = "4012", description = "BAD_REQUEST , 페이지 번호는 1 이상이여야 합니다.", content = @Content(schema = @Schema(implementation = ResponseDto.class))),
+//            @ApiResponse(responseCode = "4013", description = "BAD_REQUEST , 페이지 번호가 페이징 범위를 초과했습니다.", content = @Content(schema = @Schema(implementation = ResponseDto.class))),
+//            @ApiResponse(responseCode = "2301", description = "OK , 프로젝트가 존재하지 않습니다.", content = @Content(schema = @Schema(implementation = ResponseDto.class))),
+//    })
+//    @Parameters({
+//            @Parameter(name = "member", hidden = true)
+//
+//    })
+//    @GetMapping("/project")
+//    public ResponseDto<ProjectResponseDto.ProjectPageDto> getAllProject(@AuthMember Member member, @CheckPage @RequestParam(name = "page") Integer page) {
+//        if (page == null)
+//            page = 1;
+//        else if (page < 1)
+//            throw new MemberException(ResponseStatus.UNDER_PAGE_INDEX_ERROR);
+//        page -= 1;
+//
+//        ProjectResponseDto.ProjectPageDto allProject = projectService.getAllProject(page);
+//        return ResponseDto.of(allProject);
+//    }
+
     @Operation(summary = "전체 프로젝트 조회 API ✔️🔑", description = "전체 프로젝트 조회 API입니다.")
     @ApiResponses({
             @ApiResponse(responseCode = "4012", description = "BAD_REQUEST , 페이지 번호는 1 이상이여야 합니다.", content = @Content(schema = @Schema(implementation = ResponseDto.class))),
@@ -64,7 +90,7 @@ public class ProjectController {
 
     })
     @GetMapping("/project")
-    public ResponseDto<ProjectResponseDto.ProjectPageDto> getAllProject(@AuthMember Member member, @CheckPage @RequestParam(name = "page") Integer page) {
+    public PageResponseDto<List<ProjectResponseDto.ProjectSimpleProfileDto>> getAllProject(@AuthMember Member member, @CheckPage @RequestParam(name = "page") Integer page) {
         if (page == null)
             page = 1;
         else if (page < 1)
@@ -72,8 +98,43 @@ public class ProjectController {
         page -= 1;
 
         ProjectResponseDto.ProjectPageDto allProject = projectService.getAllProject(page);
-        return ResponseDto.of(allProject);
+
+        List<ProjectResponseDto.ProjectSimpleProfileDto> projectList;
+        projectList = allProject.getProjectList();
+
+        RootRequestDto.PageRequestDto pageRequestDto = RootRequestDto.PageRequestDto.builder()
+                .totalElements(allProject.getTotalElements())
+                .currentPageElements(allProject.getCurrentPageElements())
+                .totalPage(allProject.getTotalPage())
+                .isFirst(allProject.getIsFirst())
+                .isLast(allProject.getIsLast())
+                .build();
+
+        return PageResponseDto.of(projectList, pageRequestDto);
     }
+
+
+
+//    @Operation(summary = "내 프로젝트 조회 API ✔️🔑", description = "내 프로젝트 조회 API입니다.")
+//    @ApiResponses({
+//            @ApiResponse(responseCode = "4012", description = "BAD_REQUEST , 페이지 번호는 1 이상이여야 합니다.", content = @Content(schema = @Schema(implementation = ResponseDto.class))),
+//            @ApiResponse(responseCode = "4013", description = "BAD_REQUEST , 페이지 번호가 페이징 범위를 초과했습니다.", content = @Content(schema = @Schema(implementation = ResponseDto.class))),
+//            @ApiResponse(responseCode = "2301", description = "OK , 프로젝트가 존재하지 않습니다.", content = @Content(schema = @Schema(implementation = ResponseDto.class))),
+//    })
+//    @Parameters({
+//            @Parameter(name = "member", hidden = true)
+//    })
+//    @GetMapping("/project/my")
+//    public ResponseDto<ProjectResponseDto.ProjectPageDto> getMyProject(@AuthMember Member member, @CheckPage @RequestParam(name = "page") Integer page) {
+//        if (page == null)
+//            page = 1;
+//        else if (page < 1)
+//            throw new MemberException(ResponseStatus.UNDER_PAGE_INDEX_ERROR);
+//        page -= 1;
+//
+//        ProjectResponseDto.ProjectPageDto allProject = projectService.getMyProject(member, page);
+//        return ResponseDto.of(allProject);
+//    }
 
     @Operation(summary = "내 프로젝트 조회 API ✔️🔑", description = "내 프로젝트 조회 API입니다.")
     @ApiResponses({
@@ -85,15 +146,27 @@ public class ProjectController {
             @Parameter(name = "member", hidden = true)
     })
     @GetMapping("/project/my")
-    public ResponseDto<ProjectResponseDto.ProjectPageDto> getMyProject(@AuthMember Member member, @CheckPage @RequestParam(name = "page") Integer page) {
+    public PageResponseDto<List<ProjectResponseDto.ProjectSimpleProfileDto>> getMyProject(@AuthMember Member member, @CheckPage @RequestParam(name = "page") Integer page) {
         if (page == null)
             page = 1;
         else if (page < 1)
             throw new MemberException(ResponseStatus.UNDER_PAGE_INDEX_ERROR);
         page -= 1;
 
-        ProjectResponseDto.ProjectPageDto allProject = projectService.getMyProject(member, page);
-        return ResponseDto.of(allProject);
+        ProjectResponseDto.ProjectPageDto myProject = projectService.getMyProject(member, page);
+
+        List<ProjectResponseDto.ProjectSimpleProfileDto> projectList;
+        projectList = myProject.getProjectList();
+
+        RootRequestDto.PageRequestDto pageRequestDto = RootRequestDto.PageRequestDto.builder()
+                .totalElements(myProject.getTotalElements())
+                .currentPageElements(myProject.getCurrentPageElements())
+                .totalPage(myProject.getTotalPage())
+                .isFirst(myProject.getIsFirst())
+                .isLast(myProject.getIsLast())
+                .build();
+
+        return PageResponseDto.of(projectList, pageRequestDto);
     }
 
     @Operation(summary = "프로젝트 상세 페이지 조회 API ✔️🔑", description = "프로젝트 상세 페이지 조회 API입니다.")
