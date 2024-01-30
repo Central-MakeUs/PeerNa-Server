@@ -18,6 +18,7 @@ public class FcmService {
 
     public void testFCMService(String fcmToken)
     {
+        logger.info("받은 FCM 토큰 값 : " + fcmToken);
         Message message = Message.builder()
                 .setToken(fcmToken)
                 .setNotification(
