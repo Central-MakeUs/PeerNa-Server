@@ -2,6 +2,7 @@ package cmc.peerna.web.controller;
 
 import cmc.peerna.apiResponse.code.ResponseStatus;
 import cmc.peerna.apiResponse.exception.handler.MemberException;
+import cmc.peerna.apiResponse.exception.handler.ProjectException;
 import cmc.peerna.apiResponse.response.PageResponseDto;
 import cmc.peerna.apiResponse.response.ResponseDto;
 import cmc.peerna.converter.MemberConverter;
@@ -83,7 +84,7 @@ public class ProjectController {
     @ApiResponses({
             @ApiResponse(responseCode = "4012", description = "BAD_REQUEST , 페이지 번호는 1 이상이여야 합니다.", content = @Content(schema = @Schema(implementation = ResponseDto.class))),
             @ApiResponse(responseCode = "4013", description = "BAD_REQUEST , 페이지 번호가 페이징 범위를 초과했습니다.", content = @Content(schema = @Schema(implementation = ResponseDto.class))),
-            @ApiResponse(responseCode = "2301", description = "OK , 프로젝트가 존재하지 않습니다.", content = @Content(schema = @Schema(implementation = ResponseDto.class))),
+            @ApiResponse(responseCode = "2301", description = "OK , 조회된 프로젝트가 0개입니다.", content = @Content(schema = @Schema(implementation = ResponseDto.class))),
     })
     @Parameters({
             @Parameter(name = "member", hidden = true)
@@ -114,7 +115,6 @@ public class ProjectController {
     }
 
 
-
 //    @Operation(summary = "내 프로젝트 조회 API ✔️🔑", description = "내 프로젝트 조회 API입니다.")
 //    @ApiResponses({
 //            @ApiResponse(responseCode = "4012", description = "BAD_REQUEST , 페이지 번호는 1 이상이여야 합니다.", content = @Content(schema = @Schema(implementation = ResponseDto.class))),
@@ -140,7 +140,7 @@ public class ProjectController {
     @ApiResponses({
             @ApiResponse(responseCode = "4012", description = "BAD_REQUEST , 페이지 번호는 1 이상이여야 합니다.", content = @Content(schema = @Schema(implementation = ResponseDto.class))),
             @ApiResponse(responseCode = "4013", description = "BAD_REQUEST , 페이지 번호가 페이징 범위를 초과했습니다.", content = @Content(schema = @Schema(implementation = ResponseDto.class))),
-            @ApiResponse(responseCode = "2301", description = "OK , 프로젝트가 존재하지 않습니다.", content = @Content(schema = @Schema(implementation = ResponseDto.class))),
+            @ApiResponse(responseCode = "2301", description = "OK , 조회된 프로젝트가 0개입니다.", content = @Content(schema = @Schema(implementation = ResponseDto.class))),
     })
     @Parameters({
             @Parameter(name = "member", hidden = true)
@@ -178,4 +178,42 @@ public class ProjectController {
         ProjectResponseDto.ProjectDetailDto projectDetailInfo = projectService.getProjectDetailInfo(projectId);
         return ResponseDto.of(projectDetailInfo);
     }
+
+    @Operation(summary = "프로젝트 초대 링크 조회 API ✔️🔑", description = "프로젝트 초대 링크 조회 API입니다.")
+    @Parameters({
+            @Parameter(name = "member", hidden = true)
+    })
+    @GetMapping("/project/{project-id}/invite/link")
+    public ResponseDto<String> getProjectInviteLinkResponse(@AuthMember Member member, @PathVariable(name = "project-id") Long projectId) {
+        String projectCreatorName = projectService.findProjectCreator(projectId);
+        return ResponseDto.of(projectCreatorName);
+    }
+
+    @Operation(summary = "링크로 초대된 프로젝트 자세히 알아보기 API ✔️🔑", description = "링크로 초대된 프로젝트 자세히 알아보기 API입니다.")
+    @Parameters({
+            @Parameter(name = "member", hidden = true)
+    })
+    @GetMapping("/project/{project-id}/invite/detail")
+    public ResponseDto<ProjectResponseDto.ProjectDetailDto> getProjectInviteDetail(@AuthMember Member member, @PathVariable(name = "project-id") Long projectId) {
+        ProjectResponseDto.ProjectDetailDto projectDetailInfo = projectService.getProjectDetailInfo(projectId);
+        return ResponseDto.of(projectDetailInfo);
+    }
+
+    @Operation(summary = "링크로 초대된 프로젝트 - 초대 수락 API ✔️🔑", description = "링크로 초대된 프로젝트 - 초대 수락 API입니다.")
+    @Parameters({
+            @Parameter(name = "member", hidden = true)
+    })
+    @ApiResponses({
+            @ApiResponse(responseCode = "2300", description = "OK , 프로젝트가 존재하지 않습니다.", content = @Content(schema = @Schema(implementation = ResponseDto.class))),
+            @ApiResponse(responseCode = "2302", description = "OK , 이미 해당 프로젝트에 참여중입니다.", content = @Content(schema = @Schema(implementation = ResponseDto.class))),
+            @ApiResponse(responseCode = "2303", description = "OK , 자신이 만든 프로젝트엔 참여할 수 없습니다.", content = @Content(schema = @Schema(implementation = ResponseDto.class))),
+    })
+    @PostMapping("/project/{project-id}/invite/accept")
+    public ResponseDto<MemberResponseDto.MemberStatusDto> acceptProjectLinkInvite(@AuthMember Member member, @PathVariable(name = "project-id") Long projectId) {
+        projectService.checkProjectSelfInvite(projectId, member.getId());
+        projectService.checkExistProjectMember(projectId, member.getId());
+        projectService.saveNewProjectMember(projectId, member.getId());
+        return ResponseDto.of(MemberConverter.toMemberStatusDto(member.getId(), "프로젝트 초대 수락"));
+    }
+
 }

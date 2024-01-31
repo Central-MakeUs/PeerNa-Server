@@ -49,4 +49,12 @@ public class ProjectResponseDto {
         Boolean isFirst;
         Boolean isLast;
     }
+
+    @Builder
+    @Getter
+    @AllArgsConstructor(access = AccessLevel.PROTECTED)
+    @NoArgsConstructor(access = AccessLevel.PROTECTED)
+    public static class ProjectInviteLinkDto{
+        String creatorName;
+    }
 }
