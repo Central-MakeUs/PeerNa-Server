@@ -13,4 +13,12 @@ public interface ProjectService {
 
     ProjectResponseDto.ProjectPageDto getAllProject(Integer page);
     ProjectResponseDto.ProjectPageDto getMyProject(Member member, Integer page);
+
+    String findProjectCreator(Long projectId);
+
+    void checkExistProjectMember(Long projectId, Long memberId);
+
+    void checkProjectSelfInvite(Long projectId, Long memberId);
+
+    void saveNewProjectMember(Long projectId, Long memberId);
 }

@@ -7,6 +7,9 @@ import cmc.peerna.apiResponse.exception.handler.RootException;
 import cmc.peerna.converter.ProjectConverter;
 import cmc.peerna.domain.Member;
 import cmc.peerna.domain.Project;
+import cmc.peerna.domain.mapping.ProjectMember;
+import cmc.peerna.repository.MemberRepository;
+import cmc.peerna.repository.ProjectMemberRepository;
 import cmc.peerna.repository.ProjectRepository;
 import cmc.peerna.service.ProjectService;
 import cmc.peerna.web.dto.requestDto.ProjectRequestDto;
@@ -20,11 +23,15 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 @Service
 @Slf4j
 @RequiredArgsConstructor
 public class ProjectServiceImpl implements ProjectService {
     private final ProjectRepository projectRepository;
+    private final ProjectMemberRepository projectMemberRepository;
+    private final MemberRepository memberRepository;
     @Value("${paging.size}")
     private Integer pageSize;
 
@@ -86,4 +93,37 @@ public class ProjectServiceImpl implements ProjectService {
         return allProjectPageDto;
     }
 
+    @Override
+    public String findProjectCreator(Long projectId) {
+        Project project = projectRepository.findById(projectId).orElseThrow(() -> new ProjectException(ResponseStatus.PROJECT_NOT_FOUND));
+        return project.getCreator().getName();
+
+    }
+
+    @Override
+    public void checkExistProjectMember(Long projectId, Long memberId) {
+        if (projectMemberRepository.existsByProjectIdAndMemberId(projectId, memberId)) {
+            throw new ProjectException(ResponseStatus.ALREADY_EXIST_PROJECT_MEMBER);
+        }
+
+    }
+
+    @Override
+    public void checkProjectSelfInvite(Long projectId, Long memberId){
+        Project project = projectRepository.findById(projectId).orElseThrow(() -> new ProjectException(ResponseStatus.PROJECT_NOT_FOUND));
+        if (project.getCreator().getId() == memberId) {
+            throw new ProjectException(ResponseStatus.PROJECT_SELF_INVITE);
+        }
+    }
+
+    @Override
+    public void saveNewProjectMember(Long projectId, Long memberId) {
+        Project project = projectRepository.findById(projectId).orElseThrow(() -> new ProjectException(ResponseStatus.PROJECT_NOT_FOUND));
+        Member member = memberRepository.findById(memberId).orElseThrow(() -> new MemberException(ResponseStatus.MEMBER_NOT_FOUND));
+        projectMemberRepository.save(ProjectMember.builder()
+                .project(project)
+                .member(member)
+                .build()
+        );
+    }
 }

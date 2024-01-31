@@ -11,4 +11,5 @@ public interface ProjectRepository extends JpaRepository<Project, Long> {
     Page<Project> findAllByIdNotNull(PageRequest pageRequest);
 
     Page<Project> findAllByCreator(Member creator, PageRequest pageRequest);
+
 }
