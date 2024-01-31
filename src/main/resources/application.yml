@@ -1,4 +1,19 @@
+
 spring:
+  profiles:
+    active: app_profiles
+springdoc:
+  swagger-ui:
+    tags-sorter: alpha            # alpha: 알파벳 순 태그 정렬, method: HTTP Method 순 정렬
+    operations-sorter: alpha      # alpha: 알파벳 순 태그 정렬, method: HTTP Method 순 정렬
+  cache:
+    disabled: true
+  use-fqn: true
+---
+spring:
+  config:
+    activate:
+      on-profile: dev
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: ${aws.db.username}
@@ -19,7 +34,6 @@ spring:
           auto: update
   data:
     redis:
-#      host: localhost
       host: ${aws.redis.host}
       port: 6379
 
@@ -30,7 +44,6 @@ spring:
         baseUrl: https://kauth.kakao.com
         clientId: ${kakao.client.id}
         redirectUri: https://dev.peerna.me/login/oauth2/kakao
-#        redirectUri: http://localhost:8080/login/oauth2/kakao
         secretKey: ${kakao.client.secret}
       client:
         provider:
@@ -46,7 +59,6 @@ spring:
             client-secret: ${kakao.client.secret}
             client-authentication-method: client_secret_post
             redirect-uri: https://dev.peerna.me/login/oauth2/kakao
-#            redirect-uri: http://localhost:8080/login/oauth2/kakao
             authorization-grant-type: authorization_code
             client-name: kakao
 
@@ -64,7 +76,81 @@ jwt:
 
 web:
   redirect-url: http://localhost:5173/login/kakao
-#  redirect-url: https://localhost:8080
+  apple-redirect-url: ${apple.redirect.url}
+
+
+paging:
+  size : 10
+
+firebase:
+  admin-sdk: firebase-adminsdk-keyfile.json
+---
+spring:
+  config:
+    activate:
+      on-profile: local
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: ${aws.db.username}
+    password: ${aws.db.password}
+    url: ${aws.db.url}
+  output:
+    ansi:
+      enabled: always
+
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
+        show_sql: true
+        format_sql: true
+        use_sql_comments: true
+        hbm2ddl:
+          auto: update
+  data:
+    redis:
+      host: localhost
+      port: 6379
+
+  security:
+    oauth2:
+      kakao:
+        infoUrl: https://kapi.kakao.com
+        baseUrl: https://kauth.kakao.com
+        clientId: ${kakao.client.id}
+        redirectUri: http://localhost:8080/login/oauth2/kakao
+        secretKey: ${kakao.client.secret}
+      client:
+        provider:
+          kakao:
+            authorization-uri: https://kauth.kakao.com/oauth/authorize
+            token-uri: https://kauth.kakao.com/oauth/token
+            user-info-uri: https://kapi.kakao.com/v2/user/me
+            user-name-attribute: id
+
+        registration:
+          kakao:
+            client-id: ${kakao.client.id}
+            client-secret: ${kakao.client.secret}
+            client-authentication-method: client_secret_post
+            redirect-uri: http://localhost:8080/login/oauth2/kakao
+            authorization-grant-type: authorization_code
+            client-name: kakao
+
+  logging:
+    level:
+      #      root: info
+      org.hibernate.SQL: DEBUG
+      org.hibernate.type: trace
+debug: true
+jwt:
+  secret:
+    key: testsecrettestsecrettestsecrettestsecrettestsecrettestsecrettestsecrettestsecrettestsecret
+  access-token-validity-in-seconds: 1800 # 30 m
+  refresh-token-validity-in-seconds: 1210000000 # 14 d
+
+web:
+  redirect-url: https://localhost:8080
   apple-redirect-url: ${apple.redirect.url}
 
 
