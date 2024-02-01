@@ -5,13 +5,15 @@ import cmc.peerna.apiResponse.exception.handler.MemberException;
 import cmc.peerna.apiResponse.response.PageResponseDto;
 import cmc.peerna.apiResponse.response.ResponseDto;
 import cmc.peerna.domain.Member;
-import cmc.peerna.fcm.service.FcmService;
 import cmc.peerna.jwt.handler.annotation.AuthMember;
 import cmc.peerna.service.MemberService;
+import cmc.peerna.service.NoticeService;
 import cmc.peerna.service.RootService;
 import cmc.peerna.validation.annotation.CheckPage;
+import cmc.peerna.web.dto.requestDto.RootRequestDto;
 import cmc.peerna.web.dto.responseDto.HomeResponseDto;
 import cmc.peerna.web.dto.responseDto.NoticeResponseDto;
+import cmc.peerna.web.dto.responseDto.ProjectResponseDto;
 import cmc.peerna.web.dto.responseDto.RootResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -48,6 +50,7 @@ public class HomeController {
 
     private final MemberService memberService;
     private final RootService rootService;
+    private final NoticeService noticeService;
 
 
     @Operation(summary = "피어 유형으로 동료 찾기 API ✔️🔑", description = "피어 유형으로 동료 찾기 API입니다.")
@@ -135,6 +138,7 @@ public class HomeController {
     @Operation(summary = "알림 - 피어테스트 알림 조회 API ✔️🔑", description = "알림 - 피어테스트 알림 조회 API입니다.")
     @ApiResponses({
             @ApiResponse(responseCode = "2200", description = "BAD_REQUEST, 존재하지 않는 유저를 조회한 경우."),
+            @ApiResponse(responseCode = "2350", description = "BAD_REQUEST, 조회된 알림이 0개입니다."),
             @ApiResponse(responseCode = "4012", description = "BAD_REQUEST , 페이지 번호는 1 이상이여야 합니다.", content = @Content(schema = @Schema(implementation = ResponseDto.class))),
             @ApiResponse(responseCode = "4013", description = "BAD_REQUEST , 페이지 번호가 페이징 범위를 초과했습니다.", content = @Content(schema = @Schema(implementation = ResponseDto.class))),
     })
@@ -142,17 +146,34 @@ public class HomeController {
             @Parameter(name = "member", hidden = true)
     })
     @GetMapping("/home/notice/peer-test")
-    public PageResponseDto<List<NoticeResponseDto.noticeSimpleInfoDto>> getPeerTestNotice(@AuthMember Member member) {
+    public PageResponseDto<List<NoticeResponseDto.NoticeSimpleInfoDto>> getPeerTestNotice(@AuthMember Member member, @CheckPage @RequestParam(name = "page") Integer page) {
+        if (page == null)
+            page = 1;
+        else if (page < 1)
+            throw new MemberException(ResponseStatus.UNDER_PAGE_INDEX_ERROR);
+        page -= 1;
 
-        // 알림 조회 로직 구현
+        NoticeResponseDto.NoticePageDto peerTestNoticePage = noticeService.getPeerTestNoticePage(member, page);
 
-        return PageResponseDto.of(null, null);
+        List<NoticeResponseDto.NoticeSimpleInfoDto> peerTestNoticeList;
+        peerTestNoticeList = peerTestNoticePage.getNoticeList();
+
+        RootRequestDto.PageRequestDto pageRequestDto = RootRequestDto.PageRequestDto.builder()
+                .totalElements(peerTestNoticePage.getTotalElements())
+                .currentPageElements(peerTestNoticePage.getCurrentPageElements())
+                .totalPage(peerTestNoticePage.getTotalPage())
+                .isFirst(peerTestNoticePage.getIsFirst())
+                .isLast(peerTestNoticePage.getIsLast())
+                .build();
+
+        return PageResponseDto.of(peerTestNoticeList, pageRequestDto);
     }
 
 
     @Operation(summary = "알림 - 프로젝트 알림 조회 API ✔️🔑", description = "알림 - 프로젝트 알림 조회 API입니다.")
     @ApiResponses({
             @ApiResponse(responseCode = "2200", description = "BAD_REQUEST, 존재하지 않는 유저를 조회한 경우."),
+            @ApiResponse(responseCode = "2350", description = "BAD_REQUEST, 조회된 알림이 0개입니다."),
             @ApiResponse(responseCode = "4012", description = "BAD_REQUEST , 페이지 번호는 1 이상이여야 합니다.", content = @Content(schema = @Schema(implementation = ResponseDto.class))),
             @ApiResponse(responseCode = "4013", description = "BAD_REQUEST , 페이지 번호가 페이징 범위를 초과했습니다.", content = @Content(schema = @Schema(implementation = ResponseDto.class))),
     })
@@ -160,11 +181,27 @@ public class HomeController {
             @Parameter(name = "member", hidden = true)
     })
     @GetMapping("/home/notice/project")
-    public PageResponseDto<List<NoticeResponseDto.noticeSimpleInfoDto>> getProjectNotice(@AuthMember Member member) {
+    public PageResponseDto<List<NoticeResponseDto.NoticeSimpleInfoDto>> getProjectNotice(@AuthMember Member member, @CheckPage @RequestParam(name = "page") Integer page) {
+        if (page == null)
+            page = 1;
+        else if (page < 1)
+            throw new MemberException(ResponseStatus.UNDER_PAGE_INDEX_ERROR);
+        page -= 1;
 
-        // 알림 조회 로직 구현
+        NoticeResponseDto.NoticePageDto peerTestNoticePage = noticeService.getProjectNoticePage(member, page);
 
-        return PageResponseDto.of(null, null);
+        List<NoticeResponseDto.NoticeSimpleInfoDto> projectNoticeList;
+        projectNoticeList = peerTestNoticePage.getNoticeList();
+
+        RootRequestDto.PageRequestDto pageRequestDto = RootRequestDto.PageRequestDto.builder()
+                .totalElements(peerTestNoticePage.getTotalElements())
+                .currentPageElements(peerTestNoticePage.getCurrentPageElements())
+                .totalPage(peerTestNoticePage.getTotalPage())
+                .isFirst(peerTestNoticePage.getIsFirst())
+                .isLast(peerTestNoticePage.getIsLast())
+                .build();
+
+        return PageResponseDto.of(projectNoticeList, pageRequestDto);
     }
 
 }
