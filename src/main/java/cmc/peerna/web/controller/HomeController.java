@@ -135,6 +135,29 @@ public class HomeController {
         return ResponseDto.of(feedbackList);
     }
 
+    @Operation(summary = "동료 상세 - 참여 프로젝트 더보기 API ✔️🔑", description = "동료 상세 - 참여 프로젝트 더보기 API입니다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "2200", description = "BAD_REQUEST, 존재하지 않는 유저를 조회한 경우."),
+            @ApiResponse(responseCode = "4012", description = "BAD_REQUEST , 페이지 번호는 1 이상이여야 합니다.", content = @Content(schema = @Schema(implementation = ResponseDto.class))),
+            @ApiResponse(responseCode = "4013", description = "BAD_REQUEST , 페이지 번호가 페이징 범위를 초과했습니다.", content = @Content(schema = @Schema(implementation = ResponseDto.class))),
+    })
+    @Parameters({
+            @Parameter(name = "member", hidden = true)
+    })
+    @GetMapping("/home/{peer-id}/peer-project")
+    public ResponseDto<ProjectResponseDto.ProjectPageDto> seeMoreProject(@PathVariable(name="peer-id") Long peerId, @CheckPage @RequestParam(name = "page") Integer page, @AuthMember Member member) {
+        if (page == null)
+            page = 1;
+        else if (page < 1)
+            throw new MemberException(ResponseStatus.UNDER_PAGE_INDEX_ERROR);
+        page -= 1;
+
+        Member peer = memberService.findById(peerId);
+        ProjectResponseDto.ProjectPageDto peerProjectPage = rootService.getPeerProject(peer, page);
+        return ResponseDto.of(peerProjectPage);
+    }
+
+
     @Operation(summary = "알림 - 피어테스트 알림 조회 API ✔️🔑", description = "알림 - 피어테스트 알림 조회 API입니다.")
     @ApiResponses({
             @ApiResponse(responseCode = "2200", description = "BAD_REQUEST, 존재하지 않는 유저를 조회한 경우."),

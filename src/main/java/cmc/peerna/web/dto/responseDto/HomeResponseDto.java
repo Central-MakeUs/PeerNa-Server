@@ -32,5 +32,8 @@ public class HomeResponseDto {
         // 나와 동료의 공통점
         private List<Long> colorAnswerIdList;
 
+        // 해당 동료가 참여중인 프로젝트 최신순 3개
+        private List<ProjectResponseDto.ProjectSimpleProfileDto> peerProjectDtoList;
+
     }
 }

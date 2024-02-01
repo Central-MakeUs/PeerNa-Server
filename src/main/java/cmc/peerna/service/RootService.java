@@ -2,6 +2,7 @@ package cmc.peerna.service;
 
 import cmc.peerna.domain.Member;
 import cmc.peerna.web.dto.responseDto.HomeResponseDto;
+import cmc.peerna.web.dto.responseDto.ProjectResponseDto;
 import cmc.peerna.web.dto.responseDto.RootResponseDto;
 import cmc.peerna.web.dto.responseDto.TestResponseDto;
 
@@ -16,6 +17,7 @@ public interface RootService {
     List<TestResponseDto.totalEvaluation> getTotalEvaluationList(Member member);
 
     RootResponseDto.AllFeedbackDto getFeedbackList(Member member, Integer page);
+    ProjectResponseDto.ProjectPageDto getPeerProject(Member member, Integer page);
 
     RootResponseDto.memberSimpleDtoPage getMemberListByPeerType(Member member, String testType, Integer pageSize);
     RootResponseDto.memberSimpleDtoPage getMemberListByPart(Member member, String part, Integer pageSize);

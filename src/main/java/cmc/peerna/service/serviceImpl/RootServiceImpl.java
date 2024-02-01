@@ -4,20 +4,19 @@ import cmc.peerna.apiResponse.code.ResponseStatus;
 import cmc.peerna.apiResponse.exception.handler.MemberException;
 import cmc.peerna.apiResponse.exception.handler.RootException;
 import cmc.peerna.converter.MemberConverter;
+import cmc.peerna.converter.ProjectConverter;
 import cmc.peerna.converter.TestConverter;
 import cmc.peerna.domain.*;
 import cmc.peerna.domain.enums.Part;
 import cmc.peerna.domain.enums.PeerCard;
 import cmc.peerna.domain.enums.PeerGrade;
 import cmc.peerna.domain.enums.TestType;
+import cmc.peerna.domain.mapping.ProjectMember;
 import cmc.peerna.fcm.service.FcmService;
 import cmc.peerna.repository.*;
 import cmc.peerna.service.RootService;
 import cmc.peerna.utils.TestResultCalculator;
-import cmc.peerna.web.dto.responseDto.HomeResponseDto;
-import cmc.peerna.web.dto.responseDto.MemberResponseDto;
-import cmc.peerna.web.dto.responseDto.RootResponseDto;
-import cmc.peerna.web.dto.responseDto.TestResponseDto;
+import cmc.peerna.web.dto.responseDto.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -42,6 +41,9 @@ public class RootServiceImpl implements RootService {
     private final PeerTestRepository peerTestRepository;
     private final MemberRepository memberRepository;
     private final PushAlarmRepository pushAlarmRepository;
+
+    private final ProjectMemberRepository projectMemberRepository;
+
     private final TestResultCalculator testResultCalculator;
     private final FcmService fcmService;
     @Value("${paging.size}")
@@ -173,6 +175,11 @@ public class RootServiceImpl implements RootService {
 
         List<Long> colorAnswerIdList = getPeerAndMyCommonAnswerIdList(peerAnswerIdList, myAnswerIdList);
 
+        List<Project> top3projectList = projectMemberRepository.qFindProjectByMemberOrderByCreatedAtDesc(target);
+        if (top3projectList.size() > 3) {
+            top3projectList = top3projectList.subList(0, 3);
+        }
+        List<ProjectResponseDto.ProjectSimpleProfileDto> top3ProjectSimpleProfileList = ProjectConverter.toProjectSimpleProfileList(top3projectList);
 
         return HomeResponseDto.peerDetailPageDto.builder()
                 .peerTestMoreThanThree(peerTestMoreThanThree)
@@ -184,9 +191,9 @@ public class RootServiceImpl implements RootService {
                 .peerFeedbackList(TestConverter.peerFeedbackListToStringList(peerFeedbackList))
                 .peerAnswerIdList(peerAnswerIdList)
                 .colorAnswerIdList(colorAnswerIdList)
+                .peerProjectDtoList(top3ProjectSimpleProfileList)
                 .build();
     }
-
     @Override
     public RootResponseDto.AllFeedbackDto getFeedbackList(Member member, Integer page) {
         if (!peerFeedbackRepository.existsByTarget(member)) return null;
@@ -195,6 +202,16 @@ public class RootServiceImpl implements RootService {
             throw new MemberException(ResponseStatus.OVER_PAGE_INDEX_ERROR);
         RootResponseDto.AllFeedbackDto allFeedbackDto = MemberConverter.toFeedbackString(peerFeedbacks, member);
         return allFeedbackDto;
+    }
+
+    @Override
+    public ProjectResponseDto.ProjectPageDto getPeerProject(Member member, Integer page) {
+        Page<Project> projectPage = projectMemberRepository.qFindProjectPageByMemberOrderByCreatedAtDesc(member, PageRequest.of(page, pageSize, Sort.by(Sort.Direction.DESC, "createdAt")));
+        if (projectPage.getTotalPages() <= page)
+            throw new MemberException(ResponseStatus.OVER_PAGE_INDEX_ERROR);
+
+        ProjectResponseDto.ProjectPageDto projectPageDto = ProjectConverter.toProjectPageDto(projectPage);
+        return projectPageDto;
     }
 
     @Override

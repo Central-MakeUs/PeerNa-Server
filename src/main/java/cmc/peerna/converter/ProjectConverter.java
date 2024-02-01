@@ -39,6 +39,15 @@ public class ProjectConverter {
                 .build();
     }
 
+    public static List<ProjectResponseDto.ProjectSimpleProfileDto> toProjectSimpleProfileList(List<Project> projectList) {
+        if(projectList.isEmpty()) return null;
+        List<ProjectResponseDto.ProjectSimpleProfileDto> projectSimpleProfileDtoList = projectList.stream()
+                .map(project -> toProjectSimpleProfile(project))
+                .collect(Collectors.toList());
+        return projectSimpleProfileDtoList;
+    }
+
+
     public static ProjectResponseDto.ProjectPageDto toProjectPageDto(Page<Project> projectPage) {
         if(projectPage.getTotalElements()==0L) return null;
         List<ProjectResponseDto.ProjectSimpleProfileDto> projectSimpleProfileDtoList = projectPage.stream()
