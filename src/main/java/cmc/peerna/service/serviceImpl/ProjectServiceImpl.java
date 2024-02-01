@@ -105,7 +105,14 @@ public class ProjectServiceImpl implements ProjectService {
         if (projectMemberRepository.existsByProjectIdAndMemberId(projectId, memberId)) {
             throw new ProjectException(ResponseStatus.ALREADY_EXIST_PROJECT_MEMBER);
         }
+    }
 
+    @Override
+    public void checkProjectCreator(Long projectId, Member member) {
+        Project project = projectRepository.findById(projectId).orElseThrow(() -> new ProjectException(ResponseStatus.PROJECT_NOT_FOUND));
+        if (!project.getCreator().equals(member)) {
+            throw new ProjectException(ResponseStatus.NOT_PROJECT_CREATOR);
+        }
     }
 
     @Override
