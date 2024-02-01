@@ -1,6 +1,7 @@
 package cmc.peerna.domain;
 
 import cmc.peerna.domain.common.BaseEntity;
+import cmc.peerna.domain.enums.NoticeGroup;
 import cmc.peerna.domain.enums.NoticeType;
 import jakarta.persistence.*;
 import lombok.*;
@@ -24,7 +25,11 @@ public class Notice extends BaseEntity {
     private Member receiver;
 
     @Enumerated(EnumType.STRING)
+    private NoticeGroup noticeGroup;
+
+    @Enumerated(EnumType.STRING)
     private NoticeType noticeType;
+    private Long targetId;
 
     private String contents;
 
