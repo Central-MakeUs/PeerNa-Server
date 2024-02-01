@@ -17,9 +17,7 @@ public class ProjectRequestDto {
 
         @NotBlank @Size(max = 15, message = "프로젝트 명은 1~15글자 사이여야 합니다.")
         private String projectName;
-        @NotBlank
         private Date startDate;
-        @NotBlank
         private Date endDate;
         @NotBlank @Size(max = 20, message = "프로젝트 설명은 1~20글자 사이여야 합니다.")
         private String introduce;
