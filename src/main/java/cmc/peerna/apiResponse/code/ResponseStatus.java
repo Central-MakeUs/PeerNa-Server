@@ -37,6 +37,7 @@ public enum ResponseStatus implements BaseCode {
     PROJECT_COUNT_ZERO(OK, 2301, "조회된 프로젝트가 0개입니다."),
     ALREADY_EXIST_PROJECT_MEMBER(OK, 2302, "이미 해당 프로젝트에 참여중입니다."),
     PROJECT_SELF_INVITE(OK, 2303, "자신이 만든 프로젝트엔 참여할 수 없습니다."),
+    NOT_PROJECT_CREATOR(BAD_REQUEST, 2304, "자신이 만든 프로젝트에만 초대할 수 있습니다."),
 
     // Notice 에러
     NOTICE_COUNT_ZERO(OK, 2350, "조회된 알림이 0개입니다."),

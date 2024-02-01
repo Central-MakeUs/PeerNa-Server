@@ -7,7 +7,11 @@ import cmc.peerna.apiResponse.response.PageResponseDto;
 import cmc.peerna.apiResponse.response.ResponseDto;
 import cmc.peerna.converter.MemberConverter;
 import cmc.peerna.domain.Member;
+import cmc.peerna.domain.Project;
+import cmc.peerna.domain.enums.NoticeGroup;
+import cmc.peerna.domain.enums.NoticeType;
 import cmc.peerna.jwt.handler.annotation.AuthMember;
+import cmc.peerna.service.NoticeService;
 import cmc.peerna.service.ProjectService;
 import cmc.peerna.validation.annotation.CheckPage;
 import cmc.peerna.web.dto.requestDto.MemberRequestDto;
@@ -47,6 +51,7 @@ import java.util.List;
 
 public class ProjectController {
     private final ProjectService projectService;
+    private final NoticeService noticeService;
 
     @Operation(summary = "프로젝트 생성 API ✔️🔑", description = "새 프로젝트 생성하는 API입니다.")
     @Parameters({
@@ -115,26 +120,26 @@ public class ProjectController {
     }
 
 
-//    @Operation(summary = "내 프로젝트 조회 API ✔️🔑", description = "내 프로젝트 조회 API입니다.")
-//    @ApiResponses({
-//            @ApiResponse(responseCode = "4012", description = "BAD_REQUEST , 페이지 번호는 1 이상이여야 합니다.", content = @Content(schema = @Schema(implementation = ResponseDto.class))),
-//            @ApiResponse(responseCode = "4013", description = "BAD_REQUEST , 페이지 번호가 페이징 범위를 초과했습니다.", content = @Content(schema = @Schema(implementation = ResponseDto.class))),
-//            @ApiResponse(responseCode = "2301", description = "OK , 프로젝트가 존재하지 않습니다.", content = @Content(schema = @Schema(implementation = ResponseDto.class))),
-//    })
-//    @Parameters({
-//            @Parameter(name = "member", hidden = true)
-//    })
-//    @GetMapping("/project/my")
-//    public ResponseDto<ProjectResponseDto.ProjectPageDto> getMyProject(@AuthMember Member member, @CheckPage @RequestParam(name = "page") Integer page) {
-//        if (page == null)
-//            page = 1;
-//        else if (page < 1)
-//            throw new MemberException(ResponseStatus.UNDER_PAGE_INDEX_ERROR);
-//        page -= 1;
-//
-//        ProjectResponseDto.ProjectPageDto allProject = projectService.getMyProject(member, page);
-//        return ResponseDto.of(allProject);
-//    }
+    @Operation(summary = "내가 생성한 프로젝트 조회 API ✔️🔑", description = "내가 생성한 프로젝트 조회 API입니다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "4012", description = "BAD_REQUEST , 페이지 번호는 1 이상이여야 합니다.", content = @Content(schema = @Schema(implementation = ResponseDto.class))),
+            @ApiResponse(responseCode = "4013", description = "BAD_REQUEST , 페이지 번호가 페이징 범위를 초과했습니다.", content = @Content(schema = @Schema(implementation = ResponseDto.class))),
+            @ApiResponse(responseCode = "2301", description = "OK , 프로젝트가 존재하지 않습니다.", content = @Content(schema = @Schema(implementation = ResponseDto.class))),
+    })
+    @Parameters({
+            @Parameter(name = "member", hidden = true)
+    })
+    @GetMapping("/project/created")
+    public ResponseDto<ProjectResponseDto.ProjectPageDto> getCreatedProject(@AuthMember Member member, @CheckPage @RequestParam(name = "page") Integer page) {
+        if (page == null)
+            page = 1;
+        else if (page < 1)
+            throw new MemberException(ResponseStatus.UNDER_PAGE_INDEX_ERROR);
+        page -= 1;
+
+        ProjectResponseDto.ProjectPageDto allProject = projectService.getMyProject(member, page);
+        return ResponseDto.of(allProject);
+    }
 
     @Operation(summary = "내 프로젝트 조회 API ✔️🔑", description = "내 프로젝트 조회 API입니다.")
     @ApiResponses({
@@ -216,4 +221,26 @@ public class ProjectController {
         return ResponseDto.of(MemberConverter.toMemberStatusDto(member.getId(), "프로젝트 초대 수락"));
     }
 
+
+    @Operation(summary = "동료 상세 - 내가 만든 프로젝트에 동료 초대 API ✔️🔑", description = "동료 상세 - 내가 만든 프로젝트에 동료 초대 API입니다.")
+    @Parameters({
+            @Parameter(name = "member", hidden = true)
+    })
+    @ApiResponses({
+            @ApiResponse(responseCode = "2200", description = "BAD_REQUEST, 존재하지 않는 유저를 조회한 경우."),
+            @ApiResponse(responseCode = "2300", description = "OK , 프로젝트가 존재하지 않습니다.", content = @Content(schema = @Schema(implementation = ResponseDto.class))),
+            @ApiResponse(responseCode = "2302", description = "OK , 이미 해당 프로젝트에 참여중입니다.", content = @Content(schema = @Schema(implementation = ResponseDto.class))),
+            @ApiResponse(responseCode = "2304", description = "BAD_REQUEST , 자신이 만든 프로젝트에만 초대할 수 있습니다.", content = @Content(schema = @Schema(implementation = ResponseDto.class)))
+    })
+    @PostMapping("/project/{project-id}/invite/{peer-id}")
+    public ResponseDto<MemberResponseDto.MemberStatusDto> invitePeerToMyProject(@AuthMember Member member, @PathVariable(name = "project-id") Long projectId, @PathVariable(name = "peer-id") Long peerId) {
+
+        projectService.checkExistProjectMember(projectId, peerId);
+        projectService.checkProjectCreator(projectId, member);
+
+        Project project = projectService.findById(projectId);
+        String messageContents = "\'"+project.getName()+"\' 참여 제안이 있어요.";
+        noticeService.createNotice(member, peerId, NoticeGroup.PROJECT, NoticeType.INVITED_TO_OTHER_PROJECT, projectId,messageContents);
+        return ResponseDto.of(MemberConverter.toMemberStatusDto(member.getId(), "프로젝트 초대 완료"));
+    }
 }

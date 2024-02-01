@@ -34,12 +34,15 @@ public class NoticeServiceImpl implements NoticeService {
 
     @Override
     @Transactional
-    public void createNotice(Member sender, Long receiverId, NoticeType noticeType) {
+    public void createNotice(Member sender, Long receiverId, NoticeGroup noticeGroup, NoticeType noticeType, Long targetId, String contents) {
         Member receiver = memberRepository.findById(receiverId).orElseThrow(() -> new MemberException(ResponseStatus.MEMBER_NOT_FOUND));
         noticeRepository.save(Notice.builder()
                 .sender(sender)
                 .receiver(receiver)
                 .noticeType(noticeType)
+                .noticeGroup(noticeGroup)
+                .targetId(targetId)
+                        .contents(contents)
                 .build()
         );
     }

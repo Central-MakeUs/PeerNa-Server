@@ -21,4 +21,5 @@ public interface ProjectService {
     void checkProjectSelfInvite(Long projectId, Long memberId);
 
     void saveNewProjectMember(Long projectId, Long memberId);
+    void checkProjectCreator(Long projectId, Member member);
 }
