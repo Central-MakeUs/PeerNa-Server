@@ -6,12 +6,12 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 public enum NoticeType {
-    INVITED_TO_OTHER_PROJECT("남의 프로젝트에 참여 제안 받음"),
-    OTHER_USER_REQUESTED_MY_PROJECT("남이 내 프로젝트에 참여 신청함."),
-    OTHER_PROJECT_MY_REQUEST_ACCEPTED("남의 프로젝트에 대한 내 참여 요청이 수락됨."),
-    OTHER_PROJECT_MY_REQUEST_DECLINED("남의 프로젝트에 대한 내 참여 요청이 거절됨."),
-    MY_PROJECT_MY_INVITE_ACCEPTED("나의 프로젝트에 대한 내 참여 제안이 수락됨."),
-    MY_PROJECT_MY_INVITE_DECLINED("나의 프로젝트에 대한 내 참여 제안이 거절됨.");
+    INVITE_TO_PROJECT("프로젝트 초대"),
+    REQUEST_JOIN_PROJECT("프로젝트 참여 신청"),
+    ACCEPT_PROJECT_INVITATION("프로젝트 초대 수락"),
+    DECLINE_PROJECT_INVITATION("프로젝트 초대 거절"),
+    ACCEPT_PROJECT_JOIN_REQUEST("프로젝트 참여 요청 수락"),
+    DECLINE_PROJECT_JOIN_REQUEST("프로젝트 참여 요청 거절");
 
     private final String description;
 }

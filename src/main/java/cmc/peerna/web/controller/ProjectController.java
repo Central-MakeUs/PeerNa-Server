@@ -2,7 +2,6 @@ package cmc.peerna.web.controller;
 
 import cmc.peerna.apiResponse.code.ResponseStatus;
 import cmc.peerna.apiResponse.exception.handler.MemberException;
-import cmc.peerna.apiResponse.exception.handler.ProjectException;
 import cmc.peerna.apiResponse.response.PageResponseDto;
 import cmc.peerna.apiResponse.response.ResponseDto;
 import cmc.peerna.converter.MemberConverter;
@@ -14,7 +13,6 @@ import cmc.peerna.jwt.handler.annotation.AuthMember;
 import cmc.peerna.service.NoticeService;
 import cmc.peerna.service.ProjectService;
 import cmc.peerna.validation.annotation.CheckPage;
-import cmc.peerna.web.dto.requestDto.MemberRequestDto;
 import cmc.peerna.web.dto.requestDto.ProjectRequestDto;
 import cmc.peerna.web.dto.requestDto.RootRequestDto;
 import cmc.peerna.web.dto.responseDto.MemberResponseDto;
@@ -217,8 +215,35 @@ public class ProjectController {
     public ResponseDto<MemberResponseDto.MemberStatusDto> acceptProjectLinkInvite(@AuthMember Member member, @PathVariable(name = "project-id") Long projectId) {
         projectService.checkProjectSelfInvite(projectId, member.getId());
         projectService.checkExistProjectMember(projectId, member.getId());
+
         projectService.saveNewProjectMember(projectId, member.getId());
+        Project project = projectService.findById(projectId);
+
+        String messageContents = member.getName() + "님이 \'"+project.getName()+"\' 참여 제안을 수락했어요.";
+        noticeService.createNotice(member, project.getCreator().getId(), NoticeGroup.PROJECT, NoticeType.ACCEPT_PROJECT_INVITATION, projectId,messageContents);
         return ResponseDto.of(MemberConverter.toMemberStatusDto(member.getId(), "프로젝트 초대 수락"));
+    }
+
+    @Operation(summary = "링크로 초대된 프로젝트 - 초대 거절 API ✔️🔑", description = "링크로 초대된 프로젝트 - 초대 거절 API입니다.")
+    @Parameters({
+            @Parameter(name = "member", hidden = true)
+    })
+    @ApiResponses({
+            @ApiResponse(responseCode = "2300", description = "OK , 프로젝트가 존재하지 않습니다.", content = @Content(schema = @Schema(implementation = ResponseDto.class))),
+            @ApiResponse(responseCode = "2302", description = "OK , 이미 해당 프로젝트에 참여중입니다.", content = @Content(schema = @Schema(implementation = ResponseDto.class))),
+            @ApiResponse(responseCode = "2303", description = "OK , 자신이 만든 프로젝트엔 참여할 수 없습니다.", content = @Content(schema = @Schema(implementation = ResponseDto.class))),
+    })
+    @PostMapping("/project/{project-id}/invite/decline")
+    public ResponseDto<MemberResponseDto.MemberStatusDto> declineProjectLinkInvite(@AuthMember Member member, @PathVariable(name = "project-id") Long projectId) {
+        projectService.checkProjectSelfInvite(projectId, member.getId());
+        projectService.checkExistProjectMember(projectId, member.getId());
+
+        Project project = projectService.findById(projectId);
+
+        String messageContents = member.getName() + "님이 \'"+project.getName()+"\' 참여 제안을 거절했어요.";
+        noticeService.createNotice(member, project.getCreator().getId(), NoticeGroup.PROJECT, NoticeType.DECLINE_PROJECT_INVITATION, projectId,messageContents);
+
+        return ResponseDto.of(MemberConverter.toMemberStatusDto(member.getId(), "프로젝트 초대 거절"));
     }
 
 
@@ -240,7 +265,9 @@ public class ProjectController {
 
         Project project = projectService.findById(projectId);
         String messageContents = "\'"+project.getName()+"\' 참여 제안이 있어요.";
-        noticeService.createNotice(member, peerId, NoticeGroup.PROJECT, NoticeType.INVITED_TO_OTHER_PROJECT, projectId,messageContents);
+        noticeService.createNotice(member, peerId, NoticeGroup.PROJECT, NoticeType.INVITE_TO_PROJECT, projectId,messageContents);
         return ResponseDto.of(MemberConverter.toMemberStatusDto(member.getId(), "프로젝트 초대 완료"));
     }
+
+
 }
