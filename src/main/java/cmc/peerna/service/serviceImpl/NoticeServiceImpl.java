@@ -2,6 +2,7 @@ package cmc.peerna.service.serviceImpl;
 
 import cmc.peerna.apiResponse.code.ResponseStatus;
 import cmc.peerna.apiResponse.exception.handler.MemberException;
+import cmc.peerna.apiResponse.exception.handler.NoticeException;
 import cmc.peerna.apiResponse.exception.handler.RootException;
 import cmc.peerna.converter.NoticeConverter;
 import cmc.peerna.domain.Member;
@@ -70,6 +71,18 @@ public class NoticeServiceImpl implements NoticeService {
     @Override
     public NoticeResponseDto.NoticePageDto getPeerTestNoticePage(Member receiver, Integer page) {
         return getNoticePageByNoticeGroup(receiver, NoticeGroup.PEER_TEST, page);
+    }
+
+    @Override
+    public boolean existsNotice(Long receiverId, Long senderId, NoticeType noticeType) {
+        return noticeRepository.existsByReceiverIdAndSenderIdAndNoticeType(receiverId, senderId, noticeType);
+    }
+
+    @Override
+    public void existsProjectJoinRequestNotice(Long receiverId, Long senderId) {
+        if(!existsNotice(receiverId, senderId, NoticeType.REQUEST_JOIN_PROJECT)){
+            throw new NoticeException(ResponseStatus.PROJECT_REQUEST_NOTICE_NOT_FOUND);
+        }
     }
 
 }

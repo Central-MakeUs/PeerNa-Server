@@ -1,6 +1,5 @@
 package cmc.peerna.apiResponse.code;
 
-import com.google.api.Http;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
@@ -37,7 +36,8 @@ public enum ResponseStatus implements BaseCode {
     PROJECT_COUNT_ZERO(OK, 2301, "조회된 프로젝트가 0개입니다."),
     ALREADY_EXIST_PROJECT_MEMBER(OK, 2302, "이미 해당 프로젝트에 참여중입니다."),
     PROJECT_SELF_INVITE(OK, 2303, "자신이 만든 프로젝트엔 참여할 수 없습니다."),
-    NOT_PROJECT_CREATOR(BAD_REQUEST, 2304, "자신이 만든 프로젝트에만 초대할 수 있습니다."),
+
+
 
     // Notice 에러
     NOTICE_COUNT_ZERO(OK, 2350, "조회된 알림이 0개입니다."),
@@ -72,6 +72,13 @@ public enum ResponseStatus implements BaseCode {
     ANSWER_NOT_FOUND(BAD_REQUEST, 4200, "잘못된 답변 ID 값을 전달했습니다."),
     WRONG_ANSWER_COUNT(BAD_REQUEST, 4201, "답변 개수가 정확하게 18개가 아닙니다."),
     WRONG_TOTAL_ANSWER_COUNT(BAD_REQUEST, 4202, "피어테스트 답변 개수가 18의 배수가 아닙니다. 피어테스트 저장 과정에서 누락 발생"),
+
+
+    // 프로젝트 및 알림 관련
+    NOT_PROJECT_CREATOR(BAD_REQUEST, 4250, "자신이 만든 프로젝트가 아닙니다."),
+    PROJECT_REQUEST_NOTICE_NOT_FOUND(BAD_REQUEST, 4251, "해당 유저가 프로젝트 참가 신청을 하지 않았습니다."),
+
+
 
     // 500번대 에러
     _INTERNAL_SERVER_ERROR(INTERNAL_SERVER_ERROR, 5000, "서버 에러, 관리자에게 문의 바랍니다."),

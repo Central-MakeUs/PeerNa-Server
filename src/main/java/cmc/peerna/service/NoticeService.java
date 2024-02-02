@@ -7,8 +7,14 @@ import cmc.peerna.web.dto.responseDto.NoticeResponseDto;
 
 public interface NoticeService {
     void createNotice(Member sender, Long receiverId, NoticeGroup noticeGroup, NoticeType noticeType, Long targetId, String contents);
+
     NoticeResponseDto.NoticePageDto getNoticePageByNoticeGroup(Member receiver, NoticeGroup noticeGroup, Integer page);
 
     NoticeResponseDto.NoticePageDto getProjectNoticePage(Member receiver, Integer page);
+
     NoticeResponseDto.NoticePageDto getPeerTestNoticePage(Member receiver, Integer page);
+
+    boolean existsNotice(Long receiverId, Long senderId, NoticeType noticeType);
+
+    void existsProjectJoinRequestNotice(Long receiverId, Long senderId);
 }
