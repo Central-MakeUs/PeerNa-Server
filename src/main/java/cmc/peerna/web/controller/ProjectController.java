@@ -255,7 +255,7 @@ public class ProjectController {
             @ApiResponse(responseCode = "2200", description = "BAD_REQUEST, 존재하지 않는 유저를 조회한 경우."),
             @ApiResponse(responseCode = "2300", description = "OK , 프로젝트가 존재하지 않습니다.", content = @Content(schema = @Schema(implementation = ResponseDto.class))),
             @ApiResponse(responseCode = "2302", description = "OK , 이미 해당 프로젝트에 참여중입니다.", content = @Content(schema = @Schema(implementation = ResponseDto.class))),
-            @ApiResponse(responseCode = "2304", description = "BAD_REQUEST , 자신이 만든 프로젝트에만 초대할 수 있습니다.", content = @Content(schema = @Schema(implementation = ResponseDto.class)))
+            @ApiResponse(responseCode = "4250", description = "BAD_REQUEST , 자신이 만든 프로젝트에만 초대할 수 있습니다.", content = @Content(schema = @Schema(implementation = ResponseDto.class)))
     })
     @PostMapping("/project/{project-id}/invite/{peer-id}")
     public ResponseDto<MemberResponseDto.MemberStatusDto> invitePeerToMyProject(@AuthMember Member member, @PathVariable(name = "project-id") Long projectId, @PathVariable(name = "peer-id") Long peerId) {
@@ -270,4 +270,80 @@ public class ProjectController {
     }
 
 
+    @Operation(summary = "[프로젝트 참여 신청한 입장] - 프로젝트 참가 신청 API ✔️🔑", description = "프로젝트 참여 신청한 입장 - 프로젝트 참가 신청 API입니다.")
+    @Parameters({
+            @Parameter(name = "member", hidden = true)
+    })
+    @ApiResponses({
+            @ApiResponse(responseCode = "2300", description = "OK , 프로젝트가 존재하지 않습니다.", content = @Content(schema = @Schema(implementation = ResponseDto.class))),
+            @ApiResponse(responseCode = "2302", description = "OK , 이미 해당 프로젝트에 참여중입니다.", content = @Content(schema = @Schema(implementation = ResponseDto.class))),
+    })
+    @PostMapping("/project/{project-id}/request-join")
+    public ResponseDto<MemberResponseDto.MemberStatusDto> requestEnterProject(@AuthMember Member member, @PathVariable(name = "project-id") Long projectId) {
+
+        projectService.checkExistProjectMember(projectId, member.getId());
+
+        Project project = projectService.findById(projectId);
+
+        String messageContents = member.getName()+ "님이 \'"+project.getName()+"\' 에 참여하고 싶어해요.";
+        noticeService.createNotice(member, project.getCreator().getId(), NoticeGroup.PROJECT, NoticeType.REQUEST_JOIN_PROJECT, projectId,messageContents);
+        return ResponseDto.of(MemberConverter.toMemberStatusDto(member.getId(), "프로젝트 참가 신청 완료"));
+    }
+
+
+    @Operation(summary = "[참여 신청 받은 입장] - 프로젝트 참가 신청 수락 API ✔️🔑", description = "[참여 신청 받은 입장] - 프로젝트 참가 신청 수락 API입니다.")
+    @Parameters({
+            @Parameter(name = "member", hidden = true)
+    })
+    @ApiResponses({
+            @ApiResponse(responseCode = "2200", description = "BAD_REQUEST, 존재하지 않는 유저를 조회한 경우."),
+            @ApiResponse(responseCode = "2300", description = "OK , 프로젝트가 존재하지 않습니다.", content = @Content(schema = @Schema(implementation = ResponseDto.class))),
+            @ApiResponse(responseCode = "2302", description = "OK , 이미 해당 프로젝트에 참여중입니다.", content = @Content(schema = @Schema(implementation = ResponseDto.class))),
+            @ApiResponse(responseCode = "4250", description = "BAD_REQUEST , 자신이 만든 프로젝트가 아닙니다.", content = @Content(schema = @Schema(implementation = ResponseDto.class))),
+            @ApiResponse(responseCode = "4251", description = "BAD_REQUEST , 해당 유저가 프로젝트 참가 신청을 하지 않았습니다.", content = @Content(schema = @Schema(implementation = ResponseDto.class))),
+
+    })
+    @PostMapping("/project/{project-id}/request-join/{peer-id}/accept")
+    public ResponseDto<MemberResponseDto.MemberStatusDto> acceptRequest(@AuthMember Member member, @PathVariable(name = "project-id") Long projectId, @PathVariable(name = "peer-id") Long peerId) {
+
+        projectService.checkExistProjectMember(projectId, peerId);
+        projectService.checkProjectCreator(projectId, member);
+
+        // 참가 신청이 있었는지 확인
+        noticeService.existsProjectJoinRequestNotice(member.getId(), peerId);
+
+        Project project = projectService.findById(projectId);
+        projectService.saveNewProjectMember(projectId, peerId);
+
+        String messageContents = "\'" + project.getName() + "\' 참가 신청이 수락 되었어요.";
+        noticeService.createNotice(member, project.getCreator().getId(), NoticeGroup.PROJECT, NoticeType.ACCEPT_PROJECT_JOIN_REQUEST, projectId, messageContents);
+        return ResponseDto.of(MemberConverter.toMemberStatusDto(member.getId(), "프로젝트 참가 신청 수락 완료"));
+    }
+
+    @Operation(summary = "[참여 신청 받은 입장] - 프로젝트 참가 신청 거절 API ✔️🔑", description = "[참여 신청 받은 입장] - 프로젝트 참가 신청 거절 API입니다.")
+    @Parameters({
+            @Parameter(name = "member", hidden = true)
+    })
+    @ApiResponses({
+            @ApiResponse(responseCode = "2200", description = "BAD_REQUEST, 존재하지 않는 유저를 조회한 경우."),
+            @ApiResponse(responseCode = "2300", description = "OK , 프로젝트가 존재하지 않습니다.", content = @Content(schema = @Schema(implementation = ResponseDto.class))),
+            @ApiResponse(responseCode = "2302", description = "OK , 이미 해당 프로젝트에 참여중입니다.", content = @Content(schema = @Schema(implementation = ResponseDto.class))),
+            @ApiResponse(responseCode = "4250", description = "BAD_REQUEST , 자신이 만든 프로젝트가 아닙니다.", content = @Content(schema = @Schema(implementation = ResponseDto.class))),
+            @ApiResponse(responseCode = "4251", description = "BAD_REQUEST , 해당 유저가 프로젝트 참가 신청을 하지 않았습니다.", content = @Content(schema = @Schema(implementation = ResponseDto.class))),
+    })
+    @PostMapping("/project/{project-id}/request-join/{peer-id}/decline")
+    public ResponseDto<MemberResponseDto.MemberStatusDto> declineRequest(@AuthMember Member member, @PathVariable(name = "project-id") Long projectId, @PathVariable(name = "peer-id") Long peerId) {
+
+        projectService.checkExistProjectMember(projectId, peerId);
+        projectService.checkProjectCreator(projectId, member);
+
+        // 참가 신청이 있었는지 확인
+        noticeService.existsProjectJoinRequestNotice(member.getId(), peerId);
+
+        Project project = projectService.findById(projectId);
+
+        String messageContents = "\'" + project.getName() + "\' 참가 신청이 거절 되었어요.";
+        noticeService.createNotice(member, project.getCreator().getId(), NoticeGroup.PROJECT, NoticeType.DECLINE_PROJECT_JOIN_REQUEST, projectId, messageContents);
+        return ResponseDto.of(MemberConverter.toMemberStatusDto(member.getId(), "프로젝트 참가 신청 거절 완료"));
+    }
 }
