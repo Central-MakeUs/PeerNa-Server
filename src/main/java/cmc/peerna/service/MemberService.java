@@ -30,4 +30,5 @@ public interface MemberService {
 
     void withdrawal(Member member);
 
+
 }

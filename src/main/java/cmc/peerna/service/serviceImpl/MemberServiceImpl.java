@@ -160,4 +160,5 @@ public class MemberServiceImpl implements MemberService {
         }
         memberRepository.deleteById(member.getId());
     }
+
 }

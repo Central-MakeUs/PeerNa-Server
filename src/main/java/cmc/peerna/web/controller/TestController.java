@@ -125,7 +125,7 @@ public class TestController {
     }
 
 
-    @Operation(summary = "[동료 상세 페이지] 내 피어 테스트 응답 요청하기 API ✔️🔑", description = "[동료 상세 페이지] 내 피어 테스트 응답 요청하기 API API입니다.")
+    @Operation(summary = "[동료 상세 페이지] 내 피어 테스트 응답 요청하기 API ✔️🔑", description = "[동료 상세 페이지] 내 피어 테스트 응답 요청하기 API입니다.")
     @ApiResponses({
             @ApiResponse(responseCode = "2200", description = "BAD_REQUEST, 존재하지 않는 유저입니다."),
             @ApiResponse(responseCode = "2251", description = "OK, 이미 피어테스트를 진행했습니다."),
@@ -141,6 +141,36 @@ public class TestController {
         fcmService.sendFcmMessage(memberService.findById(peerId), fcmTitle, messageContents);
         return ResponseDto.of(MemberConverter.toMemberStatusDto(member.getId(), "피어 테스트 응답 요청 완료"));
 
+    }
+
+    @Operation(summary = "[피어 테스트 알림 탭] - 피어 테스트 응답 요청 알림 작성 버튼 눌렀을 때 호출할 API ✔️🔑", description = "[피어 테스트 알림 탭] 피어 테스트 응답 요청 알림 작성 버튼 눌렀을 때 호출할 API입니다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "2200", description = "BAD_REQUEST, 존재하지 않는 유저입니다."),
+    })
+    @GetMapping("/review/request/{target-id}")
+    public ResponseDto<MemberResponseDto.memberNameResponseDto> responseMemberName(@AuthMember Member member, @PathVariable(name = "target-id") Long targetId) {
+
+        Member peer = memberService.findById(targetId);
+        return ResponseDto.of(MemberResponseDto.memberNameResponseDto.builder()
+                .name(peer.getName())
+                .build());
+    }
+
+    @Operation(summary = "피어 테스트 작성 API ✔️", description = "피어 테스트 작성 API입니다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "2200", description = "BAD_REQUEST, 존재하지 않는 유저입니다."),
+            @ApiResponse(responseCode = "2251", description = "OK, 이미 피어테스트를 진행했습니다."),
+            @ApiResponse(responseCode = "4200", description = "BAD_REQUEST, 잘못된 답변 ID 값을 전달했습니다."),
+            @ApiResponse(responseCode = "4201", description = "BAD_REQUEST, 답변 개수가 정확하게 18개가 아닙니다.")
+    })
+    @PostMapping("/review/peer-test/{target-id}")
+    public ResponseDto<MemberResponseDto.MemberStatusDto> saveRequestedPeerTest(@AuthMember Member member, @PathVariable(name = "target-id") Long targetId,  @RequestBody TestRequestDto.peerTestRequestDto requestDto) {
+        Member target = memberService.findById(targetId);
+        testService.checkExistPeerTest(member.getId(), targetId);
+        testService.savePeerTest(member, target, requestDto);
+        memberService.updateTotalScore(target);
+        memberService.updatePeerTestType(target);
+        return ResponseDto.of(MemberConverter.toMemberStatusDto(member.getId(), "피어 테스트 작성 완료"));
     }
 
 }
