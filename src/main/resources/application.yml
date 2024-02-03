@@ -75,7 +75,7 @@ jwt:
   refresh-token-validity-in-seconds: 1210000000 # 14 d
 
 web:
-  redirect-url: http://localhost:5173/login/kakao
+  redirect-url: ${kakao.redirect.url}
   apple-redirect-url: ${apple.redirect.url}
 
 
@@ -150,7 +150,7 @@ jwt:
   refresh-token-validity-in-seconds: 1210000000 # 14 d
 
 web:
-  redirect-url: https://localhost:8080
+  redirect-url: ${kakao.redirect.url}
   apple-redirect-url: ${apple.redirect.url}
 
 

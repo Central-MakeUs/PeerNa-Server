@@ -1,6 +1,7 @@
 package cmc.peerna.service.serviceImpl;
 
 import cmc.peerna.apiResponse.code.ResponseStatus;
+import cmc.peerna.apiResponse.exception.handler.MemberException;
 import cmc.peerna.apiResponse.exception.handler.TestException;
 import cmc.peerna.converter.TestConverter;
 import cmc.peerna.domain.*;
@@ -32,7 +33,7 @@ public class TestServiceImpl implements TestService {
     private final PeerFeedbackRepository peerFeedbackRepository;
     private final PeerGradeResultRepository peerGradeResultRepository;
     private final PeerTestRepository peerTestRepository;
-
+    private final MemberRepository memberRepository;
     private final TestResultCalculator testResultCalculator;
 
     @Transactional
@@ -185,7 +186,15 @@ public class TestServiceImpl implements TestService {
         return peerCardList;
     }
 
-
+    @Override
+    public void checkExistPeerTest(Long writerId, Long targetId) {
+        if (!memberRepository.existsById(writerId)) {
+            throw new MemberException(ResponseStatus.MEMBER_NOT_FOUND);
+        }
+        if (peerTestRepository.existsByWriterIdAndTargetId(writerId, targetId)) {
+            throw new TestException(ResponseStatus.ALREADY_PEER_TEST_DONE);
+        }
+    }
 }
 
 

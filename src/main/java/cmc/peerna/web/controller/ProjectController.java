@@ -216,6 +216,8 @@ public class ProjectController {
             @ApiResponse(responseCode = "2300", description = "OK , 프로젝트가 존재하지 않습니다.", content = @Content(schema = @Schema(implementation = ResponseDto.class))),
             @ApiResponse(responseCode = "2302", description = "OK , 이미 해당 프로젝트에 참여중입니다.", content = @Content(schema = @Schema(implementation = ResponseDto.class))),
             @ApiResponse(responseCode = "2303", description = "OK , 자신이 만든 프로젝트엔 참여할 수 없습니다.", content = @Content(schema = @Schema(implementation = ResponseDto.class))),
+            @ApiResponse(responseCode = "2351", description = "OK , 해당 유저의 Fcm Token이 존재하지 않습니다.", content = @Content(schema = @Schema(implementation = ResponseDto.class))),
+
     })
     @PostMapping("/project/{project-id}/invite/accept")
     public ResponseDto<MemberResponseDto.MemberStatusDto> acceptProjectLinkInvite(@AuthMember Member member, @PathVariable(name = "project-id") Long projectId) {
@@ -242,6 +244,7 @@ public class ProjectController {
             @ApiResponse(responseCode = "2300", description = "OK , 프로젝트가 존재하지 않습니다.", content = @Content(schema = @Schema(implementation = ResponseDto.class))),
             @ApiResponse(responseCode = "2302", description = "OK , 이미 해당 프로젝트에 참여중입니다.", content = @Content(schema = @Schema(implementation = ResponseDto.class))),
             @ApiResponse(responseCode = "2303", description = "OK , 자신이 만든 프로젝트엔 참여할 수 없습니다.", content = @Content(schema = @Schema(implementation = ResponseDto.class))),
+            @ApiResponse(responseCode = "2351", description = "OK , 해당 유저의 Fcm Token이 존재하지 않습니다.", content = @Content(schema = @Schema(implementation = ResponseDto.class))),
     })
     @PostMapping("/project/{project-id}/invite/decline")
     public ResponseDto<MemberResponseDto.MemberStatusDto> declineProjectLinkInvite(@AuthMember Member member, @PathVariable(name = "project-id") Long projectId) {
@@ -266,6 +269,7 @@ public class ProjectController {
             @ApiResponse(responseCode = "2200", description = "BAD_REQUEST, 존재하지 않는 유저를 조회한 경우."),
             @ApiResponse(responseCode = "2300", description = "OK , 프로젝트가 존재하지 않습니다.", content = @Content(schema = @Schema(implementation = ResponseDto.class))),
             @ApiResponse(responseCode = "2302", description = "OK , 이미 해당 프로젝트에 참여중입니다.", content = @Content(schema = @Schema(implementation = ResponseDto.class))),
+            @ApiResponse(responseCode = "2351", description = "OK , 해당 유저의 Fcm Token이 존재하지 않습니다.", content = @Content(schema = @Schema(implementation = ResponseDto.class))),
             @ApiResponse(responseCode = "4250", description = "BAD_REQUEST , 자신이 만든 프로젝트에만 초대할 수 있습니다.", content = @Content(schema = @Schema(implementation = ResponseDto.class)))
     })
     @PostMapping("/project/{project-id}/invite/{peer-id}")
@@ -290,6 +294,7 @@ public class ProjectController {
     @ApiResponses({
             @ApiResponse(responseCode = "2300", description = "OK , 프로젝트가 존재하지 않습니다.", content = @Content(schema = @Schema(implementation = ResponseDto.class))),
             @ApiResponse(responseCode = "2302", description = "OK , 이미 해당 프로젝트에 참여중입니다.", content = @Content(schema = @Schema(implementation = ResponseDto.class))),
+            @ApiResponse(responseCode = "2351", description = "OK , 해당 유저의 Fcm Token이 존재하지 않습니다.", content = @Content(schema = @Schema(implementation = ResponseDto.class))),
     })
     @PostMapping("/project/{project-id}/request-join")
     public ResponseDto<MemberResponseDto.MemberStatusDto> requestEnterProject(@AuthMember Member member, @PathVariable(name = "project-id") Long projectId) {
@@ -298,9 +303,9 @@ public class ProjectController {
 
         Project project = projectService.findById(projectId);
 
-        String messageContents = member.getName()+ "님이 \'"+project.getName()+"\' 에 참여하고 싶어해요.";
+        String messageContents = member.getName() + "님이 \'" + project.getName() + "\' 에 참여하고 싶어해요.";
         fcmService.sendFcmMessage(project.getCreator(), fcmTitle, messageContents);
-        noticeService.createNotice(member, project.getCreator().getId(), NoticeGroup.PROJECT, NoticeType.REQUEST_JOIN_PROJECT, projectId,messageContents);
+        noticeService.createNotice(member, project.getCreator().getId(), NoticeGroup.PROJECT, NoticeType.REQUEST_JOIN_PROJECT, projectId, messageContents);
         return ResponseDto.of(MemberConverter.toMemberStatusDto(member.getId(), "프로젝트 참가 신청 완료"));
     }
 
@@ -313,6 +318,7 @@ public class ProjectController {
             @ApiResponse(responseCode = "2200", description = "BAD_REQUEST, 존재하지 않는 유저를 조회한 경우."),
             @ApiResponse(responseCode = "2300", description = "OK , 프로젝트가 존재하지 않습니다.", content = @Content(schema = @Schema(implementation = ResponseDto.class))),
             @ApiResponse(responseCode = "2302", description = "OK , 이미 해당 프로젝트에 참여중입니다.", content = @Content(schema = @Schema(implementation = ResponseDto.class))),
+            @ApiResponse(responseCode = "2351", description = "OK , 해당 유저의 Fcm Token이 존재하지 않습니다.", content = @Content(schema = @Schema(implementation = ResponseDto.class))),
             @ApiResponse(responseCode = "4250", description = "BAD_REQUEST , 자신이 만든 프로젝트가 아닙니다.", content = @Content(schema = @Schema(implementation = ResponseDto.class))),
             @ApiResponse(responseCode = "4251", description = "BAD_REQUEST , 해당 유저가 프로젝트 참가 신청을 하지 않았습니다.", content = @Content(schema = @Schema(implementation = ResponseDto.class))),
 
@@ -343,6 +349,7 @@ public class ProjectController {
             @ApiResponse(responseCode = "2200", description = "BAD_REQUEST, 존재하지 않는 유저를 조회한 경우."),
             @ApiResponse(responseCode = "2300", description = "OK , 프로젝트가 존재하지 않습니다.", content = @Content(schema = @Schema(implementation = ResponseDto.class))),
             @ApiResponse(responseCode = "2302", description = "OK , 이미 해당 프로젝트에 참여중입니다.", content = @Content(schema = @Schema(implementation = ResponseDto.class))),
+            @ApiResponse(responseCode = "2351", description = "OK , 해당 유저의 Fcm Token이 존재하지 않습니다.", content = @Content(schema = @Schema(implementation = ResponseDto.class))),
             @ApiResponse(responseCode = "4250", description = "BAD_REQUEST , 자신이 만든 프로젝트가 아닙니다.", content = @Content(schema = @Schema(implementation = ResponseDto.class))),
             @ApiResponse(responseCode = "4251", description = "BAD_REQUEST , 해당 유저가 프로젝트 참가 신청을 하지 않았습니다.", content = @Content(schema = @Schema(implementation = ResponseDto.class))),
     })
