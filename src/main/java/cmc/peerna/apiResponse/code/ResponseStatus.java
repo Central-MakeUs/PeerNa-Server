@@ -84,7 +84,8 @@ public enum ResponseStatus implements BaseCode {
     _INTERNAL_SERVER_ERROR(INTERNAL_SERVER_ERROR, 5000, "서버 에러, 관리자에게 문의 바랍니다."),
     FEIGN_CLIENT_ERROR_500(HttpStatus.INTERNAL_SERVER_ERROR, 5001, "Inter server Error in feign client"),
 
-    FCM_ACCESS_TOKEN_REQUEST_ERROR(INTERNAL_SERVER_ERROR, 5002, "서버 에러, FCM 서버에 AccessToken 요청할 때 에러 발생.");
+    FCM_ACCESS_TOKEN_REQUEST_ERROR(INTERNAL_SERVER_ERROR, 5002, "서버 에러, FCM 서버에 AccessToken 요청할 때 에러 발생."),
+    FCM_SEND_MESSAGE_ERROR(INTERNAL_SERVER_ERROR, 5003, "서버 에러, FCM 서버에 메시지를 전송할 때 에러 발생.");
 
     private final HttpStatus httpStatus;
     private final Integer code;
