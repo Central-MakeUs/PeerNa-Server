@@ -55,7 +55,7 @@ public class ProjectController {
     private final FcmService fcmService;
     private final MemberService memberService;
 
-    private final String fcmTitle = "test Title";
+    private final String fcmTitle = "[PeerNa]";
 
     @Operation(summary = "프로젝트 생성 API ✔️🔑", description = "새 프로젝트 생성하는 API입니다.")
     @Parameters({
