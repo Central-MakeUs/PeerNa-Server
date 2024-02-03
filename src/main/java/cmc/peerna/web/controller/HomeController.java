@@ -11,10 +11,7 @@ import cmc.peerna.service.NoticeService;
 import cmc.peerna.service.RootService;
 import cmc.peerna.validation.annotation.CheckPage;
 import cmc.peerna.web.dto.requestDto.RootRequestDto;
-import cmc.peerna.web.dto.responseDto.HomeResponseDto;
-import cmc.peerna.web.dto.responseDto.NoticeResponseDto;
-import cmc.peerna.web.dto.responseDto.ProjectResponseDto;
-import cmc.peerna.web.dto.responseDto.RootResponseDto;
+import cmc.peerna.web.dto.responseDto.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
@@ -64,7 +61,7 @@ public class HomeController {
             @ApiResponse(responseCode = "4013",description = "BAD_REQUEST, 페이지 번호가 페이징 범위를 초과했습니다.")
     })
     @GetMapping("/home/search/peer-type")
-    public ResponseDto<RootResponseDto.memberSimpleDtoPage> searchByPeerType(@RequestParam(name = "peerType") String peerType, @CheckPage @RequestParam(name = "page") Integer page, @AuthMember Member member) {
+    public PageResponseDto<List<MemberResponseDto.memberSimpleProfileDto>> searchByPeerType(@RequestParam(name = "peerType") String peerType, @CheckPage @RequestParam(name = "page") Integer page, @AuthMember Member member) {
         if (page == null)
             page = 1;
         else if (page < 1)
@@ -73,7 +70,19 @@ public class HomeController {
 
 
         RootResponseDto.memberSimpleDtoPage memberListByPeerType = rootService.getMemberListByPeerType(member, peerType, page);
-        return ResponseDto.of(memberListByPeerType);
+
+        List<MemberResponseDto.memberSimpleProfileDto> memberSimpleProfileDtoList = memberListByPeerType.getMemberSimpleProfileDtoList();
+
+        RootRequestDto.PageRequestDto pageRequestDto = RootRequestDto.PageRequestDto.builder()
+                .totalElements(memberListByPeerType.getTotalElements())
+                .currentPageElements(memberListByPeerType.getCurrentPageElements())
+                .totalPage(memberListByPeerType.getTotalPage())
+                .isFirst(memberListByPeerType.getIsFirst())
+                .isLast(memberListByPeerType.getIsLast())
+                .build();
+
+
+        return PageResponseDto.of(memberSimpleProfileDtoList, pageRequestDto);
     }
 
 
@@ -88,15 +97,27 @@ public class HomeController {
             @ApiResponse(responseCode = "4013", description = "BAD_REQUEST, 페이지 번호가 페이징 범위를 초과했습니다.")
     })
     @GetMapping("/home/search/peer-part")
-    public ResponseDto<RootResponseDto.memberSimpleDtoPage> searchByPart(@RequestParam(name = "part") String part, @CheckPage @RequestParam(name = "page") Integer page, @AuthMember Member member) {
+    public PageResponseDto<List<MemberResponseDto.memberSimpleProfileDto>> searchByPart(@RequestParam(name = "part") String part, @CheckPage @RequestParam(name = "page") Integer page, @AuthMember Member member) {
         if (page == null)
             page = 1;
         else if (page < 1)
             throw new MemberException(ResponseStatus.UNDER_PAGE_INDEX_ERROR);
         page -= 1;
 
+
         RootResponseDto.memberSimpleDtoPage memberListByPart = rootService.getMemberListByPart(member, part, page);
-        return ResponseDto.of(memberListByPart);
+
+        List<MemberResponseDto.memberSimpleProfileDto> memberSimpleProfileDtoList =memberListByPart.getMemberSimpleProfileDtoList();
+
+        RootRequestDto.PageRequestDto pageRequestDto = RootRequestDto.PageRequestDto.builder()
+                .totalElements(memberListByPart.getTotalElements())
+                .currentPageElements(memberListByPart.getCurrentPageElements())
+                .totalPage(memberListByPart.getTotalPage())
+                .isFirst(memberListByPart.getIsFirst())
+                .isLast(memberListByPart.getIsLast())
+                .build();
+
+        return PageResponseDto.of(memberSimpleProfileDtoList, pageRequestDto);
     }
 
 
@@ -123,7 +144,7 @@ public class HomeController {
             @Parameter(name = "member", hidden = true)
     })
     @GetMapping("/home/{peer-id}/peer-feedback")
-    public ResponseDto<RootResponseDto.AllFeedbackDto> seeMoreFeedback(@PathVariable(name="peer-id") Long peerId, @CheckPage @RequestParam(name = "page") Integer page, @AuthMember Member member) {
+    public PageResponseDto<List<String>> seeMoreFeedback(@PathVariable(name="peer-id") Long peerId, @CheckPage @RequestParam(name = "page") Integer page, @AuthMember Member member) {
         if (page == null)
             page = 1;
         else if (page < 1)
@@ -132,7 +153,17 @@ public class HomeController {
 
         Member peer = memberService.findById(peerId);
         RootResponseDto.AllFeedbackDto feedbackList = rootService.getFeedbackList(peer, page);
-        return ResponseDto.of(feedbackList);
+
+        List<String> feedBackStringList = feedbackList.getFeedbackList();
+        RootRequestDto.PageRequestDto pageRequestDto = RootRequestDto.PageRequestDto.builder()
+                .totalElements(feedbackList.getTotalElements())
+                .currentPageElements(feedbackList.getCurrentPageElements())
+                .totalPage(feedbackList.getTotalPage())
+                .isFirst(feedbackList.getIsFirst())
+                .isLast(feedbackList.getIsLast())
+                .build();
+
+        return PageResponseDto.of(feedBackStringList, pageRequestDto);
     }
 
     @Operation(summary = "동료 상세 - 참여 프로젝트 더보기 API ✔️🔑", description = "동료 상세 - 참여 프로젝트 더보기 API입니다.")
@@ -145,7 +176,7 @@ public class HomeController {
             @Parameter(name = "member", hidden = true)
     })
     @GetMapping("/home/{peer-id}/peer-project")
-    public ResponseDto<ProjectResponseDto.ProjectPageDto> seeMoreProject(@PathVariable(name="peer-id") Long peerId, @CheckPage @RequestParam(name = "page") Integer page, @AuthMember Member member) {
+    public PageResponseDto<List<ProjectResponseDto.ProjectSimpleProfileDto>> seeMoreProject(@PathVariable(name="peer-id") Long peerId, @CheckPage @RequestParam(name = "page") Integer page, @AuthMember Member member) {
         if (page == null)
             page = 1;
         else if (page < 1)
@@ -154,7 +185,18 @@ public class HomeController {
 
         Member peer = memberService.findById(peerId);
         ProjectResponseDto.ProjectPageDto peerProjectPage = rootService.getPeerProject(peer, page);
-        return ResponseDto.of(peerProjectPage);
+
+        List<ProjectResponseDto.ProjectSimpleProfileDto> projectSimpleProfileDtoList = peerProjectPage.getProjectList();
+
+        RootRequestDto.PageRequestDto pageRequestDto = RootRequestDto.PageRequestDto.builder()
+                .totalElements(peerProjectPage.getTotalElements())
+                .currentPageElements(peerProjectPage.getCurrentPageElements())
+                .totalPage(peerProjectPage.getTotalPage())
+                .isFirst(peerProjectPage.getIsFirst())
+                .isLast(peerProjectPage.getIsLast())
+                .build();
+
+        return PageResponseDto.of(projectSimpleProfileDtoList, pageRequestDto);
     }
 
 
