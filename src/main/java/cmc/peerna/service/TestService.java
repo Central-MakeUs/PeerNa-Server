@@ -30,4 +30,6 @@ public interface TestService {
     void updatePeerTestMemberId(Member member, String uuid);
 
     List<PeerCard> getPeerTestCard(Member target);
+
+    void checkExistPeerTest(Long writerId, Long targetId);
 }

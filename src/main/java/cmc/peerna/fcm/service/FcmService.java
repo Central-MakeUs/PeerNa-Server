@@ -44,7 +44,7 @@ public class FcmService {
     }
 
     public void sendFcmMessage(Member receiver, String title, String body) {
-        FcmToken fcmToken = fcmTokenRepository.findByMember(receiver).orElseThrow(() -> new MemberException(ResponseStatus.MEMBER_NOT_FOUND));
+        FcmToken fcmToken = fcmTokenRepository.findByMember(receiver).orElseThrow(() -> new FcmException(ResponseStatus.FCM_TOKEN_NOT_FOUND));
         String token = fcmToken.getToken();
         logger.info("받은 FCM 토큰 값 : " + token);
         Message message = Message.builder()

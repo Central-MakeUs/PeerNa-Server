@@ -16,4 +16,6 @@ public interface PeerTestRepository extends JpaRepository<PeerTest, Long> {
 
     void deleteAllByTarget(Member target);
 
+    boolean existsByWriterIdAndTargetId(Long writerId, Long targetId);
+
 }

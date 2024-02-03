@@ -30,6 +30,7 @@ public enum ResponseStatus implements BaseCode {
 
     // Peertest 에러
     UUID_NOT_FOUND(OK, 2250, "잘못된 UUID 값입니다."),
+    ALREADY_PEER_TEST_DONE(OK, 2251, "이미 피어테스트를 진행했습니다."),
 
     // Project 에러
     PROJECT_NOT_FOUND(OK, 2300, "존재하지 않는 프로젝트입니다."),
@@ -41,6 +42,7 @@ public enum ResponseStatus implements BaseCode {
 
     // Notice 에러
     NOTICE_COUNT_ZERO(OK, 2350, "조회된 알림이 0개입니다."),
+    FCM_TOKEN_NOT_FOUND(OK, 2351, "해당 유저의 FCM TOKEN이 존재하지 않습니다."),
 
 
 
@@ -63,8 +65,6 @@ public enum ResponseStatus implements BaseCode {
     WRONG_IDENTITY_TOKEN(BAD_REQUEST, 4015, "Identity Token의 형태가 잘못되었습니다."),
 
     INVALID_ACCESS_TOKEN(UNAUTHORIZED, 4016, "액세스 토큰이 없거나 유효하지 않습니다."),
-
-    FCM_TOKEN_NOT_FOUND(BAD_REQUEST, 4017, "해당 유저의 FCM 토큰이 존재하지 않습니다."),
 
     WRONG_POST_TEST(BAD_REQUEST, 4101, "잘못된 POST 테스트 요청입니다."),
 

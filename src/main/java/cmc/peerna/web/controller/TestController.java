@@ -3,8 +3,12 @@ package cmc.peerna.web.controller;
 import cmc.peerna.apiResponse.response.ResponseDto;
 import cmc.peerna.converter.MemberConverter;
 import cmc.peerna.domain.Member;
+import cmc.peerna.domain.enums.NoticeGroup;
+import cmc.peerna.domain.enums.NoticeType;
+import cmc.peerna.fcm.service.FcmService;
 import cmc.peerna.jwt.handler.annotation.AuthMember;
 import cmc.peerna.service.MemberService;
+import cmc.peerna.service.NoticeService;
 import cmc.peerna.service.TestService;
 import cmc.peerna.web.dto.requestDto.MemberRequestDto;
 import cmc.peerna.web.dto.requestDto.TestRequestDto;
@@ -13,6 +17,8 @@ import cmc.peerna.web.dto.responseDto.TestResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -39,6 +45,11 @@ public class TestController {
 
     private final MemberService memberService;
     private final TestService testService;
+    private final FcmService fcmService;
+    private final NoticeService noticeService;
+
+    private final String fcmTitle = "[PeerNa]";
+
 
     @Operation(summary = "셀프 테스트 API ✔️🔑", description = "셀프 테스트 API입니다.")
     @ApiResponses({
@@ -111,6 +122,25 @@ public class TestController {
     public ResponseDto<MemberResponseDto.MemberStatusDto> updateMemberId(@AuthMember Member member, @RequestBody MemberRequestDto.uuidRequestDto uuid) {
         testService.updatePeerTestMemberId(member, uuid.getUuid());
         return ResponseDto.of(MemberConverter.toMemberStatusDto(member.getId(), "UpdatePeerTestWriterId"));
+    }
+
+
+    @Operation(summary = "[동료 상세 페이지] 내 피어 테스트 응답 요청하기 API ✔️🔑", description = "[동료 상세 페이지] 내 피어 테스트 응답 요청하기 API API입니다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "2200", description = "BAD_REQUEST, 존재하지 않는 유저입니다."),
+            @ApiResponse(responseCode = "2251", description = "OK, 이미 피어테스트를 진행했습니다."),
+            @ApiResponse(responseCode = "2351", description = "OK , 해당 유저의 Fcm Token이 존재하지 않습니다.", content = @Content(schema = @Schema(implementation = ResponseDto.class))),
+    })
+    @PostMapping("/review/request/{peer-id}")
+    public ResponseDto<MemberResponseDto.MemberStatusDto> requestPeerTest(@AuthMember Member member, @PathVariable(name = "peer-id") Long peerId) {
+
+        testService.checkExistPeerTest(peerId, member.getId());
+
+        String messageContents = member.getName()+"님이 피어테스트 응답을 요청했어요";
+        noticeService.createNotice(member, peerId, NoticeGroup.PEER_TEST, NoticeType.PEER_TEST_REQUEST, member.getId(), messageContents);
+        fcmService.sendFcmMessage(memberService.findById(peerId), fcmTitle, messageContents);
+        return ResponseDto.of(MemberConverter.toMemberStatusDto(member.getId(), "피어 테스트 응답 요청 완료"));
+
     }
 
 }
