@@ -2,6 +2,7 @@ package cmc.peerna.web.controller;
 
 import cmc.peerna.apiResponse.code.ResponseStatus;
 import cmc.peerna.apiResponse.exception.handler.MemberException;
+import cmc.peerna.apiResponse.response.PageResponseDto;
 import cmc.peerna.apiResponse.response.ResponseDto;
 import cmc.peerna.converter.MemberConverter;
 import cmc.peerna.domain.Member;
@@ -19,6 +20,7 @@ import cmc.peerna.service.MemberService;
 import cmc.peerna.service.RootService;
 import cmc.peerna.validation.annotation.CheckPage;
 import cmc.peerna.web.dto.requestDto.MemberRequestDto;
+import cmc.peerna.web.dto.requestDto.RootRequestDto;
 import cmc.peerna.web.dto.responseDto.MemberResponseDto;
 import cmc.peerna.web.dto.responseDto.RootResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
@@ -191,14 +193,25 @@ public class MemberController {
             @Parameter(name = "member", hidden = true)
     })
     @GetMapping("/member/mypage/feedback")
-    public ResponseDto<RootResponseDto.AllFeedbackDto> seeMoreFeedback(@CheckPage @RequestParam(name = "page") Integer page, @AuthMember Member member) {
+    public PageResponseDto<List<String>> seeMoreFeedback(@CheckPage @RequestParam(name = "page") Integer page, @AuthMember Member member) {
         if (page == null)
             page = 1;
         else if (page < 1)
             throw new MemberException(ResponseStatus.UNDER_PAGE_INDEX_ERROR);
         page -= 1;
+
         RootResponseDto.AllFeedbackDto feedbackList = rootService.getFeedbackList(member, page);
-        return ResponseDto.of(feedbackList);
+
+        List<String> feedBackStringList = feedbackList.getFeedbackList();
+        RootRequestDto.PageRequestDto pageRequestDto = RootRequestDto.PageRequestDto.builder()
+                .totalElements(feedbackList.getTotalElements())
+                .currentPageElements(feedbackList.getCurrentPageElements())
+                .totalPage(feedbackList.getTotalPage())
+                .isFirst(feedbackList.getIsFirst())
+                .isLast(feedbackList.getIsLast())
+                .build();
+
+        return PageResponseDto.of(feedBackStringList, pageRequestDto);
     }
 
 
