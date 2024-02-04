@@ -49,6 +49,11 @@ public class ProjectServiceImpl implements ProjectService {
                 .githubLink(request.getGithubLink())
                 .build();
         projectRepository.save(project);
+
+        projectMemberRepository.save(ProjectMember.builder()
+                .project(project)
+                .member(member)
+                .build());
     }
 
     @Override
@@ -79,10 +84,29 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public ProjectResponseDto.ProjectPageDto getMyProject(Member member, Integer page) {
+    public ProjectResponseDto.ProjectPageDto getProjectICreated(Member member, Integer page) {
         PageRequest pageRequest = PageRequest.of(page, pageSize, Sort.by(Sort.Order.desc("startDate"), Sort.Order.asc("name")));
 
         Page<Project> allProjectPage = projectRepository.findAllByCreator(member, pageRequest);
+        if (allProjectPage.getTotalElements() == 0L) {
+            throw new RootException(ResponseStatus.PROJECT_COUNT_ZERO);
+        }
+        if (allProjectPage.getTotalPages() <= page)
+            throw new MemberException(ResponseStatus.OVER_PAGE_INDEX_ERROR);
+
+        ProjectResponseDto.ProjectPageDto allProjectPageDto = ProjectConverter.toProjectPageDto(allProjectPage);
+        return allProjectPageDto;
+    }
+
+    @Override
+    public ProjectResponseDto.ProjectPageDto getProjectIJoined(Member member, Integer page) {
+        PageRequest pageRequest = PageRequest.of(page, pageSize);
+
+//        Page<Project> allProjectPage = projectRepository.findAllByCreator(member, pageRequest);
+
+        Page<Project> allProjectPage = projectMemberRepository.qFindProjectPageByMemberOrderByCreatedAtDesc(member, pageRequest);
+
+
         if (allProjectPage.getTotalElements() == 0L) {
             throw new RootException(ResponseStatus.PROJECT_COUNT_ZERO);
         }

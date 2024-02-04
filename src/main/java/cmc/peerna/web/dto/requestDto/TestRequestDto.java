@@ -20,15 +20,5 @@ public class TestRequestDto {
     }
 
 
-    @Builder
-    @Getter
-    @AllArgsConstructor(access = AccessLevel.PROTECTED)
-    @NoArgsConstructor(access = AccessLevel.PROTECTED)
-    public static class loginPeerTestRequestDto{
-        private List<Long> answerIdList;
-        private PeerGrade peerGrade;
-        private String feedback;
-    }
-
 
 }

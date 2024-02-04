@@ -12,7 +12,8 @@ public interface ProjectService {
     ProjectResponseDto.ProjectDetailDto getProjectDetailInfo(Long projectId);
 
     ProjectResponseDto.ProjectPageDto getAllProject(Integer page);
-    ProjectResponseDto.ProjectPageDto getMyProject(Member member, Integer page);
+    ProjectResponseDto.ProjectPageDto getProjectICreated(Member member, Integer page);
+    ProjectResponseDto.ProjectPageDto getProjectIJoined(Member member, Integer page);
 
     String findProjectCreator(Long projectId);
 
