@@ -5,6 +5,7 @@ import cmc.peerna.domain.enums.NoticeGroup;
 import cmc.peerna.domain.enums.NoticeType;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 
 @Entity
 @Getter
@@ -32,5 +33,12 @@ public class Notice extends BaseEntity {
     private Long targetId;
 
     private String contents;
+
+    @ColumnDefault("'false'")
+    private String readFlag;
+
+    public void noticeRead(){
+        this.readFlag="true";
+    }
 
 }
