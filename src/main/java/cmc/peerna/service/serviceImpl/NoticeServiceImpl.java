@@ -22,6 +22,9 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 @Slf4j
 @RequiredArgsConstructor
@@ -43,12 +46,14 @@ public class NoticeServiceImpl implements NoticeService {
                 .noticeType(noticeType)
                 .noticeGroup(noticeGroup)
                 .targetId(targetId)
-                        .contents(contents)
+                .contents(contents)
+                .readFlag("false")
                 .build()
         );
     }
 
     @Override
+    @Transactional
     public NoticeResponseDto.NoticePageDto getNoticePageByNoticeGroup(Member receiver, NoticeGroup noticeGroup, Integer page) {
 
         PageRequest pageRequest = PageRequest.of(page, pageSize, Sort.by(Sort.Order.desc("createdAt")));
@@ -59,16 +64,25 @@ public class NoticeServiceImpl implements NoticeService {
         if (noticeByNoticeGroup.getTotalPages() <= page)
             throw new MemberException(ResponseStatus.OVER_PAGE_INDEX_ERROR);
 
+        List<Notice> noticeList = noticeByNoticeGroup.getContent();
+        noticeList.stream()
+                .map(notice -> {
+                    notice.noticeRead();
+                    return null;
+                }).collect(Collectors.toList());
+
         NoticeResponseDto.NoticePageDto noticePageDto = NoticeConverter.toNoticePageDto(noticeByNoticeGroup);
         return noticePageDto;
     }
 
     @Override
+    @Transactional
     public NoticeResponseDto.NoticePageDto getProjectNoticePage(Member receiver, Integer page) {
         return getNoticePageByNoticeGroup(receiver, NoticeGroup.PROJECT, page);
     }
 
     @Override
+    @Transactional
     public NoticeResponseDto.NoticePageDto getPeerTestNoticePage(Member receiver, Integer page) {
         return getNoticePageByNoticeGroup(receiver, NoticeGroup.PEER_TEST, page);
     }

@@ -141,7 +141,7 @@ public class ProjectController {
             throw new MemberException(ResponseStatus.UNDER_PAGE_INDEX_ERROR);
         page -= 1;
 
-        ProjectResponseDto.ProjectPageDto allProject = projectService.getMyProject(member, page);
+        ProjectResponseDto.ProjectPageDto allProject = projectService.getProjectICreated(member, page);
         return ResponseDto.of(allProject);
     }
 
@@ -162,17 +162,17 @@ public class ProjectController {
             throw new MemberException(ResponseStatus.UNDER_PAGE_INDEX_ERROR);
         page -= 1;
 
-        ProjectResponseDto.ProjectPageDto myProject = projectService.getMyProject(member, page);
+        ProjectResponseDto.ProjectPageDto projectIJoined = projectService.getProjectIJoined(member, page);
 
         List<ProjectResponseDto.ProjectSimpleProfileDto> projectList;
-        projectList = myProject.getProjectList();
+        projectList = projectIJoined.getProjectList();
 
         RootRequestDto.PageRequestDto pageRequestDto = RootRequestDto.PageRequestDto.builder()
-                .totalElements(myProject.getTotalElements())
-                .currentPageElements(myProject.getCurrentPageElements())
-                .totalPage(myProject.getTotalPage())
-                .isFirst(myProject.getIsFirst())
-                .isLast(myProject.getIsLast())
+                .totalElements(projectIJoined.getTotalElements())
+                .currentPageElements(projectIJoined.getCurrentPageElements())
+                .totalPage(projectIJoined.getTotalPage())
+                .isFirst(projectIJoined.getIsFirst())
+                .isLast(projectIJoined.getIsLast())
                 .build();
 
         return PageResponseDto.of(projectList, pageRequestDto);
