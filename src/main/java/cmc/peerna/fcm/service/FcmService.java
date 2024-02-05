@@ -16,6 +16,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -44,8 +46,11 @@ public class FcmService {
     }
 
     public void sendFcmMessage(Member receiver, String title, String body) {
-        FcmToken fcmToken = fcmTokenRepository.findByMember(receiver).orElseThrow(() -> new FcmException(ResponseStatus.FCM_TOKEN_NOT_FOUND));
-        String token = fcmToken.getToken();
+        Optional<FcmToken> fcmToken = fcmTokenRepository.findByMember(receiver);
+        if(!fcmToken.isPresent()){
+            return;
+        }
+        String token = fcmToken.get().getToken();
         logger.info("받은 FCM 토큰 값 : " + token);
         Message message = Message.builder()
                 .setToken(token)
