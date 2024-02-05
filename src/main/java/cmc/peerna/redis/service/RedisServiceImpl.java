@@ -86,7 +86,7 @@ public class RedisServiceImpl implements RedisService{
             throw new RefreshTokenException(ResponseStatus.RE_LOGIN_EXCEPTION);
         }
 
-        // 새로 발급할 accessToken보다 refreshToken이 먼저 만료 될 경우인가?
+        // 새로 발급할 accessToken보다 refreshToken이 먼저 만료 될 경우
         if (expireTime.isAfter(expireDeadLine)) {
             logger.info("기존 리프레시 토큰 발급");
             return findRefreshToken;

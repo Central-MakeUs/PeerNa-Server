@@ -50,6 +50,11 @@ public class FcmService {
         if(!fcmToken.isPresent()){
             return;
         }
+
+        if (receiver.isPushAgree() == false) {
+            return;
+        }
+
         String token = fcmToken.get().getToken();
         logger.info("받은 FCM 토큰 값 : " + token);
         Message message = Message.builder()
