@@ -64,4 +64,13 @@ public class MemberRequestDto {
     public static class pushAgreeDto{
         boolean pushAgree;
     }
+
+    @Builder
+    @Getter
+    @AllArgsConstructor(access = AccessLevel.PROTECTED)
+    @NoArgsConstructor(access = AccessLevel.PROTECTED)
+    public static class logoutRequestDto{
+        String refreshToken;
+        String fcmToken;
+    }
 }

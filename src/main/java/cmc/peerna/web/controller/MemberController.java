@@ -302,12 +302,10 @@ public class MemberController {
             @Parameter(name = "member", hidden = true)
     })
     @PostMapping("/member/logout")
-    ResponseDto<MemberResponseDto.MemberStatusDto> logout(@AuthMember Member member) {
+    ResponseDto<MemberResponseDto.MemberStatusDto> logout(@AuthMember Member member, @RequestBody MemberRequestDto.logoutRequestDto request) {
 
-        // fcm 토큰 전달받아서
-
-        //fcm 토큰 삭제
-        //리프레시 토큰 삭제
+        memberService.logout(member, request.getFcmToken());
+        redisService.deleteRefreshToken(request.getRefreshToken());
 
         return ResponseDto.of(MemberConverter.toMemberStatusDto(member.getId(), "로그아웃 완료"));
     }

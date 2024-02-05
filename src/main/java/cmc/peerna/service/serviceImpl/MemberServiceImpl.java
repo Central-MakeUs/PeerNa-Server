@@ -136,6 +136,11 @@ public class MemberServiceImpl implements MemberService {
         return member.updatePushAgree(request.isPushAgree());
     }
 
+    @Override
+    @Transactional
+    public void logout(Member member, String fcmToken) {
+        fcmTokenRepository.deleteByMemberAndToken(member, fcmToken);
+    }
 
     @Override
     @Transactional

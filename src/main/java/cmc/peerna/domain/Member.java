@@ -53,6 +53,8 @@ public class Member extends BaseEntity {
     @ColumnDefault("false")
     private boolean pushAgree;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "member_status")
     @ColumnDefault("'ACTIVE'")
     private MemberStatus memberStatus;
 
