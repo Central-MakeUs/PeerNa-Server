@@ -34,6 +34,8 @@ public class MemberServiceImpl implements MemberService {
     private final PeerGradeResultRepository peerGradeResultRepository;
     private final PeerFeedbackRepository peerFeedbackRepository;
     private final PeerTestRepository peerTestRepository;
+    private final ProjectMemberRepository projectMemberRepository;
+    private final FcmTokenRepository fcmTokenRepository;
 
     private final JwtProvider jwtProvider;
     private final TestResultCalculator testResultCalculator;
@@ -158,7 +160,10 @@ public class MemberServiceImpl implements MemberService {
         for (PeerGradeResult peerGradeResult : peerGradeResultListByWriter) {
             peerGradeResult.updateWriterToNull();
         }
-        memberRepository.deleteById(member.getId());
+        projectMemberRepository.deleteAllByMember(member);
+        fcmTokenRepository.deleteAllByMember(member);
+
+        withdrawal(member);
     }
 
 }

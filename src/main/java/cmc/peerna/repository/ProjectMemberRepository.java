@@ -20,4 +20,5 @@ public interface ProjectMemberRepository extends JpaRepository<ProjectMember, Lo
     @Query("select p.project from ProjectMember p where p.member= :member order by p.project.startDate desc")
     Page<Project> qFindProjectPageByMemberOrderByCreatedAtDesc(@Param("member") Member member, PageRequest pageRequest);
 
+    void deleteAllByMember(Member member);
 }
