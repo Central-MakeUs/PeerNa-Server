@@ -54,6 +54,11 @@ public class Member extends BaseEntity {
     private boolean pushAgree;
 
     @Enumerated(EnumType.STRING)
+    @Column(name = "member_status")
+    @ColumnDefault("'ACTIVE'")
+    private MemberStatus memberStatus;
+
+    @Enumerated(EnumType.STRING)
     @Column(name = "user_role")
     @ColumnDefault("'USER'")
     private UserRole userRole;
@@ -89,5 +94,20 @@ public class Member extends BaseEntity {
         this.job = request.getJob();
         this.part = request.getPart();
         this.oneliner = request.getOneLiner();
+    }
+
+    public void withdrawalMember() {
+        this.name="(알수없음)";
+        this.job = Job.WITHDRAWAL;
+        this.part = Part.WITHDRAWAL;
+        this.oneliner="탈퇴한 유저입니다.";
+        this.selfTestType = null;
+        this.peerTestType = null;
+        this.uuid = null;
+        this.selfPeerGrade=null;
+        this.totalScore=-1;
+        this.socialId=null;
+        this.socialType = SocialType.WITHDRAWAL;
+        this.memberStatus = MemberStatus.WITHDRAWAL;
     }
 }

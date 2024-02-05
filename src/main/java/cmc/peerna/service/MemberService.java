@@ -28,6 +28,8 @@ public interface MemberService {
 
     boolean agreePush(Member member, MemberRequestDto.pushAgreeDto request);
 
+    void logout(Member member, String fcmToken);
+
     void withdrawal(Member member);
 
 

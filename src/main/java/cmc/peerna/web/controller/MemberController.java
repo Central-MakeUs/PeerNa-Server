@@ -294,5 +294,21 @@ public class MemberController {
     }
 
 
+    @Operation(summary = "로그아웃 API ✔️🔑", description = "로그아웃 API입니다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "2200", description = "BAD_REQUEST, 존재하지 않는 유저를 조회한 경우.")
+    })
+    @Parameters({
+            @Parameter(name = "member", hidden = true)
+    })
+    @PostMapping("/member/logout")
+    ResponseDto<MemberResponseDto.MemberStatusDto> logout(@AuthMember Member member, @RequestBody MemberRequestDto.logoutRequestDto request) {
+
+        memberService.logout(member, request.getFcmToken());
+        redisService.deleteRefreshToken(request.getRefreshToken());
+
+        return ResponseDto.of(MemberConverter.toMemberStatusDto(member.getId(), "로그아웃 완료"));
+    }
+
 }
 
