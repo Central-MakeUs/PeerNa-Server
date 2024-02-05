@@ -40,7 +40,6 @@ public class RootServiceImpl implements RootService {
     private final PeerGradeResultRepository peerGradeResultRepository;
     private final PeerTestRepository peerTestRepository;
     private final MemberRepository memberRepository;
-    private final PushAlarmRepository pushAlarmRepository;
 
     private final ProjectMemberRepository projectMemberRepository;
 

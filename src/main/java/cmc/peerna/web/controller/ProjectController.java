@@ -67,27 +67,6 @@ public class ProjectController {
         return ResponseDto.of(MemberConverter.toMemberStatusDto(member.getId(), "프로젝트 생성 완료"));
     }
 
-//    @Operation(summary = "전체 프로젝트 조회 API ✔️🔑", description = "전체 프로젝트 조회 API입니다.")
-//    @ApiResponses({
-//            @ApiResponse(responseCode = "4012", description = "BAD_REQUEST , 페이지 번호는 1 이상이여야 합니다.", content = @Content(schema = @Schema(implementation = ResponseDto.class))),
-//            @ApiResponse(responseCode = "4013", description = "BAD_REQUEST , 페이지 번호가 페이징 범위를 초과했습니다.", content = @Content(schema = @Schema(implementation = ResponseDto.class))),
-//            @ApiResponse(responseCode = "2301", description = "OK , 프로젝트가 존재하지 않습니다.", content = @Content(schema = @Schema(implementation = ResponseDto.class))),
-//    })
-//    @Parameters({
-//            @Parameter(name = "member", hidden = true)
-//
-//    })
-//    @GetMapping("/project")
-//    public ResponseDto<ProjectResponseDto.ProjectPageDto> getAllProject(@AuthMember Member member, @CheckPage @RequestParam(name = "page") Integer page) {
-//        if (page == null)
-//            page = 1;
-//        else if (page < 1)
-//            throw new MemberException(ResponseStatus.UNDER_PAGE_INDEX_ERROR);
-//        page -= 1;
-//
-//        ProjectResponseDto.ProjectPageDto allProject = projectService.getAllProject(page);
-//        return ResponseDto.of(allProject);
-//    }
 
     @Operation(summary = "전체 프로젝트 조회 API ✔️🔑", description = "전체 프로젝트 조회 API입니다.")
     @ApiResponses({

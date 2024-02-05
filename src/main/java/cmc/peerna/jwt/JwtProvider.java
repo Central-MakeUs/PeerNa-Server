@@ -26,16 +26,10 @@ import java.util.stream.Collectors;
 @Component
 public class JwtProvider {
 
-
     private final String secret;
-
     private Key secretKey;
-
-    // 만료시간 : 5Hour, 추후 수정
     private final long accessTokenValidityInMilliseconds;
 
-
-//    private final CustomUserDetailsService userDetailsService;
 
     @PostConstruct
     protected void init() {
@@ -48,17 +42,6 @@ public class JwtProvider {
         this.secret = secret;
         this.accessTokenValidityInMilliseconds = accessTokenValidityInMilliseconds;
 
-    }
-
-    public String createToken(Long memberId, Collection<? extends GrantedAuthority> authorities) {
-        Date now = new Date();
-        return Jwts.builder()
-                .setSubject(String.valueOf(memberId))
-                .claim("AUTHORITIES",authorities)
-                .setIssuedAt(now)
-                .setExpiration(new Date(now.getTime() + accessTokenValidityInMilliseconds))
-                .signWith(secretKey, SignatureAlgorithm.HS256)
-                .compact();
     }
 
     public String createAccessToken(
@@ -93,9 +76,6 @@ public class JwtProvider {
         return new UsernamePasswordAuthenticationToken(principal, token, authorities);
     }
 
-    public String getAccount(String token) {
-        return Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(token).getBody().getSubject();
-    }
 
     public String resolveToken(HttpServletRequest request) {
         String bearerToken = request.getHeader("Authorization");

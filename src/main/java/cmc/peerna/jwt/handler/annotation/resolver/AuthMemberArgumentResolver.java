@@ -38,21 +38,7 @@ public class AuthMemberArgumentResolver implements HandlerMethodArgumentResolver
 
     @Override
     public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer, NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
-//        Object principal = null;
-//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-//
-//        if (authentication != null) {
-//            principal = authentication.getPrincipal();
-//        }
-//        if (principal == null || principal.getClass() == String.class) {
-//            throw new MemberException(ResponseStatus.MEMBER_NOT_FOUND);
-//        }
-//
-//        UsernamePasswordAuthenticationToken authenticationToken = (UsernamePasswordAuthenticationToken) authentication;
-//        Long memberId = Long.valueOf(authentication.getName());
-//
-//        Member member = MemberConverter.toMemberById(memberId);
-//        return member;
+
         HttpServletRequest request = (HttpServletRequest) webRequest.getNativeRequest();
         String jwt = jwtProvider.resolveToken(request);
         if (StringUtils.hasText(jwt)
@@ -61,6 +47,5 @@ public class AuthMemberArgumentResolver implements HandlerMethodArgumentResolver
             String userId = jwtProvider.getAuthentication(jwt).getName();
             return memberService.findById(Long.valueOf(userId));
         } else throw new MemberException(ResponseStatus.INVALID_ACCESS_TOKEN);
-//        return null; // 토큰이 없거나 유효하지 않은 경우
     }
 }

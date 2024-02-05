@@ -102,8 +102,6 @@ public class ProjectServiceImpl implements ProjectService {
     public ProjectResponseDto.ProjectPageDto getProjectIJoined(Member member, Integer page) {
         PageRequest pageRequest = PageRequest.of(page, pageSize);
 
-//        Page<Project> allProjectPage = projectRepository.findAllByCreator(member, pageRequest);
-
         Page<Project> allProjectPage = projectMemberRepository.qFindProjectPageByMemberOrderByCreatedAtDesc(member, pageRequest);
 
 

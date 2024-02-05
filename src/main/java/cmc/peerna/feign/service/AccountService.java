@@ -49,7 +49,6 @@ public class AccountService {
 
     // 인가 코드를 통해 카카오 서버의 액세스 토큰 알아내는 함수
     public String getKakaoAccessToken(String code){
-        log.info("Feign으로 액세스 토큰  요청 시작");
         log.info("토큰 추출할 때 카카오 서버에 요청할 때 보내는 정보 : " + code);
         KakaoTokenResponseDto kakaoTokenResponseDto = kakaoLoginFeignClient.getToken(code);
         log.info("카카오 서버에서 얻은 토큰 값 :  " + kakaoTokenResponseDto.getAccess_token());

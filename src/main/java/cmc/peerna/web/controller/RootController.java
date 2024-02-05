@@ -34,7 +34,6 @@ public class RootController {
 
     private final MemberService memberService;
     private final FcmService fcmService;
-    private final RootService rootService;
 
     @GetMapping("/health")
     public String healthCheck() {
