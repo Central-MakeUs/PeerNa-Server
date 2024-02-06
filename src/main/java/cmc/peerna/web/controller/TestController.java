@@ -109,6 +109,11 @@ public class TestController {
         testService.savePeerTest(null, target, requestDto);
         memberService.updateTotalScore(target);
         memberService.updatePeerTestType(target);
+        if (testService.checkForSendPeerTestUpdateNotice(target)) {
+            String messageContents = "업데이트 된 응답 분석 결과를 확인해보세요!";
+            noticeService.createNotice(target, target.getId(), NoticeGroup.PEER_TEST, NoticeType.PEER_TEST_RESULT_UPDATE, target.getId(), messageContents);
+            fcmService.sendFcmMessage(target, fcmTitle, messageContents);
+        }
         return ResponseDto.of(TestResponseDto.peerTestIdResponseDto.builder()
                 .peerTestId(target.getId()).build());
     }
@@ -170,6 +175,11 @@ public class TestController {
         testService.savePeerTest(member, target, requestDto);
         memberService.updateTotalScore(target);
         memberService.updatePeerTestType(target);
+        if (testService.checkForSendPeerTestUpdateNotice(target)) {
+            String messageContents = "업데이트 된 응답 분석 결과를 확인해보세요!";
+            noticeService.createNotice(target, target.getId(), NoticeGroup.PEER_TEST, NoticeType.PEER_TEST_RESULT_UPDATE, target.getId(), messageContents);
+            fcmService.sendFcmMessage(target, fcmTitle, messageContents);
+        }
         return ResponseDto.of(MemberConverter.toMemberStatusDto(member.getId(), "피어 테스트 작성 완료"));
     }
 

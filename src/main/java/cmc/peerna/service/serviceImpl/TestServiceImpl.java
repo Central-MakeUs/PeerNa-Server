@@ -27,6 +27,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class TestServiceImpl implements TestService {
     private static Long answerCount = 18L;
+    private static Long peerTestUpdateNoticeCount=3L;
     private final AnswerRepository answerRepository;
     private final SelfTestRepository selfTestRepository;
     private final SelfTestResultRepository selfTestResultRepository;
@@ -194,6 +195,16 @@ public class TestServiceImpl implements TestService {
         if (peerTestRepository.existsByWriterIdAndTargetId(writerId, targetId)) {
             throw new TestException(ResponseStatus.ALREADY_PEER_TEST_DONE);
         }
+    }
+
+
+    @Override
+    public boolean checkForSendPeerTestUpdateNotice(Member target) {
+        Long peerTestCount = peerGradeResultRepository.countByTarget(target);
+        if (peerTestCount % peerTestUpdateNoticeCount == 0) {
+            return true;
+        }
+        else return false;
     }
 }
 
