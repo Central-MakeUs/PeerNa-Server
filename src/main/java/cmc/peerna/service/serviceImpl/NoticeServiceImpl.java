@@ -64,6 +64,8 @@ public class NoticeServiceImpl implements NoticeService {
         if (noticeByNoticeGroup.getTotalPages() <= page)
             throw new MemberException(ResponseStatus.OVER_PAGE_INDEX_ERROR);
 
+        NoticeResponseDto.NoticePageDto noticePageDto = NoticeConverter.toNoticePageDto(noticeByNoticeGroup);
+
         List<Notice> noticeList = noticeByNoticeGroup.getContent();
         noticeList.stream()
                 .map(notice -> {
@@ -71,7 +73,7 @@ public class NoticeServiceImpl implements NoticeService {
                     return null;
                 }).collect(Collectors.toList());
 
-        NoticeResponseDto.NoticePageDto noticePageDto = NoticeConverter.toNoticePageDto(noticeByNoticeGroup);
+
         return noticePageDto;
     }
 
