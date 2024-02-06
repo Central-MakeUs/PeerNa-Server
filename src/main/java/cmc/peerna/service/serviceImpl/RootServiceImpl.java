@@ -117,7 +117,8 @@ public class RootServiceImpl implements RootService {
 
     @Override
     public RootResponseDto.MypageDto getMyPageDto(Member member) {
-        boolean peerTestMoreThanThree = peerGradeResultRepository.countByTarget(member) >= 3 ? true : false;
+        Long peerTestCount = peerGradeResultRepository.countByTarget(member);
+        boolean peerTestMoreThanThree = peerTestCount >= 3 ? true : false;
 
         MemberResponseDto.MemberMyPageInfoDto memberMyPageInfoDto = MemberConverter.toSimpleInfoDto(member);
 
@@ -139,6 +140,7 @@ public class RootServiceImpl implements RootService {
 
         return RootResponseDto.MypageDto.builder()
                 .peerTestMoreThanThree(peerTestMoreThanThree)
+                .peerTestCount(peerTestCount)
                 .memberMyPageInfoDto(memberMyPageInfoDto)
                 .peerTestType(member.getPeerTestType())
                 .selfTestCardList(selfTestCardList)
@@ -182,6 +184,7 @@ public class RootServiceImpl implements RootService {
 
         return HomeResponseDto.peerDetailPageDto.builder()
                 .peerTestMoreThanThree(peerTestMoreThanThree)
+                .myName(me.getName())
                 .memberSimpleProfileDto(memberSimpleProfileDto)
                 .peerCardList(peerCardList)
                 .myCardList(myPeerCardList)

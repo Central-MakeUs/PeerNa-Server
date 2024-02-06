@@ -14,6 +14,7 @@ public class RootResponseDto {
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
     public static class MypageDto{
         private boolean peerTestMoreThanThree;
+        private Long peerTestCount;
         private MemberResponseDto.MemberMyPageInfoDto memberMyPageInfoDto;
 
         private TestType peerTestType;
