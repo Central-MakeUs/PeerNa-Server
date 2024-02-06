@@ -73,4 +73,12 @@ public class MemberRequestDto {
         String refreshToken;
         String fcmToken;
     }
+
+    @Builder
+    @Getter
+    @AllArgsConstructor(access = AccessLevel.PROTECTED)
+    @NoArgsConstructor(access = AccessLevel.PROTECTED)
+    public static class saveFcmTokenDto{
+        String fcmToken;
+    }
 }

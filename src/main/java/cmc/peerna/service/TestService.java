@@ -32,4 +32,6 @@ public interface TestService {
     List<PeerCard> getPeerTestCard(Member target);
 
     void checkExistPeerTest(Long writerId, Long targetId);
+
+    boolean checkForSendPeerTestUpdateNotice(Member target);
 }

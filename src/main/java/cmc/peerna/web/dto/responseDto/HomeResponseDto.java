@@ -15,6 +15,7 @@ public class HomeResponseDto {
     public static class peerDetailPageDto{
 
         private boolean peerTestMoreThanThree;
+        private String myName;
         MemberResponseDto.memberSimpleProfileDto memberSimpleProfileDto;
 
         private List<PeerCard> peerCardList;

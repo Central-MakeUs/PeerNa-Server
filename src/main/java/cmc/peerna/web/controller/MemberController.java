@@ -279,6 +279,16 @@ public class MemberController {
         return ResponseDto.of(MemberConverter.toMemberStatusDto(member.getId(), responseMessage));
     }
 
+    @Operation(summary = "FCM 토큰 저장 API ✔️🔑", description = "FCM 토큰 저장 API입니다.")
+    @Parameters({
+            @Parameter(name = "member", hidden = true)
+    })
+    @PostMapping("/member/fcm-token")
+    ResponseDto<MemberResponseDto.MemberStatusDto> saveFcmToken(@AuthMember Member member, @RequestBody MemberRequestDto.saveFcmTokenDto request) {
+        memberService.saveFcmToken(member, request);
+        return ResponseDto.of(MemberConverter.toMemberStatusDto(member.getId(), "Fcm 토큰 저장 완료"));
+    }
+
 
     @Operation(summary = "회원탈퇴 API ✔️🔑", description = "회원탈퇴 API입니다.")
     @ApiResponses({

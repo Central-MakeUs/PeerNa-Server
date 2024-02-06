@@ -138,6 +138,20 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     @Transactional
+    public void saveFcmToken(Member member, MemberRequestDto.saveFcmTokenDto request) {
+        if (fcmTokenRepository.existsByMemberAndToken(member, request.getFcmToken())) {
+            return;
+        }
+        fcmTokenRepository.save(FcmToken.builder()
+                .member(member)
+                .token(request.getFcmToken())
+                .build()
+        );
+    }
+
+
+    @Override
+    @Transactional
     public void logout(Member member, String fcmToken) {
         fcmTokenRepository.deleteByMemberAndToken(member, fcmToken);
     }
