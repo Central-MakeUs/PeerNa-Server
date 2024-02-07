@@ -58,6 +58,9 @@ public class ProjectController {
     private final String fcmTitle = "[PeerNa]";
 
     @Operation(summary = "프로젝트 생성 API ✔️🔑", description = "새 프로젝트 생성하는 API입니다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "2304", description = "OK , 이미 존재하는 프로젝트 이름입니다.", content = @Content(schema = @Schema(implementation = ResponseDto.class))),
+    })
     @Parameters({
             @Parameter(name = "member", hidden = true)
     })

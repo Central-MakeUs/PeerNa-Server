@@ -12,4 +12,6 @@ public interface ProjectRepository extends JpaRepository<Project, Long> {
 
     Page<Project> findAllByCreator(Member creator, PageRequest pageRequest);
 
+    boolean existsByName(String name);
+
 }

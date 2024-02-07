@@ -38,6 +38,9 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     @Transactional
     public void newProject(Member member, ProjectRequestDto.ProjectCreateDto request) {
+        if (projectRepository.existsByName(request.getProjectName())) {
+            throw new ProjectException(ResponseStatus.ALREADY_EXIST_PROJECT_NAME);
+        }
         Project project = Project.builder()
                 .name(request.getProjectName())
                 .creator(member)

@@ -37,6 +37,7 @@ public enum ResponseStatus implements BaseCode {
     PROJECT_COUNT_ZERO(OK, 2301, "조회된 프로젝트가 0개입니다."),
     ALREADY_EXIST_PROJECT_MEMBER(OK, 2302, "이미 해당 프로젝트에 참여중입니다."),
     PROJECT_SELF_INVITE(OK, 2303, "자신이 만든 프로젝트엔 참여할 수 없습니다."),
+    ALREADY_EXIST_PROJECT_NAME(OK, 2304, "이미 존재하는 프로젝트 이름입니다."),
 
 
 
@@ -85,7 +86,7 @@ public enum ResponseStatus implements BaseCode {
     FEIGN_CLIENT_ERROR_500(HttpStatus.INTERNAL_SERVER_ERROR, 5001, "Inter server Error in feign client"),
 
     FCM_ACCESS_TOKEN_REQUEST_ERROR(INTERNAL_SERVER_ERROR, 5002, "서버 에러, FCM 서버에 AccessToken 요청할 때 에러 발생."),
-    FCM_SEND_MESSAGE_ERROR(INTERNAL_SERVER_ERROR, 5003, "서버 에러, FCM 서버에 메시지를 전송할 때 에러 발생.");
+    FCM_SEND_MESSAGE_ERROR(INTERNAL_SERVER_ERROR, 5003, "서버 에러, FCM 서버에 메시지를 전송할 때 에러 발생. FcmToken이 유효한지 확인해주세요.");
 
     private final HttpStatus httpStatus;
     private final Integer code;

@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -46,30 +47,34 @@ public class FcmService {
     }
 
     public void sendFcmMessage(Member receiver, String title, String body) {
-        Optional<FcmToken> fcmToken = fcmTokenRepository.findByMember(receiver);
-        if(!fcmToken.isPresent()){
-            return;
-        }
-
         if (receiver.isPushAgree() == false) {
             return;
         }
 
-        String token = fcmToken.get().getToken();
-        logger.info("받은 FCM 토큰 값 : " + token);
-        Message message = Message.builder()
-                .setToken(token)
-                .setNotification(
-                        Notification.builder()
-                                .setTitle(title)
-                                .setBody(body)
-                                .build())
-                .build();
-        try {
-            String response = FirebaseMessaging.getInstance().send(message);
-            logger.info("the response of request FCM : {}",response);
-        } catch (FirebaseMessagingException e) {
-            throw new FcmException(ResponseStatus.FCM_SEND_MESSAGE_ERROR);
+        List<FcmToken> fcmTokenList = fcmTokenRepository.findAllByMember(receiver);
+        if (fcmTokenList.size() == 0) {
+            return;
         }
+
+        for (FcmToken fcmToken : fcmTokenList) {
+            String token = fcmToken.getToken();
+            logger.info("전송하고자 하는 FCM 토큰 값 : " + token);
+            Message message = Message.builder()
+                    .setToken(token)
+                    .setNotification(
+                            Notification.builder()
+                                    .setTitle(title)
+                                    .setBody(body)
+                                    .build())
+                    .build();
+            try {
+                String response = FirebaseMessaging.getInstance().send(message);
+                logger.info("the response of request FCM : {}",response);
+            } catch (FirebaseMessagingException e) {
+                throw new FcmException(ResponseStatus.FCM_SEND_MESSAGE_ERROR);
+            }
+        }
+
+
     }
 }
