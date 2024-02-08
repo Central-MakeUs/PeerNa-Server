@@ -76,7 +76,7 @@ public class MemberConverter {
     }
 
     public static RootResponseDto.memberSimpleDtoPage toSearchByPeerTypeDto(Page<Member> memberPage) {
-        if(memberPage.getTotalElements()==0L) return null;
+//        if(memberPage.getTotalElements()==0L) return null;
         List<MemberResponseDto.memberSimpleProfileDto> memberSimpleProfileDtoList = memberPage.stream()
                 .map(member -> toMemberSimpleProfileDto(member))
                 .collect(Collectors.toList());

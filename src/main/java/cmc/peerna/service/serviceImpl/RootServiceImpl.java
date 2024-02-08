@@ -198,10 +198,10 @@ public class RootServiceImpl implements RootService {
     }
     @Override
     public RootResponseDto.AllFeedbackDto getFeedbackList(Member member, Integer page) {
-        if (!peerFeedbackRepository.existsByTarget(member)) return null;
+//        if (!peerFeedbackRepository.existsByTarget(member)) return null;
         Page<PeerFeedback> peerFeedbacks = peerFeedbackRepository.findAllByTarget(member, PageRequest.of(page, pageSize, Sort.by(Sort.Direction.DESC, "createdAt")));
-        if (peerFeedbacks.getTotalPages() <= page)
-            throw new MemberException(ResponseStatus.OVER_PAGE_INDEX_ERROR);
+//        if (peerFeedbacks.getTotalPages() <= page)
+//            throw new MemberException(ResponseStatus.OVER_PAGE_INDEX_ERROR);
         RootResponseDto.AllFeedbackDto allFeedbackDto = MemberConverter.toFeedbackString(peerFeedbacks, member);
         return allFeedbackDto;
     }
@@ -209,8 +209,8 @@ public class RootServiceImpl implements RootService {
     @Override
     public ProjectResponseDto.ProjectPageDto getPeerProject(Member member, Integer page) {
         Page<Project> projectPage = projectMemberRepository.qFindProjectPageByMemberOrderByCreatedAtDesc(member, PageRequest.of(page, pageSize, Sort.by(Sort.Direction.DESC, "createdAt")));
-        if (projectPage.getTotalPages() <= page)
-            throw new MemberException(ResponseStatus.OVER_PAGE_INDEX_ERROR);
+//        if (projectPage.getTotalPages() <= page)
+//            throw new MemberException(ResponseStatus.OVER_PAGE_INDEX_ERROR);
 
         ProjectResponseDto.ProjectPageDto projectPageDto = ProjectConverter.toProjectPageDto(projectPage);
         return projectPageDto;
@@ -225,11 +225,11 @@ public class RootServiceImpl implements RootService {
 
         PageRequest pageRequest = PageRequest.of(page, pageSize, Sort.by(Sort.Order.desc("totalScore"), Sort.Order.asc("name")));
         Page<Member> memberByPeerTypePage = memberRepository.findAllByPeerTestTypeAndIdNot(TestType.valueOf(testType), member.getId(), pageRequest);
-        if (memberByPeerTypePage.getTotalElements() == 0L) {
-            throw new RootException(ResponseStatus.MEMBER_COUNT_ZERO);
-        }
-        if (memberByPeerTypePage.getTotalPages() <= page)
-            throw new MemberException(ResponseStatus.OVER_PAGE_INDEX_ERROR);
+//        if (memberByPeerTypePage.getTotalElements() == 0L) {
+//            throw new RootException(ResponseStatus.MEMBER_COUNT_ZERO);
+//        }
+//        if (memberByPeerTypePage.getTotalPages() <= page)
+//            throw new MemberException(ResponseStatus.OVER_PAGE_INDEX_ERROR);
         RootResponseDto.memberSimpleDtoPage memberByPeerTypeDto = MemberConverter.toSearchByPeerTypeDto(memberByPeerTypePage);
         return memberByPeerTypeDto;
     }
@@ -250,11 +250,11 @@ public class RootServiceImpl implements RootService {
             memberByPeerTypePage = memberRepository.findAllByPartAndIdNot(Part.valueOf(part), member.getId(), pageRequest);
         }
 
-        if (memberByPeerTypePage.getTotalElements() == 0L) {
-            throw new RootException(ResponseStatus.MEMBER_COUNT_ZERO);
-        }
-        if (memberByPeerTypePage.getTotalPages() <= page)
-            throw new MemberException(ResponseStatus.OVER_PAGE_INDEX_ERROR);
+//        if (memberByPeerTypePage.getTotalElements() == 0L) {
+//            throw new RootException(ResponseStatus.MEMBER_COUNT_ZERO);
+//        }
+//        if (memberByPeerTypePage.getTotalPages() <= page)
+//            throw new MemberException(ResponseStatus.OVER_PAGE_INDEX_ERROR);
         RootResponseDto.memberSimpleDtoPage memberByPeerTypeDto = MemberConverter.toSearchByPeerTypeDto(memberByPeerTypePage);
         return memberByPeerTypeDto;
     }

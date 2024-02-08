@@ -49,7 +49,7 @@ public class ProjectConverter {
 
 
     public static ProjectResponseDto.ProjectPageDto toProjectPageDto(Page<Project> projectPage) {
-        if(projectPage.getTotalElements()==0L) return null;
+//        if(projectPage.getTotalElements()==0L) return null;
         List<ProjectResponseDto.ProjectSimpleProfileDto> projectSimpleProfileDtoList = projectPage.stream()
                 .map(project -> toProjectSimpleProfile(project))
                 .collect(Collectors.toList());
