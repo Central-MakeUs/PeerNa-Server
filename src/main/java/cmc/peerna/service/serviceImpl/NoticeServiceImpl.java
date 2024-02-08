@@ -58,11 +58,11 @@ public class NoticeServiceImpl implements NoticeService {
 
         PageRequest pageRequest = PageRequest.of(page, pageSize, Sort.by(Sort.Order.desc("createdAt")));
         Page<Notice> noticeByNoticeGroup = noticeRepository.findAllByNoticeGroupAndReceiver(noticeGroup, receiver, pageRequest);
-        if (noticeByNoticeGroup.getTotalElements() == 0L) {
-            throw new RootException(ResponseStatus.NOTICE_COUNT_ZERO);
-        }
-        if (noticeByNoticeGroup.getTotalPages() <= page)
-            throw new MemberException(ResponseStatus.OVER_PAGE_INDEX_ERROR);
+//        if (noticeByNoticeGroup.getTotalElements() == 0L) {
+//            throw new RootException(ResponseStatus.NOTICE_COUNT_ZERO);
+//        }
+//        if (noticeByNoticeGroup.getTotalPages() <= page)
+//            throw new MemberException(ResponseStatus.OVER_PAGE_INDEX_ERROR);
 
         NoticeResponseDto.NoticePageDto noticePageDto = NoticeConverter.toNoticePageDto(noticeByNoticeGroup);
 

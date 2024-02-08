@@ -76,11 +76,11 @@ public class ProjectServiceImpl implements ProjectService {
         PageRequest pageRequest = PageRequest.of(page, pageSize, Sort.by(Sort.Order.desc("startDate"), Sort.Order.asc("name")));
 
         Page<Project> allProjectPage = projectRepository.findAllByIdNotNull(pageRequest);
-        if (allProjectPage.getTotalElements() == 0L) {
-            throw new RootException(ResponseStatus.PROJECT_COUNT_ZERO);
-        }
-        if (allProjectPage.getTotalPages() <= page)
-            throw new MemberException(ResponseStatus.OVER_PAGE_INDEX_ERROR);
+//        if (allProjectPage.getTotalElements() == 0L) {
+//            throw new RootException(ResponseStatus.PROJECT_COUNT_ZERO);
+//        }
+//        if (allProjectPage.getTotalPages() <= page)
+//            throw new MemberException(ResponseStatus.OVER_PAGE_INDEX_ERROR);
 
         ProjectResponseDto.ProjectPageDto allProjectPageDto = ProjectConverter.toProjectPageDto(allProjectPage);
         return allProjectPageDto;
@@ -91,11 +91,11 @@ public class ProjectServiceImpl implements ProjectService {
         PageRequest pageRequest = PageRequest.of(page, pageSize, Sort.by(Sort.Order.desc("startDate"), Sort.Order.asc("name")));
 
         Page<Project> allProjectPage = projectRepository.findAllByCreator(member, pageRequest);
-        if (allProjectPage.getTotalElements() == 0L) {
-            throw new RootException(ResponseStatus.PROJECT_COUNT_ZERO);
-        }
-        if (allProjectPage.getTotalPages() <= page)
-            throw new MemberException(ResponseStatus.OVER_PAGE_INDEX_ERROR);
+//        if (allProjectPage.getTotalElements() == 0L) {
+//            throw new RootException(ResponseStatus.PROJECT_COUNT_ZERO);
+//        }
+//        if (allProjectPage.getTotalPages() <= page)
+//            throw new MemberException(ResponseStatus.OVER_PAGE_INDEX_ERROR);
 
         ProjectResponseDto.ProjectPageDto allProjectPageDto = ProjectConverter.toProjectPageDto(allProjectPage);
         return allProjectPageDto;
@@ -108,11 +108,11 @@ public class ProjectServiceImpl implements ProjectService {
         Page<Project> allProjectPage = projectMemberRepository.qFindProjectPageByMemberOrderByCreatedAtDesc(member, pageRequest);
 
 
-        if (allProjectPage.getTotalElements() == 0L) {
-            throw new RootException(ResponseStatus.PROJECT_COUNT_ZERO);
-        }
-        if (allProjectPage.getTotalPages() <= page)
-            throw new MemberException(ResponseStatus.OVER_PAGE_INDEX_ERROR);
+//        if (allProjectPage.getTotalElements() == 0L) {
+//            throw new RootException(ResponseStatus.PROJECT_COUNT_ZERO);
+//        }
+//        if (allProjectPage.getTotalPages() <= page)
+//            throw new MemberException(ResponseStatus.OVER_PAGE_INDEX_ERROR);
 
         ProjectResponseDto.ProjectPageDto allProjectPageDto = ProjectConverter.toProjectPageDto(allProjectPage);
         return allProjectPageDto;

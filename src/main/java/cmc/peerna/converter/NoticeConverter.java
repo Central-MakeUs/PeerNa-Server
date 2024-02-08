@@ -20,7 +20,7 @@ public class NoticeConverter {
     }
 
     public static NoticeResponseDto.NoticePageDto toNoticePageDto(Page<Notice> noticePage) {
-        if(noticePage.getTotalElements()==0L) return null;
+//        if(noticePage.getTotalElements()==0L) return null;
         List<NoticeResponseDto.NoticeSimpleInfoDto> noticeSimpleInfoDtoList = noticePage.stream()
                 .map(notice -> toNoticeSimpleProfile(notice))
                 .collect(Collectors.toList());
