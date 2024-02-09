@@ -182,7 +182,7 @@ public class MemberServiceImpl implements MemberService {
         projectMemberRepository.deleteAllByMember(member);
         fcmTokenRepository.deleteAllByMember(member);
 
-        withdrawal(member);
+        member.withdrawalMember();
     }
 
 }
