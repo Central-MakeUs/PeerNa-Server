@@ -78,7 +78,7 @@ public enum ResponseStatus implements BaseCode {
     // 프로젝트 및 알림 관련
     NOT_PROJECT_CREATOR(BAD_REQUEST, 4250, "자신이 만든 프로젝트가 아닙니다."),
     PROJECT_REQUEST_NOTICE_NOT_FOUND(BAD_REQUEST, 4251, "해당 유저가 프로젝트 참가 신청을 하지 않았습니다."),
-
+    PEER_TEST_REQUEST_NOTICE_NOT_FOUND(BAD_REQUEST, 4252, "해당 유저에 대한 피어테스트 요청이 존재하지 않습니다."),
 
 
     // 500번대 에러

@@ -101,4 +101,11 @@ public class NoticeServiceImpl implements NoticeService {
         }
     }
 
+    @Override
+    public void existsPeerTestRequestNotice(Long receiverId, Long senderId) {
+        if (!noticeRepository.existsByReceiverIdAndSenderIdAndNoticeType(receiverId, senderId, NoticeType.PEER_TEST_REQUEST)) {
+            throw new NoticeException(ResponseStatus.PEER_TEST_REQUEST_NOTICE_NOT_FOUND);
+        }
+    }
+
 }

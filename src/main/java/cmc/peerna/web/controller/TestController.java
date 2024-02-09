@@ -166,11 +166,16 @@ public class TestController {
             @ApiResponse(responseCode = "2200", description = "BAD_REQUEST, 존재하지 않는 유저입니다."),
             @ApiResponse(responseCode = "2251", description = "OK, 이미 피어테스트를 진행했습니다."),
             @ApiResponse(responseCode = "4200", description = "BAD_REQUEST, 잘못된 답변 ID 값을 전달했습니다."),
-            @ApiResponse(responseCode = "4201", description = "BAD_REQUEST, 답변 개수가 정확하게 18개가 아닙니다.")
+            @ApiResponse(responseCode = "4201", description = "BAD_REQUEST, 답변 개수가 정확하게 18개가 아닙니다."),
+            @ApiResponse(responseCode = "4252", description = "BAD_REQUEST, 해당 유저에 대한 피어테스트 요청이 존재하지 않습니다.")
     })
     @PostMapping("/review/peer-test/{target-id}")
     public ResponseDto<MemberResponseDto.MemberStatusDto> saveRequestedPeerTest(@AuthMember Member member, @PathVariable(name = "target-id") Long targetId,  @RequestBody TestRequestDto.peerTestRequestDto requestDto) {
         Member target = memberService.findById(targetId);
+
+        // 피어테스트 요청받았는지 확인 필요
+        noticeService.existsPeerTestRequestNotice(member.getId(), targetId);
+
         testService.checkExistPeerTest(member.getId(), targetId);
         testService.savePeerTest(member, target, requestDto);
         memberService.updateTotalScore(target);

@@ -17,4 +17,6 @@ public interface NoticeService {
     boolean existsNotice(Long receiverId, Long senderId, NoticeType noticeType);
 
     void existsProjectJoinRequestNotice(Long receiverId, Long senderId);
+
+    void existsPeerTestRequestNotice(Long receiverId, Long senderId);
 }
