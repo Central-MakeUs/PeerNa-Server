@@ -312,7 +312,7 @@ public class ProjectController {
 
         String messageContents = "\'" + project.getName() + "\' 참가 신청이 수락 되었어요.";
         fcmService.sendFcmMessage(memberService.findById(peerId), fcmTitle, messageContents);
-        noticeService.createNotice(member, project.getCreator().getId(), NoticeGroup.PROJECT, NoticeType.ACCEPT_PROJECT_JOIN_REQUEST, projectId, messageContents);
+        noticeService.createNotice(member, peerId, NoticeGroup.PROJECT, NoticeType.ACCEPT_PROJECT_JOIN_REQUEST, projectId, messageContents);
         return ResponseDto.of(MemberConverter.toMemberStatusDto(member.getId(), "프로젝트 참가 신청 수락 완료"));
     }
 
@@ -340,7 +340,7 @@ public class ProjectController {
 
         String messageContents = "\'" + project.getName() + "\' 참가 신청이 거절 되었어요.";
         fcmService.sendFcmMessage(memberService.findById(peerId), fcmTitle, messageContents);
-        noticeService.createNotice(member, project.getCreator().getId(), NoticeGroup.PROJECT, NoticeType.DECLINE_PROJECT_JOIN_REQUEST, projectId, messageContents);
+        noticeService.createNotice(member, peerId, NoticeGroup.PROJECT, NoticeType.DECLINE_PROJECT_JOIN_REQUEST, projectId, messageContents);
         return ResponseDto.of(MemberConverter.toMemberStatusDto(member.getId(), "프로젝트 참가 신청 거절 완료"));
     }
 }

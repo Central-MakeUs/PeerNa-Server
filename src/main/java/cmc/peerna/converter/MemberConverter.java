@@ -44,6 +44,7 @@ public class MemberConverter {
                 .job(member.getJob())
                 .totalScore(member.getTotalScore())
                 .oneLiner(member.getOneliner())
+                .uuid(member.getUuid())
                 .build();
     }
 

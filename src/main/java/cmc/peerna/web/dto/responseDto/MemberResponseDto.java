@@ -39,6 +39,7 @@ public class MemberResponseDto {
 
         private Integer totalScore;
         private String oneLiner;
+        private String uuid;
     }
 
     @Builder
