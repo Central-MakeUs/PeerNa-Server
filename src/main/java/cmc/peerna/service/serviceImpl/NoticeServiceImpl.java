@@ -54,6 +54,23 @@ public class NoticeServiceImpl implements NoticeService {
 
     @Override
     @Transactional
+    public void createProjectRequestNotice(Member sender, Long receiverId, NoticeGroup noticeGroup, NoticeType noticeType, Long projectId, Long senderId, String contents) {
+        Member receiver = memberRepository.findById(receiverId).orElseThrow(() -> new MemberException(ResponseStatus.MEMBER_NOT_FOUND));
+        noticeRepository.save(Notice.builder()
+                .sender(sender)
+                .receiver(receiver)
+                .noticeType(noticeType)
+                .noticeGroup(noticeGroup)
+                .targetId(projectId)
+                .subTargetId(senderId)
+                .contents(contents)
+                .readFlag("false")
+                .build()
+        );
+    }
+
+    @Override
+    @Transactional
     public NoticeResponseDto.NoticePageDto getNoticePageByNoticeGroup(Member receiver, NoticeGroup noticeGroup, Integer page) {
 
         PageRequest pageRequest = PageRequest.of(page, pageSize, Sort.by(Sort.Order.desc("createdAt")));

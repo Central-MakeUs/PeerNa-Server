@@ -31,6 +31,7 @@ public class Notice extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private NoticeType noticeType;
     private Long targetId;
+    private Long subTargetId;
 
     private String contents;
 

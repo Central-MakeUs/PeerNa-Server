@@ -281,7 +281,7 @@ public class ProjectController {
 
         String messageContents = member.getName() + "님이 \'" + project.getName() + "\' 에 참여하고 싶어해요.";
         fcmService.sendFcmMessage(project.getCreator(), fcmTitle, messageContents);
-        noticeService.createNotice(member, project.getCreator().getId(), NoticeGroup.PROJECT, NoticeType.REQUEST_JOIN_PROJECT, member.getId(), messageContents);
+        noticeService.createProjectRequestNotice(member, project.getCreator().getId(), NoticeGroup.PROJECT, NoticeType.REQUEST_JOIN_PROJECT,projectId, member.getId(), messageContents);
         return ResponseDto.of(MemberConverter.toMemberStatusDto(member.getId(), "프로젝트 참가 신청 완료"));
     }
 

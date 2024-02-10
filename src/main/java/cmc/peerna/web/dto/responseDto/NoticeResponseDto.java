@@ -13,6 +13,7 @@ public class NoticeResponseDto {
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
     public static class NoticeSimpleInfoDto {
         private Long targetId;
+        private Long subTargetId;
 
         // 알림의 좌측 아이콘 구분 위한 필드
         private NoticeType noticeType;

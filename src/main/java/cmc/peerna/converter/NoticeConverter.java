@@ -12,6 +12,7 @@ public class NoticeConverter {
     public static NoticeResponseDto.NoticeSimpleInfoDto toNoticeSimpleProfile(Notice notice) {
         return NoticeResponseDto.NoticeSimpleInfoDto.builder()
                 .targetId(notice.getTargetId())
+                .subTargetId(notice.getSubTargetId())
                 .noticeType(notice.getNoticeType())
                 .contents(notice.getContents())
                 .createdTime(notice.getCreatedAt())
