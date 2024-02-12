@@ -96,6 +96,7 @@ public class MemberServiceImpl implements MemberService {
             scoreSum += peerGradeResult.getPeerGrade().getScore();
         }
         totalScore = scoreSum / peerGradeResultList.size();
+        totalScore = totalScore + projectMemberRepository.countByMember(member);
         if(totalScore>100) totalScore=100;
         member.updateTotalScore(totalScore);
     }
@@ -103,6 +104,7 @@ public class MemberServiceImpl implements MemberService {
     @Override
     @Transactional
     public void updatePeerTestType(Member member) {
+        if(peerGradeResultRepository.countByTarget(member)<3) return;
         List<PeerTest> peerTestList = peerTestRepository.findALlByTarget(member);
         TestType peerTestType = testResultCalculator.peerTestPeerType(peerTestList);
         member.updatePeerTestType(peerTestType);

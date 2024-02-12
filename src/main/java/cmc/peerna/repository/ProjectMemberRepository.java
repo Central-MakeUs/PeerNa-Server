@@ -21,4 +21,6 @@ public interface ProjectMemberRepository extends JpaRepository<ProjectMember, Lo
     Page<Project> qFindProjectPageByMemberOrderByCreatedAtDesc(@Param("member") Member member, PageRequest pageRequest);
 
     void deleteAllByMember(Member member);
+
+    Integer countByMember(Member member);
 }

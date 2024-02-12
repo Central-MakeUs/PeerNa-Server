@@ -57,6 +57,9 @@ public class ProjectServiceImpl implements ProjectService {
                 .project(project)
                 .member(member)
                 .build());
+
+        member.updateTotalScoreByNewProject();
+
     }
 
     @Override
@@ -149,6 +152,7 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
+    @Transactional
     public void saveNewProjectMember(Long projectId, Long memberId) {
         Project project = projectRepository.findById(projectId).orElseThrow(() -> new ProjectException(ResponseStatus.PROJECT_NOT_FOUND));
         Member member = memberRepository.findById(memberId).orElseThrow(() -> new MemberException(ResponseStatus.MEMBER_NOT_FOUND));
@@ -157,5 +161,7 @@ public class ProjectServiceImpl implements ProjectService {
                 .member(member)
                 .build()
         );
+        member.updateTotalScoreByNewProject();
+
     }
 }
