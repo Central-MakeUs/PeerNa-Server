@@ -125,18 +125,23 @@ public class RootServiceImpl implements RootService {
         SelfTestResult selfTestResult = selfTestResultRepository.findByMember(member);
 
         List<PeerCard> selfTestCardList = TestConverter.selfTestResultToPeerCardList(selfTestResult);
-
-        List<PeerTest> peerTestList = peerTestRepository.findALlByTarget(member);
-
-        List<PeerCard> peerCardList = testResultCalculator.getPeerTestPeerCard(peerTestList);
-
-        List<TestResponseDto.totalEvaluation> totalEvaluation = getTotalEvaluationList(member);
-
-        List<PeerFeedback> peerFeedbackList = peerFeedbackRepository.findTop3ByTargetOrderByCreatedAtDesc(member);
-
         List<Long> selfTestAnswerIdList = TestConverter.selfTestToAnswerId(selfTestRepository.findAllByWriter(member));
 
-        List<Long> colorAnswerIdList = getMyPageColorAnswerIdList(member, selfTestAnswerIdList);
+        List<PeerTest> peerTestList = new ArrayList<>();
+        List<PeerCard> peerCardList = new ArrayList<>();
+        List<TestResponseDto.totalEvaluation> totalEvaluation = new ArrayList<>();
+        List<PeerFeedback> peerFeedbackList = new ArrayList<>();
+
+        List<Long> colorAnswerIdList = new ArrayList<>();
+
+        if(peerTestMoreThanThree==true){
+            peerTestList = peerTestRepository.findALlByTarget(member);
+            peerCardList = testResultCalculator.getPeerTestPeerCard(peerTestList);
+            totalEvaluation = getTotalEvaluationList(member);
+            peerFeedbackList = peerFeedbackRepository.findTop3ByTargetOrderByCreatedAtDesc(member);
+            colorAnswerIdList = getMyPageColorAnswerIdList(member, selfTestAnswerIdList);
+        }
+
 
         return RootResponseDto.MypageDto.builder()
                 .peerTestMoreThanThree(peerTestMoreThanThree)
@@ -159,22 +164,56 @@ public class RootServiceImpl implements RootService {
 
         MemberResponseDto.memberSimpleProfileDto memberSimpleProfileDto = MemberConverter.toMemberSimpleProfileDto(target);
 
+
+        List<PeerTest> myPeerTestList = new ArrayList<>();
+        List<PeerCard> myPeerCardList = new ArrayList<>();
+
+        List<PeerTest> peerPeerTestList = new ArrayList<>();
+        List<PeerCard> peerCardList = new ArrayList<>();
+        List<TestResponseDto.totalEvaluation> totalEvaluation = new ArrayList<>();
+        List<PeerFeedback> peerFeedbackList = new ArrayList<>();
+        List<Long> peerAnswerIdList = new ArrayList<>();
+        List<Long> myAnswerIdList = new ArrayList<>();
+        List<Long> colorAnswerIdList = new ArrayList<>();
+
+        if (peerGradeResultRepository.countByTarget(me) >= 3) {
+            myPeerTestList = peerTestRepository.findALlByTarget(me);
+            myPeerCardList = testResultCalculator.getPeerTestPeerCard(myPeerTestList);
+            myAnswerIdList = getPeerTestAnswerIdList(me);
+        }
+
+
+
+        if (peerTestMoreThanThree == true) {
+            peerPeerTestList = peerTestRepository.findALlByTarget(target);
+            peerCardList = testResultCalculator.getPeerTestPeerCard(peerPeerTestList);
+            totalEvaluation = getTotalEvaluationList(target);
+            peerFeedbackList = peerFeedbackRepository.findTop3ByTargetOrderByCreatedAtDesc(target);
+            peerAnswerIdList = getPeerTestAnswerIdList(target);
+            if(peerGradeResultRepository.countByTarget(me) >= 3) {
+                colorAnswerIdList = getPeerAndMyCommonAnswerIdList(peerAnswerIdList, myAnswerIdList);
+            }
+
+        }
+
         // 동료의 피어카드 리스트
-        List<PeerTest> peerPeerTestList = peerTestRepository.findALlByTarget(target);
-        List<PeerCard> peerCardList = testResultCalculator.getPeerTestPeerCard(peerPeerTestList);
+//        List<PeerTest> peerPeerTestList = peerTestRepository.findALlByTarget(target);
+//        List<PeerCard> peerCardList = testResultCalculator.getPeerTestPeerCard(peerPeerTestList);
 
         // 나의 피어카드 리스트
-        List<PeerTest> myPeerTestList = peerTestRepository.findALlByTarget(me);
-        List<PeerCard> myPeerCardList = testResultCalculator.getPeerTestPeerCard(myPeerTestList);
+//        List<PeerTest> myPeerTestList = peerTestRepository.findALlByTarget(me);
+//        List<PeerCard> myPeerCardList = testResultCalculator.getPeerTestPeerCard(myPeerTestList);
 
-        List<TestResponseDto.totalEvaluation> totalEvaluation = getTotalEvaluationList(target);
+//        List<TestResponseDto.totalEvaluation> totalEvaluation = getTotalEvaluationList(target);
+//
+//        List<PeerFeedback> peerFeedbackList = peerFeedbackRepository.findTop3ByTargetOrderByCreatedAtDesc(target);
 
-        List<PeerFeedback> peerFeedbackList = peerFeedbackRepository.findTop3ByTargetOrderByCreatedAtDesc(target);
+//        List<Long> peerAnswerIdList = getPeerTestAnswerIdList(target);
+//        List<Long> myAnswerIdList = getPeerTestAnswerIdList(me);
+//
+//        List<Long> colorAnswerIdList = getPeerAndMyCommonAnswerIdList(peerAnswerIdList, myAnswerIdList);
 
-        List<Long> peerAnswerIdList = getPeerTestAnswerIdList(target);
-        List<Long> myAnswerIdList = getPeerTestAnswerIdList(me);
 
-        List<Long> colorAnswerIdList = getPeerAndMyCommonAnswerIdList(peerAnswerIdList, myAnswerIdList);
 
         List<Project> top3projectList = projectMemberRepository.qFindProjectByMemberOrderByCreatedAtDesc(target);
         if (top3projectList.size() > 3) {

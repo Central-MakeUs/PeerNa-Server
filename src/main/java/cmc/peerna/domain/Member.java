@@ -83,6 +83,11 @@ public class Member extends BaseEntity {
     }
 
     public void updateTotalScore(Integer totalScore){ this.totalScore=totalScore;}
+    public void updateTotalScoreByNewProject(){
+        if(this.totalScore==null) this.totalScore=1;
+        else this.totalScore = this.totalScore + 1;
+        if(this.totalScore>100) this.totalScore=100;
+    }
     public void updatePeerTestType(TestType peerTestType){ this.peerTestType = peerTestType;}
 
     public boolean updatePushAgree(boolean pushAgree){
