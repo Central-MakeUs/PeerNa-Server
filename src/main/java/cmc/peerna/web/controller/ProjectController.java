@@ -55,8 +55,6 @@ public class ProjectController {
     private final FcmService fcmService;
     private final MemberService memberService;
 
-    private final String fcmTitle = "[PeerNa]";
-
     @Operation(summary = "프로젝트 생성 API ✔️🔑", description = "새 프로젝트 생성하는 API입니다.")
     @ApiResponses({
             @ApiResponse(responseCode = "2304", description = "OK , 이미 존재하는 프로젝트 이름입니다.", content = @Content(schema = @Schema(implementation = ResponseDto.class))),
@@ -207,9 +205,10 @@ public class ProjectController {
         projectService.saveNewProjectMember(projectId, member.getId());
         Project project = projectService.findById(projectId);
 
-        String messageContents = member.getName() + "님이 \'"+project.getName()+"\' 참여 제안을 수락했어요.";
-        fcmService.sendFcmMessage(project.getCreator(), fcmTitle, messageContents);
-        noticeService.createNotice(member, project.getCreator().getId(), NoticeGroup.PROJECT, NoticeType.ACCEPT_PROJECT_INVITATION, projectId,messageContents);
+        String messageTitle = member.getName() + "님이 프로젝트 제안을 수락했어요 🎉";
+        String messageContents = "알림을 눌러 확인하기 >";
+        fcmService.sendFcmMessage(project.getCreator(), messageTitle, messageContents);
+        noticeService.createNotice(member, project.getCreator().getId(), NoticeGroup.PROJECT, NoticeType.ACCEPT_PROJECT_INVITATION, projectId, messageTitle);
 
 
 
@@ -231,9 +230,10 @@ public class ProjectController {
 
         Project project = projectService.findById(projectId);
 
-        String messageContents = member.getName() + "님이 \'"+project.getName()+"\' 참여 제안을 거절했어요.";
-        fcmService.sendFcmMessage(project.getCreator(), fcmTitle, messageContents);
-        noticeService.createNotice(member, project.getCreator().getId(), NoticeGroup.PROJECT, NoticeType.DECLINE_PROJECT_INVITATION, projectId,messageContents);
+        String messageTitle = member.getName() + "님이 프로젝트 제안을 거절했어요 💦";
+        String messageContents = "알림을 눌러 확인하기 >";
+        fcmService.sendFcmMessage(project.getCreator(), messageTitle, messageContents);
+        noticeService.createNotice(member, project.getCreator().getId(), NoticeGroup.PROJECT, NoticeType.DECLINE_PROJECT_INVITATION, projectId,messageTitle);
 
         return ResponseDto.of(MemberConverter.toMemberStatusDto(member.getId(), "프로젝트 초대 거절"));
     }
@@ -255,11 +255,10 @@ public class ProjectController {
         projectService.checkExistProjectMember(projectId, peerId);
         projectService.checkProjectCreator(projectId, member);
 
-        Project project = projectService.findById(projectId);
-
-        String messageContents = "\'"+project.getName()+"\' 참여 제안이 있어요.";
-        fcmService.sendFcmMessage(memberService.findById(peerId), fcmTitle, messageContents);
-        noticeService.createNotice(member, peerId, NoticeGroup.PROJECT, NoticeType.INVITE_TO_PROJECT, projectId,messageContents);
+        String messageTitle = memberService.findById(peerId).getName()+"님, 새로운 프로젝트 제안이 있어요 💌";
+        String messageContents = "알림을 눌러 확인하기 >";
+        fcmService.sendFcmMessage(memberService.findById(peerId), messageTitle, messageContents);
+        noticeService.createNotice(member, peerId, NoticeGroup.PROJECT, NoticeType.INVITE_TO_PROJECT, projectId,messageTitle);
         return ResponseDto.of(MemberConverter.toMemberStatusDto(member.getId(), "프로젝트 초대 완료"));
     }
 
@@ -279,9 +278,10 @@ public class ProjectController {
 
         Project project = projectService.findById(projectId);
 
-        String messageContents = member.getName() + "님이 \'" + project.getName() + "\' 에 참여하고 싶어해요.";
-        fcmService.sendFcmMessage(project.getCreator(), fcmTitle, messageContents);
-        noticeService.createProjectRequestNotice(member, project.getCreator().getId(), NoticeGroup.PROJECT, NoticeType.REQUEST_JOIN_PROJECT,projectId, member.getId(), messageContents);
+        String messageTitle = "내 프로젝트에 참여하고 싶어하는 동료가 있어요 🙋🏻";
+        String messageContents = "알림을 눌러 확인하기 >";
+        fcmService.sendFcmMessage(project.getCreator(), messageTitle, messageContents);
+        noticeService.createProjectRequestNotice(member, project.getCreator().getId(), NoticeGroup.PROJECT, NoticeType.REQUEST_JOIN_PROJECT,projectId, member.getId(), messageTitle);
         return ResponseDto.of(MemberConverter.toMemberStatusDto(member.getId(), "프로젝트 참가 신청 완료"));
     }
 
@@ -310,9 +310,10 @@ public class ProjectController {
         Project project = projectService.findById(projectId);
         projectService.saveNewProjectMember(projectId, peerId);
 
-        String messageContents = "\'" + project.getName() + "\' 참가 신청이 수락 되었어요.";
-        fcmService.sendFcmMessage(memberService.findById(peerId), fcmTitle, messageContents);
-        noticeService.createNotice(member, peerId, NoticeGroup.PROJECT, NoticeType.ACCEPT_PROJECT_JOIN_REQUEST, projectId, messageContents);
+        String messageTitle = member.getName() + "님이 프로젝트 제안을 수락했어요 🎉";
+        String messageContents = "알림을 눌러 확인하기 >";
+        fcmService.sendFcmMessage(memberService.findById(peerId), messageTitle, messageContents);
+        noticeService.createNotice(member, peerId, NoticeGroup.PROJECT, NoticeType.ACCEPT_PROJECT_JOIN_REQUEST, projectId, messageTitle);
         return ResponseDto.of(MemberConverter.toMemberStatusDto(member.getId(), "프로젝트 참가 신청 수락 완료"));
     }
 
@@ -336,11 +337,10 @@ public class ProjectController {
         // 참가 신청이 있었는지 확인
         noticeService.existsProjectJoinRequestNotice(member.getId(), peerId);
 
-        Project project = projectService.findById(projectId);
-
-        String messageContents = "\'" + project.getName() + "\' 참가 신청이 거절 되었어요.";
-        fcmService.sendFcmMessage(memberService.findById(peerId), fcmTitle, messageContents);
-        noticeService.createNotice(member, peerId, NoticeGroup.PROJECT, NoticeType.DECLINE_PROJECT_JOIN_REQUEST, projectId, messageContents);
+        String messageTitle = member.getName() + "님, 프로젝트 참가 신청이 거절되었어요 💦";
+        String messageContents = "아쉽지만 다음에 함께 해요";
+        fcmService.sendFcmMessage(memberService.findById(peerId), messageTitle, messageContents);
+        noticeService.createNotice(member, peerId, NoticeGroup.PROJECT, NoticeType.DECLINE_PROJECT_JOIN_REQUEST, projectId, messageTitle);
         return ResponseDto.of(MemberConverter.toMemberStatusDto(member.getId(), "프로젝트 참가 신청 거절 완료"));
     }
 }
