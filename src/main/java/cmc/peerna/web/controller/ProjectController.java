@@ -231,7 +231,7 @@ public class ProjectController {
         Project project = projectService.findById(projectId);
 
         String messageTitle = member.getName() + "님이 프로젝트 제안을 거절했어요 💦";
-        String messageContents = "알림을 눌러 확인하기 >";
+        String messageContents = "아쉽지만 다음에 함께 해요";
         fcmService.sendFcmMessage(project.getCreator(), messageTitle, messageContents);
         noticeService.createNotice(member, project.getCreator().getId(), NoticeGroup.PROJECT, NoticeType.DECLINE_PROJECT_INVITATION, projectId,messageTitle);
 
