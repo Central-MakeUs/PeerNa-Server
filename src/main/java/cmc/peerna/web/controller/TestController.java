@@ -110,9 +110,10 @@ public class TestController {
         memberService.updateTotalScore(target);
         memberService.updatePeerTestType(target);
         if (testService.checkForSendPeerTestUpdateNotice(target)) {
-            String messageContents = "업데이트 된 응답 분석 결과를 확인해보세요!";
-            noticeService.createNotice(target, target.getId(), NoticeGroup.PEER_TEST, NoticeType.PEER_TEST_RESULT_UPDATE, target.getId(), messageContents);
-            fcmService.sendFcmMessage(target, fcmTitle, messageContents);
+            String messageTitle = target.getName() + "님, 마이페이지가 업데이트 되었어요 🔔";
+            String messageContents = "알림을 눌러 확인하기 >";
+            noticeService.createNotice(target, target.getId(), NoticeGroup.PEER_TEST, NoticeType.PEER_TEST_RESULT_UPDATE, target.getId(), messageTitle);
+            fcmService.sendFcmMessage(target, messageTitle, messageContents);
         }
         return ResponseDto.of(TestResponseDto.peerTestIdResponseDto.builder()
                 .peerTestId(target.getId()).build());
@@ -141,9 +142,10 @@ public class TestController {
 
         testService.checkExistPeerTest(peerId, member.getId());
 
-        String messageContents = member.getName()+"님이 피어테스트 응답을 요청했어요";
-        noticeService.createNotice(member, peerId, NoticeGroup.PEER_TEST, NoticeType.PEER_TEST_REQUEST, member.getId(), messageContents);
-        fcmService.sendFcmMessage(memberService.findById(peerId), fcmTitle, messageContents);
+        String messageTitle = member.getName() + "님이 피어테스트 응답을 요청했어요 💌";
+        String messageContents = member.getName()+"알림을 눌러 테스트 응답하기 >";
+        noticeService.createNotice(member, peerId, NoticeGroup.PEER_TEST, NoticeType.PEER_TEST_REQUEST, member.getId(), messageTitle);
+        fcmService.sendFcmMessage(memberService.findById(peerId), messageTitle, messageContents);
         return ResponseDto.of(MemberConverter.toMemberStatusDto(member.getId(), "피어 테스트 응답 요청 완료"));
 
     }
