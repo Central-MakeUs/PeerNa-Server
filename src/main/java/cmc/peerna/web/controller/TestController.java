@@ -22,6 +22,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -104,9 +105,11 @@ public class TestController {
             @ApiResponse(responseCode = "4201", description = "BAD_REQUEST, 답변 개수가 정확하게 18개가 아닙니다.")
     })
     @PostMapping("/review/non-member/peer-test")
-    public ResponseDto<TestResponseDto.peerTestIdResponseDto> savePeerTest(@RequestParam(name = "target-uuid") String targetUuid,  @RequestBody TestRequestDto.peerTestRequestDto requestDto) {
+    public ResponseDto<TestResponseDto.peerTestIdResponseDto> savePeerTest(@RequestParam(name = "target-uuid") String targetUuid,  @RequestBody TestRequestDto.peerTestRequestDto requestDto, HttpServletRequest httpServletRequest) {
         Member target = memberService.findMemberByUuid(targetUuid);
+        testService.savePeerTestIpAddress(targetUuid, httpServletRequest.getRemoteAddr());
         testService.savePeerTest(null, target, requestDto);
+
         memberService.updateTotalScore(target);
         memberService.updatePeerTestType(target);
         if (testService.checkForSendPeerTestUpdateNotice(target)) {
@@ -188,6 +191,22 @@ public class TestController {
             fcmService.sendFcmMessage(target, fcmTitle, messageContents);
         }
         return ResponseDto.of(MemberConverter.toMemberStatusDto(member.getId(), "피어 테스트 작성 완료"));
+    }
+
+
+    @Operation(summary = "비회원 피어테스트 IP 주소 중복 검사 API ✔️", description = "비회원 피어테스트 IP 주소 중복 검사 API입니다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "2200", description = "BAD_REQUEST, 존재하지 않는 유저입니다."),
+            @ApiResponse(responseCode = "2250", description = "BAD_REQUEST, 잘못된 UUID 값입니다.")
+    })
+    @GetMapping("/review/non-member/check-ip")
+    public ResponseDto<TestResponseDto.checkIpAddressDto> checkSameIpAddress(@RequestParam(name = "target-uuid") String targetUuid, HttpServletRequest request) {
+        log.info("클라이언트 ip 주소 : " + request.getRemoteAddr());
+        Member target = memberService.findMemberByUuid(targetUuid);
+        boolean check = testService.checkGuestPeerTestIpAddress(targetUuid, request.getRemoteAddr());
+        return ResponseDto.of(TestResponseDto.checkIpAddressDto.builder()
+                .checkAlreadyReviewed(check)
+                .build());
     }
 
 }

@@ -34,4 +34,7 @@ public interface TestService {
     void checkExistPeerTest(Long writerId, Long targetId);
 
     boolean checkForSendPeerTestUpdateNotice(Member target);
+
+    boolean checkGuestPeerTestIpAddress(String uuid, String ipAddress);
+    void savePeerTestIpAddress(String uuid, String ipAddress);
 }

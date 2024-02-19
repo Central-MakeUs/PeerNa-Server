@@ -10,6 +10,8 @@ springdoc:
     disabled: true
   use-fqn: true
 ---
+server:
+  forward-headers-strategy: native
 spring:
   config:
     activate:
@@ -85,6 +87,8 @@ paging:
 firebase:
   admin-sdk: firebase-adminsdk-keyfile.json
 ---
+server:
+  forward-headers-strategy: native
 spring:
   config:
     activate:
