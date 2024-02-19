@@ -35,6 +35,7 @@ public class TestServiceImpl implements TestService {
     private final PeerGradeResultRepository peerGradeResultRepository;
     private final PeerTestRepository peerTestRepository;
     private final MemberRepository memberRepository;
+    private final GuestPeerTestIpRepository guestPeerTestIpRepository;
     private final TestResultCalculator testResultCalculator;
 
     @Transactional
@@ -205,6 +206,18 @@ public class TestServiceImpl implements TestService {
             return true;
         }
         else return false;
+    }
+
+    @Override
+    public void savePeerTestIpAddress(String uuid, String ipAddress) {
+        guestPeerTestIpRepository.save(GuestPeerTestIp.builder()
+                .uuid(uuid)
+                .ip(ipAddress)
+                .build());
+    }
+    @Override
+    public boolean checkGuestPeerTestIpAddress(String uuid, String ipAddress) {
+        return guestPeerTestIpRepository.existsByUuidAndIp(uuid, ipAddress);
     }
 }
 

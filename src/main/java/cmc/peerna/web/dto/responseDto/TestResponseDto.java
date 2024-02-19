@@ -41,4 +41,12 @@ public class TestResponseDto {
         private Long count;
         private PeerGrade peerGrade;
     }
+
+    @Builder
+    @Getter
+    @AllArgsConstructor(access = AccessLevel.PROTECTED)
+    @NoArgsConstructor(access = AccessLevel.PROTECTED)
+    public static class checkIpAddressDto{
+        boolean checkAlreadyReviewed;
+    }
 }
