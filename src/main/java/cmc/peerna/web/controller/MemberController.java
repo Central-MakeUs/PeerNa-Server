@@ -298,8 +298,9 @@ public class MemberController {
             @Parameter(name = "member", hidden = true)
     })
     @PostMapping("/member/withdrawal")
-    ResponseDto<MemberResponseDto.MemberStatusDto> withdrawal(@AuthMember Member member) {
+    ResponseDto<MemberResponseDto.MemberStatusDto> withdrawal(@AuthMember Member member, @RequestBody MemberRequestDto.withdrawalDto request) {
         memberService.withdrawal(member);
+        redisService.deleteRefreshToken(request.getRefreshToken());
         return ResponseDto.of(MemberConverter.toMemberStatusDto(member.getId(), "회원탈퇴 완료"));
     }
 
