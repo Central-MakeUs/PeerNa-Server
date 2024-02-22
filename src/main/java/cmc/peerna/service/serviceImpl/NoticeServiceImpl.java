@@ -71,6 +71,20 @@ public class NoticeServiceImpl implements NoticeService {
 
     @Override
     @Transactional
+    public void updatePeerTestNoticeDoneStatus(Member sender, Member receiver){
+        List<Notice> peerTestNoticeList = noticeRepository.findAllByNoticeTypeAndSenderAndReceiver(NoticeType.PEER_TEST_REQUEST, sender, receiver);
+
+        peerTestNoticeList.stream()
+                .map(notice -> {
+                    notice.noticeDone();
+                    return null;
+                }).collect(Collectors.toList());
+
+    }
+
+
+    @Override
+    @Transactional
     public NoticeResponseDto.NoticePageDto getNoticePageByNoticeGroup(Member receiver, NoticeGroup noticeGroup, Integer page) {
 
         PageRequest pageRequest = PageRequest.of(page, pageSize, Sort.by(Sort.Order.desc("createdAt")));

@@ -20,4 +20,5 @@ public interface NoticeService {
     void existsProjectJoinRequestNotice(Long receiverId, Long senderId);
 
     void existsPeerTestRequestNotice(Long receiverId, Long senderId);
+    void updatePeerTestNoticeDoneStatus(Member sender, Member receiver);
 }

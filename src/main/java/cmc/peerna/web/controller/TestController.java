@@ -178,13 +178,17 @@ public class TestController {
     public ResponseDto<MemberResponseDto.MemberStatusDto> saveRequestedPeerTest(@AuthMember Member member, @PathVariable(name = "target-id") Long targetId,  @RequestBody TestRequestDto.peerTestRequestDto requestDto) {
         Member target = memberService.findById(targetId);
 
-        // 피어테스트 요청받았는지 확인 필요
+        // 피어테스트 요청받았는지 확인
         noticeService.existsPeerTestRequestNotice(member.getId(), targetId);
 
         testService.checkExistPeerTest(member.getId(), targetId);
         testService.savePeerTest(member, target, requestDto);
         memberService.updateTotalScore(target);
         memberService.updatePeerTestType(target);
+
+        // Notice-DoneStatus Update
+        noticeService.updatePeerTestNoticeDoneStatus(target, member);
+
         if (testService.checkForSendPeerTestUpdateNotice(target)) {
             String messageContents = "업데이트 된 응답 분석 결과를 확인해보세요!";
             noticeService.createNotice(target, target.getId(), NoticeGroup.PEER_TEST, NoticeType.PEER_TEST_RESULT_UPDATE, target.getId(), messageContents);

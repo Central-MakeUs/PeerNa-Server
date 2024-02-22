@@ -16,6 +16,7 @@ public class NoticeConverter {
                 .noticeType(notice.getNoticeType())
                 .contents(notice.getContents())
                 .createdTime(notice.getCreatedAt())
+                .doneFlag(notice.getDoneFlag())
                 .readFlag(notice.getReadFlag())
                 .build();
     }

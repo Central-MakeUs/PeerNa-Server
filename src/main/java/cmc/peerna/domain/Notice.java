@@ -36,10 +36,15 @@ public class Notice extends BaseEntity {
     private String contents;
 
     @ColumnDefault("'false'")
+    private String doneFlag;
+
+    @ColumnDefault("'false'")
     private String readFlag;
 
     public void noticeRead(){
         this.readFlag="true";
     }
+
+    public void noticeDone() {this.doneFlag="true";}
 
 }

@@ -20,6 +20,7 @@ public class NoticeResponseDto {
         private String contents;
         private LocalDateTime createdTime;
 
+        private String doneFlag;
         private String readFlag;
 
     }
