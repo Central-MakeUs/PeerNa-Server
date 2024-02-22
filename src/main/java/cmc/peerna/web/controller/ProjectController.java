@@ -188,7 +188,7 @@ public class ProjectController {
         return ResponseDto.of(projectDetailInfo);
     }
 
-    @Operation(summary = "링크로 초대된 프로젝트 - 초대 수락 API ✔️🔑", description = "링크로 초대된 프로젝트 - 초대 수락 API입니다.")
+    @Operation(summary = "프로젝트 - 초대 수락 API ✔️🔑", description = "프로젝트 - 초대 수락 API입니다.")
     @Parameters({
             @Parameter(name = "member", hidden = true)
     })
@@ -205,6 +205,8 @@ public class ProjectController {
         projectService.saveNewProjectMember(projectId, member.getId());
         Project project = projectService.findById(projectId);
 
+        // 프로젝트 생성자
+
         String messageTitle = member.getName() + "님이 프로젝트 제안을 수락했어요 🎉";
         String messageContents = "알림을 눌러 확인하기 >";
         fcmService.sendFcmMessage(project.getCreator(), messageTitle, messageContents);
@@ -215,7 +217,7 @@ public class ProjectController {
         return ResponseDto.of(MemberConverter.toMemberStatusDto(member.getId(), "프로젝트 초대 수락"));
     }
 
-    @Operation(summary = "링크로 초대된 프로젝트 - 초대 거절 API ✔️🔑", description = "링크로 초대된 프로젝트 - 초대 거절 API입니다.")
+    @Operation(summary = "프로젝트 - 초대 거절 API ✔️🔑", description = "프로젝트 - 초대 거절 API입니다.")
     @Parameters({
             @Parameter(name = "member", hidden = true)
     })
