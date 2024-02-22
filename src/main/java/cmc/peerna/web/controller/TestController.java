@@ -197,6 +197,19 @@ public class TestController {
         return ResponseDto.of(MemberConverter.toMemberStatusDto(member.getId(), "피어 테스트 작성 완료"));
     }
 
+    @Operation(summary = "피어 테스트 - 함께 한 기간 30일 미만일 경우 호출 API ✔️", description = "피어 테스트 - 함께 한 기간 30일 미만일 경우 호출 API입니다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "2200", description = "BAD_REQUEST, 존재하지 않는 유저입니다.")
+    })
+    @PostMapping("/review/peer-test/{target-id}/reject")
+    public ResponseDto<MemberResponseDto.MemberStatusDto> peerTestPeriodReject(@AuthMember Member member, @PathVariable(name = "target-id") Long targetId) {
+        Member target = memberService.findById(targetId);
+        // Notice-DoneStatus Update
+        noticeService.updatePeerTestNoticeDoneStatus(target, member);
+        return ResponseDto.of(MemberConverter.toMemberStatusDto(member.getId(), "피어 테스트 작성 조건 미달"));
+
+    }
+
 
     @Operation(summary = "비회원 피어테스트 IP 주소 중복 검사 API ✔️", description = "비회원 피어테스트 IP 주소 중복 검사 API입니다.")
     @ApiResponses({
